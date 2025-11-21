@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     #region General Variables
     [SerializeField] float waterLeft = 100;
     [SerializeField] float foodLeft = 100;
+    [SerializeField] float movementMult = 1;//cuando el player se mueva, consumirá más
     [SerializeField] Image waterBarFill;
     [SerializeField] Image foodBarFill;
     //[SerializeField] float secondsOfEnergy = 180f;//3 o 4 minutos
@@ -22,9 +23,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool isSprinting;
 
     [SerializeField] float interactingCooldown = 0.1f;
-    [SerializeField] float interactRadius = 1f;
+    [SerializeField] float interactingDistance = 1.5f;
     [SerializeField] bool canInteract = true;
     [SerializeField] LayerMask interactLayer;
+    [SerializeField] Transform shootPos;
+    [SerializeField] Vector3 interactCubeScale;
+    [SerializeField] Vector3 interactCubeOffset;
 
 
     [Header("Jumping")]
@@ -44,12 +48,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Rigidbody playerRb;
     [SerializeField] Animator anim;
     [SerializeField] GameObject camHolder;
+    [SerializeField] Camera cam;
     [SerializeField] AudioSource playerSpeaker;
     [SerializeField] GameObject winPanel;
     [SerializeField] GameObject losePanel;
 
     #endregion
-
+    bool characterTurned = true;
 
     void Update()
     {
@@ -103,8 +108,8 @@ public class PlayerController : MonoBehaviour
     }
     void StatsUpdater()
     {
-        foodLeft -= Time.deltaTime * (10f / 18f); //comprobar: que se vaya agotando la comida, ajustar tiempo o según distancia
-        waterLeft -= Time.deltaTime * (10f / 18f); //comprobar: que se vaya agotando la bebida, ajustar tiempo o según distancia
+        foodLeft -= Time.deltaTime * (10f / 18f) * movementMult; //comprobar: que se vaya agotando la comida, ajustar tiempo o según distancia
+        waterLeft -= Time.deltaTime * (10f / 18f) * movementMult; //comprobar: que se vaya agotando la bebida, ajustar tiempo o según distancia
         waterBarFill.fillAmount = waterLeft / 100;
         foodBarFill.fillAmount = foodLeft / 100;
     }
@@ -118,8 +123,12 @@ public class PlayerController : MonoBehaviour
         CameraLook();
     }
 
-    void Movement()
+    void Movement() 
     {
+        //hay que rotar personaje y que siempre camine hacia delante (donde apunte la cámara) pero al estar quieto y la cámara rotando, él no rote
+        //funciona así en juegos como mario odyssey??
+        //ahora falta que rote smooth y que rote también hacia derecha izquierda y diagonales
+
         Vector3 currentVelocity = playerRb.linearVelocity;
         Vector3 targetVelocity = new Vector3(moveInput.x, 0, moveInput.y);
         targetVelocity *= isSprinting ? sprintSpeed : speed;
@@ -131,13 +140,36 @@ public class PlayerController : MonoBehaviour
         Vector3 velocityChange = (targetVelocity - currentVelocity);
         velocityChange = new Vector3(velocityChange.x, 0, velocityChange.z);
         velocityChange = Vector3.ClampMagnitude(velocityChange, maxForce);
-        if (moveInput.x > 0 || moveInput.y > 0)
+        if (moveInput.x != 0 || moveInput.y != 0)
         {
-            anim.SetBool("isWalking", true);
+            if(!characterTurned)
+            {
+                //Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
+                float turnSpeed = 2; //or whatever
+                //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+                characterTurned = true;
+                if (moveInput.x > 0)
+                {
+
+                }
+                else if (moveInput.y > 0)
+                {
+                    gameObject.transform.rotation = Quaternion.Slerp(transform.rotation, camHolder.transform.rotation, Time.deltaTime * turnSpeed);
+                }
+                else if (moveInput.y < 0)
+                {
+                    
+                }
+            }
+
+            movementMult = 2f;
+            //cam.transform.forward se camina desde ahí
+            //anim.SetBool("isWalking", true);
         }
         else
         {
-            anim.SetBool("isWalking", false);
+            movementMult = 1f;
+            //anim.SetBool("isWalking", false);
         }
         //Aplicar la fuerza de movimiento
         playerRb.AddForce(velocityChange, ForceMode.VelocityChange);
@@ -145,30 +177,46 @@ public class PlayerController : MonoBehaviour
 
     void CameraLook()
     {
+        characterTurned = false;
         //Horizontal rotation (player body)
-        transform.Rotate(Vector3.up * lookInput.x * sensitivity);
+        //transform.Rotate(Vector3.up * lookInput.x * sensitivity);
         //Vertical rotation (camera)
-        lookRotation += (-lookInput.y * sensitivity);
-        lookRotation = Mathf.Clamp(lookRotation, -90, 60);
-        camHolder.transform.localEulerAngles = new Vector3(lookRotation, 0f, 0f);
+        lookRotation += (lookInput.x * sensitivity);
+        //lookRotation = Mathf.Clamp(lookRotation, -90, 60);
+        camHolder.transform.localEulerAngles = new Vector3(0f, lookRotation, 0f);
     }
     void Interact()
     {
-        //Opción 1 OverlapSphere
-        Collider[] colTouched = Physics.OverlapSphere(transform.position, interactRadius, interactLayer); //puedes poner también layerMask y queryTriggerInteraction
+        /*//Opción 1 OverlapSphere
+        Collider[] colTouched = Physics.OverlapSphere(transform.position, interactingDistance, interactLayer); //puedes poner también layerMask y queryTriggerInteraction
+        
         foreach (Collider col in colTouched)
         {
             Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
             //col.SendMessage("AddDamage");//?
         }
-
         //Opción 2 Raycast frontal y ya
+        RaycastHit hit;
+        if(Physics.Raycast(shootPos.position, shootPos.forward, out hit, interactingDistance, interactLayer))
+        {
+            Debug.Log("Puedes interactuar con el objeto llamado " + hit.collider.name);
+        }
+        */
+        //Opción 3 OverlapBox
+        Collider[] colTouched = Physics.OverlapBox(interactCubeOffset + gameObject.transform.position, interactCubeScale, Quaternion.identity, interactLayer); //puedes poner también layerMask y queryTriggerInteraction
+
+        foreach (Collider col in colTouched)
+        {
+            Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
+            //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
+        }
+        
     }
     IEnumerator InteractRoutine()
     {
         interacting = false;
-        canInteract = false;
         if(canInteract) Interact();
+        canInteract = false;
         yield return new WaitForSeconds(interactingCooldown);
         canInteract = true;
     }
@@ -199,4 +247,10 @@ public class PlayerController : MonoBehaviour
     }
 
     #endregion
+    private void OnDrawGizmosSelected()
+    {
+        Debug.DrawRay(transform.position, transform.forward * interactingDistance, Color.yellow);
+        Gizmos.DrawCube(interactCubeOffset + gameObject.transform.position, interactCubeScale);
+        Gizmos.color = Color.blue;
+    }
 }
