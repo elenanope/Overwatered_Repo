@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float interactingCooldown = 0.1f;
     [SerializeField] float interactingDistance = 1.5f;
+    [SerializeField] float interactOffset = 0.5f;
     [SerializeField] bool canInteract = true;
     [SerializeField] LayerMask interactLayer;
     [SerializeField] Transform shootPos;
@@ -31,7 +32,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Vector3 interactCubeOffset;
 
 
-    [Header("Jumping")]
+    [Header("GroundCheck")]
     [SerializeField] float jumpForce = 5f;
     [SerializeField] GameObject groundCheck;
     [SerializeField] float groundCheckRadius = 0.3f;
@@ -47,21 +48,24 @@ public class PlayerController : MonoBehaviour
     [Header("Object References")]
     [SerializeField] Rigidbody playerRb;
     [SerializeField] Animator anim;
-    [SerializeField] GameObject camHolder;
-    [SerializeField] Camera cam;
+    //[SerializeField] GameObject camHolder;
+    //[SerializeField] Camera cam;
     [SerializeField] AudioSource playerSpeaker;
     [SerializeField] GameObject winPanel;
     [SerializeField] GameObject losePanel;
 
+    [SerializeField] Transform camTransform;
+    [SerializeField] bool hasTurned = false;
+
     #endregion
-    bool characterTurned = true;
 
     void Update()
     {
         //Groundcheck
         isGrounded = Physics.CheckSphere(groundCheck.transform.position, groundCheckRadius, groundLayer);
         //Debug ray: visible only in Scene
-        Debug.DrawRay(camHolder.transform.position, camHolder.transform.forward * 100f, Color.red);
+        //Debug.DrawRay(camHolder.transform.position, camHolder.transform.forward * 100f, Color.red);
+
 
         StatsUpdater();
         if (interacting) StartCoroutine(InteractRoutine());
@@ -118,23 +122,26 @@ public class PlayerController : MonoBehaviour
         Movement();
     }
 
-    private void LateUpdate()
+    void Movement()
     {
-        CameraLook();
-    }
+        Vector3 forward = camTransform.forward;
+        Vector3 right = camTransform.right;
 
-    void Movement() 
-    {
-        //hay que rotar personaje y que siempre camine hacia delante (donde apunte la cámara) pero al estar quieto y la cámara rotando, él no rote
-        //funciona así en juegos como mario odyssey??
-        //ahora falta que rote smooth y que rote también hacia derecha izquierda y diagonales
+        forward.y = 0;
+        forward.Normalize();
+        right.y = 0;
+        right.Normalize();
+
+        Vector3 moveDirection = forward * moveInput.y + right * moveInput.x;
+        if (!hasTurned && moveDirection.sqrMagnitude > 0.001f)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, 10f * Time.deltaTime);
+        }
 
         Vector3 currentVelocity = playerRb.linearVelocity;
-        Vector3 targetVelocity = new Vector3(moveInput.x, 0, moveInput.y);
+        Vector3 targetVelocity = moveDirection;
         targetVelocity *= isSprinting ? sprintSpeed : speed;
-
-        //Convertir la dirección local en global
-        targetVelocity = transform.TransformDirection(targetVelocity);
 
         // Calcular el cambio de velocidad (aceleración)
         Vector3 velocityChange = (targetVelocity - currentVelocity);
@@ -142,28 +149,7 @@ public class PlayerController : MonoBehaviour
         velocityChange = Vector3.ClampMagnitude(velocityChange, maxForce);
         if (moveInput.x != 0 || moveInput.y != 0)
         {
-            if(!characterTurned)
-            {
-                //Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
-                float turnSpeed = 2; //or whatever
-                //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-                characterTurned = true;
-                if (moveInput.x > 0)
-                {
-
-                }
-                else if (moveInput.y > 0)
-                {
-                    gameObject.transform.rotation = Quaternion.Slerp(transform.rotation, camHolder.transform.rotation, Time.deltaTime * turnSpeed);
-                }
-                else if (moveInput.y < 0)
-                {
-                    
-                }
-            }
-
             movementMult = 2f;
-            //cam.transform.forward se camina desde ahí
             //anim.SetBool("isWalking", true);
         }
         else
@@ -171,20 +157,9 @@ public class PlayerController : MonoBehaviour
             movementMult = 1f;
             //anim.SetBool("isWalking", false);
         }
-        //Aplicar la fuerza de movimiento
         playerRb.AddForce(velocityChange, ForceMode.VelocityChange);
     }
 
-    void CameraLook()
-    {
-        characterTurned = false;
-        //Horizontal rotation (player body)
-        //transform.Rotate(Vector3.up * lookInput.x * sensitivity);
-        //Vertical rotation (camera)
-        lookRotation += (lookInput.x * sensitivity);
-        //lookRotation = Mathf.Clamp(lookRotation, -90, 60);
-        camHolder.transform.localEulerAngles = new Vector3(0f, lookRotation, 0f);
-    }
     void Interact()
     {
         /*//Opción 1 OverlapSphere
@@ -202,9 +177,10 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Puedes interactuar con el objeto llamado " + hit.collider.name);
         }
         */
-        //Opción 3 OverlapBox
-        Collider[] colTouched = Physics.OverlapBox(interactCubeOffset + gameObject.transform.position, interactCubeScale, Quaternion.identity, interactLayer); //puedes poner también layerMask y queryTriggerInteraction
 
+        //Opción 3 OverlapBox
+        Vector3 worldOffset = transform.TransformPoint(new Vector3(0, 0, interactOffset));//transforma el offset local a global
+        Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
         foreach (Collider col in colTouched)
         {
             Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
@@ -249,8 +225,10 @@ public class PlayerController : MonoBehaviour
     #endregion
     private void OnDrawGizmosSelected()
     {
-        Debug.DrawRay(transform.position, transform.forward * interactingDistance, Color.yellow);
-        Gizmos.DrawCube(interactCubeOffset + gameObject.transform.position, interactCubeScale);
+        //Debug.DrawRay(transform.position, transform.forward * interactingDistance, Color.yellow);
+        Vector3 worldOffset = transform.TransformPoint(new Vector3(0, 0, interactOffset));
+        Gizmos.DrawCube(worldOffset, interactCubeScale);
+        //Gizmos.DrawSphere(worldOffset, interactingDistance);
         Gizmos.color = Color.blue;
     }
 }
