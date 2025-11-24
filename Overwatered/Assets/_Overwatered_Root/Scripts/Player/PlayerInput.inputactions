@@ -223,20 +223,9 @@
                     "id": "133c8c34-7d29-4463-9f3d-5048adfc98f4",
                     "path": "<Mouse>/delta",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "ScaleVector2(x=1.7)",
                     "groups": "",
                     "action": "CameraLook",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "35fc1993-7775-44c3-9f49-80bb79aaef81",
-                    "path": "<Gamepad>/rightStick",
-                    "interactions": "",
-                    "processors": "ScaleVector2(x=30,y=30)",
-                    "groups": "",
-                    "action": "CameraMouseZoom",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

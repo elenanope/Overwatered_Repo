@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] Transform camTransform;
     [SerializeField] bool hasTurned = false;
+    [SerializeField] float rotationTime = 20f;
 
     #endregion
 
@@ -112,8 +113,8 @@ public class PlayerController : MonoBehaviour
     }
     void StatsUpdater()
     {
-        foodLeft -= Time.deltaTime * (10f / 18f) * movementMult; //comprobar: que se vaya agotando la comida, ajustar tiempo o según distancia
-        waterLeft -= Time.deltaTime * (10f / 18f) * movementMult; //comprobar: que se vaya agotando la bebida, ajustar tiempo o según distancia
+        foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //comprobar: que se vaya agotando la comida, ajustar tiempo o según distancia
+        waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //comprobar: que se vaya agotando la bebida, ajustar tiempo o según distancia
         waterBarFill.fillAmount = waterLeft / 100;
         foodBarFill.fillAmount = foodLeft / 100;
     }
@@ -136,7 +137,7 @@ public class PlayerController : MonoBehaviour
         if (!hasTurned && moveDirection.sqrMagnitude > 0.001f)
         {
             Quaternion toRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, 10f * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, rotationTime * Time.deltaTime);
         }
 
         Vector3 currentVelocity = playerRb.linearVelocity;
@@ -155,6 +156,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             movementMult = 1f;
+            isSprinting = false;
             //anim.SetBool("isWalking", false);
         }
         playerRb.AddForce(velocityChange, ForceMode.VelocityChange);
@@ -183,6 +185,7 @@ public class PlayerController : MonoBehaviour
         Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
         foreach (Collider col in colTouched)
         {
+            col.gameObject.transform.localScale = new Vector3(2, 2, 2);
             Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
             //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
         }
