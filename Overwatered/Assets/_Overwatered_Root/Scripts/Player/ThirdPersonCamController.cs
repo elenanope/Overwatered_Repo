@@ -17,12 +17,17 @@ public class ThirdPersonCamController : MonoBehaviour
 
     float targetZoom;
     float currentZoom;
+    float startZoom;
+    public bool zoomReseted;
+    float zoomLerpSpeedScale = 1f;
 
     private void Start()
     {
         cam = GetComponent<CinemachineCamera>();
         orbital = cam.GetComponent<CinemachineOrbitalFollow>();
-        targetZoom = currentZoom = orbital.Radius;
+        targetZoom = currentZoom = startZoom = orbital.Radius;
+        zoomLerpSpeedScale = 1f;
+        zoomReseted = true;
         inputActions = new PlayerInput();
         inputActions.Enable();
         inputActions.CameraControls.CameraMouseZoom.performed += HandleMouseScroll;
@@ -43,6 +48,7 @@ public class ThirdPersonCamController : MonoBehaviour
             {
                 targetZoom = Mathf.Clamp(orbital.Radius - scrollDelta.y * zoomSpeed, minDistance, maxDistance);
                 scrollDelta = Vector2.zero;
+                zoomReseted = false;
             }
         }
 
@@ -50,9 +56,20 @@ public class ThirdPersonCamController : MonoBehaviour
         if (bumperDelta != 0)
         {
             targetZoom = Mathf.Clamp(orbital.Radius - bumperDelta * zoomSpeed, minDistance, maxDistance);
+            zoomReseted = false;
         }
 
-        currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomLerpSpeed);
+        currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomLerpSpeed * zoomLerpSpeedScale);
         orbital.Radius = currentZoom;
+    }
+    public void ResetZoom()
+    {
+        zoomLerpSpeedScale = 0.5f;
+        targetZoom = startZoom;
+        if (currentZoom == startZoom)
+        {
+            zoomReseted = true;
+            zoomLerpSpeedScale = 1f;
+        }
     }
 }

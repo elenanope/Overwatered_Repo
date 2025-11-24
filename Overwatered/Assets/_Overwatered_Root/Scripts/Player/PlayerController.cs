@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Splines.Interpolators;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -27,7 +28,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float interactOffset = 0.5f;
     [SerializeField] bool canInteract = true;
     [SerializeField] LayerMask interactLayer;
-    [SerializeField] Transform shootPos;
+    //[SerializeField] Transform shootPos;
     [SerializeField] Vector3 interactCubeScale;
     [SerializeField] Vector3 interactCubeOffset;
 
@@ -150,8 +151,9 @@ public class PlayerController : MonoBehaviour
         velocityChange = Vector3.ClampMagnitude(velocityChange, maxForce);
         if (moveInput.x != 0 || moveInput.y != 0)
         {
-            movementMult = 2f;
+            if(movementMult != 2) movementMult = 2f;
             //anim.SetBool("isWalking", true);
+            if(!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
         }
         else
         {
@@ -181,7 +183,7 @@ public class PlayerController : MonoBehaviour
         */
 
         //Opción 3 OverlapBox
-        Vector3 worldOffset = transform.TransformPoint(new Vector3(0, 0, interactOffset));//transforma el offset local a global
+        Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);//transforma el offset local a global
         Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
         foreach (Collider col in colTouched)
         {
@@ -229,7 +231,7 @@ public class PlayerController : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         //Debug.DrawRay(transform.position, transform.forward * interactingDistance, Color.yellow);
-        Vector3 worldOffset = transform.TransformPoint(new Vector3(0, 0, interactOffset));
+        Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);
         Gizmos.DrawCube(worldOffset, interactCubeScale);
         //Gizmos.DrawSphere(worldOffset, interactingDistance);
         Gizmos.color = Color.blue;
