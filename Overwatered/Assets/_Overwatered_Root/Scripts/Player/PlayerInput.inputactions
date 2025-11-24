@@ -24,6 +24,24 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "PutBack",
+                    "type": "Button",
+                    "id": "a032e7bf-55c4-44b1-b514-88ae3d831c84",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "OpenMenu",
+                    "type": "Button",
+                    "id": "5b61a9cd-c06c-4e62-9b53-5dd34ecc70ea",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Sprint",
                     "type": "Button",
                     "id": "f300d50e-511e-4f6c-8d16-afefb9190e06",
@@ -124,6 +142,50 @@
                 },
                 {
                     "name": "",
+                    "id": "cba49057-5d69-4efd-b3c9-b9a2dd487cc0",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PutBack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f59b82ae-9194-43c0-9c7c-b56d2b0224a7",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PutBack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f3044f29-771e-4329-bbea-06c4995e4592",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b9473015-9823-4951-9942-56970c77c5b2",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "607b0396-eec5-43c4-9344-4c940105d604",
                     "path": "<Gamepad>/leftStickPress",
                     "interactions": "",
@@ -136,7 +198,7 @@
                 {
                     "name": "",
                     "id": "04a19dca-62d8-4f88-959d-a78f35cdd1e7",
-                    "path": "<Keyboard>/ctrl",
+                    "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

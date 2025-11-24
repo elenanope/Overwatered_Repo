@@ -18,16 +18,14 @@ public class GameManager : MonoBehaviour
     }
 
     public ThirdPersonCamController camController;
+    //poner los paneles en el player para que puedan ser privados?
+    public GameObject winPanel;
+    public GameObject losePanel;
+    public GameObject inventoryPanel;
+    public CinemachineCamera cinemachineCamera;
 
     private void Awake()
     {
         instance = this;
-    }
-    
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

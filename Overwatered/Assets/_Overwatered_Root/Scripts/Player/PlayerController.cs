@@ -19,13 +19,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float speed = 5f;
     [SerializeField] float sprintSpeed = 8f;
     [SerializeField] float maxForce = 1f; //Fuerza máxima de aceleración
-    [SerializeField] float sensitivity = 0.1f;
 
     [SerializeField] bool isSprinting;
 
     [SerializeField] float interactingCooldown = 0.1f;
-    [SerializeField] float interactingDistance = 1.5f;
-    [SerializeField] float interactOffset = 0.5f;
     [SerializeField] bool canInteract = true;
     [SerializeField] LayerMask interactLayer;
     //[SerializeField] Transform shootPos;
@@ -41,10 +38,10 @@ public class PlayerController : MonoBehaviour
     bool isGrounded;
 
     //Input Variables
+    bool playerPaused;//quitar esta o la siguiente? o no?
+    bool menuOpened;
     bool interacting;
     Vector2 moveInput;
-    Vector2 lookInput;
-    float lookRotation;
     //[SerializeField] SO_GameManager gameManager;
     [Header("Object References")]
     [SerializeField] Rigidbody playerRb;
@@ -52,8 +49,6 @@ public class PlayerController : MonoBehaviour
     //[SerializeField] GameObject camHolder;
     //[SerializeField] Camera cam;
     [SerializeField] AudioSource playerSpeaker;
-    [SerializeField] GameObject winPanel;
-    [SerializeField] GameObject losePanel;
 
     [SerializeField] Transform camTransform;
     [SerializeField] bool hasTurned = false;
@@ -68,15 +63,19 @@ public class PlayerController : MonoBehaviour
         //Debug ray: visible only in Scene
         //Debug.DrawRay(camHolder.transform.position, camHolder.transform.forward * 100f, Color.red);
 
+        if (!playerPaused)//congelar también las stats? o solo en las cabinas telefónicas
+        {
+            if (interacting) StartCoroutine(InteractRoutine());
+        }
+        
 
         StatsUpdater();
-        if (interacting) StartCoroutine(InteractRoutine());
 
         if (waterLeft <= 0) //si la comida se agota, la bebida tmb se agotará más rápido?
         {
             //Método de perder
             //pantalla negra y se escucha un golpe en el suelo (thump)
-            losePanel.SetActive(true);
+            GameManager.Instance.losePanel.SetActive(true);
             Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
             Time.timeScale = 0f;
@@ -90,38 +89,17 @@ public class PlayerController : MonoBehaviour
             Time.timeScale = 0f;
             Debug.Log("Win!!");
         }*/
-
-        //Debug.DrawRay(camHolder.transform.position, camHolder.transform.forward * 2f, Color.red);
-        /* si llega a x bebida o x comida: animaciones de cansado
-         if (energy <= 20 && energy > 10 && !isBlinking)
-        {
-            blinkingPanel.SetActive(true);
-            isBlinking = true;
-            loopedSpeaker.enabled = true;
-            //StartCoroutine(Blinking(2));
-        }
-        else if (energy <= 10 && !isBlinking)
-        {
-            //StopCoroutine(Blinking(2));
-            //StartCoroutine(Blinking(1));
-        }
-        else if (isBlinking && energy > 20)
-        {
-            isBlinking = false;
-            blinkingPanel.SetActive(false);
-            loopedSpeaker.enabled = true;
-        }*/
     }
     void StatsUpdater()
     {
-        foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //comprobar: que se vaya agotando la comida, ajustar tiempo o según distancia
-        waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //comprobar: que se vaya agotando la bebida, ajustar tiempo o según distancia
+        foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
+        waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
         waterBarFill.fillAmount = waterLeft / 100;
         foodBarFill.fillAmount = foodLeft / 100;
     }
     private void FixedUpdate()
     {
-        Movement();
+        if (!playerPaused) Movement();
     }
 
     void Movement()
@@ -152,8 +130,8 @@ public class PlayerController : MonoBehaviour
         if (moveInput.x != 0 || moveInput.y != 0)
         {
             if(movementMult != 2) movementMult = 2f;
-            //anim.SetBool("isWalking", true);
             if(!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
+            //anim.SetBool("isWalking", true);
         }
         else
         {
@@ -166,28 +144,12 @@ public class PlayerController : MonoBehaviour
 
     void Interact()
     {
-        /*//Opción 1 OverlapSphere
-        Collider[] colTouched = Physics.OverlapSphere(transform.position, interactingDistance, interactLayer); //puedes poner también layerMask y queryTriggerInteraction
-        
-        foreach (Collider col in colTouched)
-        {
-            Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
-            //col.SendMessage("AddDamage");//?
-        }
-        //Opción 2 Raycast frontal y ya
-        RaycastHit hit;
-        if(Physics.Raycast(shootPos.position, shootPos.forward, out hit, interactingDistance, interactLayer))
-        {
-            Debug.Log("Puedes interactuar con el objeto llamado " + hit.collider.name);
-        }
-        */
-
-        //Opción 3 OverlapBox
         Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);//transforma el offset local a global
         Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
         foreach (Collider col in colTouched)
         {
-            col.gameObject.transform.localScale = new Vector3(2, 2, 2);
+            if(col.gameObject.transform.localScale.x == 0.5f) col.gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+            else col.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
             //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
         }
@@ -211,10 +173,6 @@ public class PlayerController : MonoBehaviour
         moveInput = ctx.ReadValue<Vector2>();
     }
 
-    public void OnLook(InputAction.CallbackContext ctx)
-    {
-        lookInput = ctx.ReadValue<Vector2>();
-    }
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (ctx.performed) interacting = true;
@@ -223,14 +181,33 @@ public class PlayerController : MonoBehaviour
     {
         if (ctx.performed) isSprinting = true; //gestionar que deje de sprintear al dejar de moverse
         //cambiar input actions para que sea doble toque de tecla/(movimiento rápido/apretar joystick)
-
-        //if (ctx.canceled) isSprinting = false;
+    }
+    public void OnMenuInteraction(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            if(menuOpened)
+            {
+                GameManager.Instance.inventoryPanel.SetActive(false);
+                GameManager.Instance.cinemachineCamera.enabled = true;
+                //poner que mínimo la cámara lerpee hasta su posición actual (o que se mantenga en esa posición aunque muevas el ratón)
+                playerPaused = false;
+                //quitar animación pensativa
+            }
+            else
+            {
+                GameManager.Instance.inventoryPanel.SetActive(true);
+                GameManager.Instance.cinemachineCamera.enabled = false;
+                playerPaused = true;
+                //poner animación pensativa
+            }
+            menuOpened = !menuOpened;
+        }
     }
 
     #endregion
     private void OnDrawGizmosSelected()
     {
-        //Debug.DrawRay(transform.position, transform.forward * interactingDistance, Color.yellow);
         Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);
         Gizmos.DrawCube(worldOffset, interactCubeScale);
         //Gizmos.DrawSphere(worldOffset, interactingDistance);
