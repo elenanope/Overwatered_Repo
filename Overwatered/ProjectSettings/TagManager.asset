@@ -6,7 +6,7 @@ TagManager:
   tags:
   - BoatFront
   - Boat
-  - ExitWater
+  - Shore
   layers:
   - Default
   - TransparentFX

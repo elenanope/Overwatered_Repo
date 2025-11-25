@@ -64,10 +64,12 @@ public class PlayerController : MonoBehaviour
 
     [Header("Boat References")]
     [SerializeField] GameObject boat;
+    [SerializeField] BoatController boatController;
     [SerializeField] Rigidbody boatRb;
     [SerializeField] Transform exitWaterPoint;
 
     [SerializeField] float timePassed;
+    public Vector3 shorePoint;
     #endregion
 
     void Update()
@@ -238,9 +240,11 @@ public class PlayerController : MonoBehaviour
                 //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
             }
             colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
-            foreach (Collider col in colTouched)
+            if (colTouched[0]!= null)
             {
-                col.GetComponent<NPCAI>().Talk();
+                colTouched[0].GetComponent<NPCAI>().Talk();
+                GameManager.Instance.ChangeCamera();
+                GameManager.Instance.SetNPCTarget(colTouched[0].gameObject.transform);
             }
         }
         else
@@ -256,6 +260,7 @@ public class PlayerController : MonoBehaviour
                 gameObject.transform.rotation = boat.transform.rotation;
                 gameObject.transform.SetParent(boat.transform);
                 isInsideBoat = true;
+                boatController.RegisterPlayer(this);
             }
             if(isNearLand && isInsideBoat)//este no va
             {
@@ -265,10 +270,11 @@ public class PlayerController : MonoBehaviour
                 playerRb.isKinematic = false;
                 playerRb.useGravity = true;
                 //poner que sea más flexible la bajada
-                //gameObject.transform.position = exitWaterPoint.position;
-                //gameObject.transform.rotation = exitWaterPoint.rotation;
+                boatController.SendClosestPoint();
+                gameObject.transform.position = shorePoint;
                 gameObject.transform.parent = null; 
                 isInsideBoat = false;
+                boatController.hasPlayer = false;
             }
         }
     }
