@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float sprintSpeed = 8f;
     [SerializeField] float maxForce = 1f; //Fuerza máxima de aceleración
 
+    [SerializeField] float rowingForce = 0.5f;
+    [SerializeField] float rowingTurningForce = 0.5f;
+
     [SerializeField] bool isSprinting;
 
     [SerializeField] float interactingCooldown = 0.1f;
@@ -42,9 +45,13 @@ public class PlayerController : MonoBehaviour
     bool playerPaused;//quitar esta o la siguiente? o no?
     bool menuOpened;
     bool interacting;
+    bool isInsideBoat = false;
+    [SerializeField] bool isNearBoat;
+    public bool isNearLand;
+    [SerializeField] bool canRow = true;
     Vector2 moveInput;
     //[SerializeField] SO_GameManager gameManager;
-    [Header("Object References")]
+    [Header("Player References")]
     [SerializeField] Rigidbody playerRb;
     [SerializeField] Animator anim;
     //[SerializeField] GameObject camHolder;
@@ -55,6 +62,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool hasTurned = false;
     [SerializeField] float rotationTime = 20f;
 
+    [Header("Boat References")]
+    [SerializeField] GameObject boat;
+    [SerializeField] Rigidbody boatRb;
+    [SerializeField] Transform exitWaterPoint;
 
     [SerializeField] float timePassed;
     #endregion
@@ -99,6 +110,20 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Win!!");
         }*/
     }
+    private void OnTriggerStay(Collider other)
+    {
+        if(other.CompareTag("Boat"))
+        {
+            if (!isInsideBoat && !isNearBoat) isNearBoat = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Boat"))
+        {
+            if (isNearBoat) isNearBoat = false;
+        }
+    }
     void StatsUpdater()
     {
         //foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
@@ -108,10 +133,20 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (!playerPaused) Movement();
+        if (!playerPaused)
+        {
+            if (!isInsideBoat)
+            {
+                Movement();
+            }
+            else
+            {
+                if(canRow)BoatMovement();
+            }
+        }
     }
 
-    void Movement()
+    void Movement() //añadir que tolere escalones ligeros (raycasts? u otra cosa)
     {
         Vector3 forward = camTransform.forward;
         Vector3 right = camTransform.right;
@@ -150,22 +185,91 @@ public class PlayerController : MonoBehaviour
         }
         playerRb.AddForce(velocityChange, ForceMode.VelocityChange);
     }
+    void BoatMovement()
+    {
+        //moveInput.x rota la barca y moveInput.y acelera o mueve hacia atrás
+        //poner preferencia en alguna si son pulsadas a la vez?
+        float forceDirection = rowingForce * moveInput.y; //quizá poner directamente si 1 o -1
+        float forceRotation = rowingTurningForce * moveInput.x;
 
+        if (moveInput.sqrMagnitude > 0.001f)
+        {
+            if (moveInput.x != 0 || moveInput.y != 0)
+            {
+                if (movementMult != 2) movementMult = 2f;
+                if (!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
+                //anim.SetBool("isWalking", true);
+            }
+            if (moveInput.y != 0)//ver si se puede poner easy in y out, no solo easyout
+            {
+                boatRb.AddForce(boat.transform.forward * forceDirection, ForceMode.Impulse);// o velocity change
+            }
+            else if (moveInput.x != 0)
+            {
+                boatRb.AddTorque(Vector3.up * forceRotation, ForceMode.Impulse);
+            }
+            canRow = false;
+            StartCoroutine(RowingCoroutine());
+        }
+        else
+        {
+            movementMult = 1f;
+            isSprinting = false;
+            //anim.SetBool("isWalking", false);
+        }
+    }
+    IEnumerator RowingCoroutine()
+    {
+        yield return new WaitForSeconds(1);
+        canRow = true;
+        yield break;
+    }
     void Interact()
     {
-        Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);//transforma el offset local a global
-        Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
-        foreach (Collider col in colTouched)
+        if(!isNearBoat && !isNearLand) // && !isInsideBoat? ya veremos
         {
-            if(col.gameObject.transform.localScale.x == 0.5f) col.gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
-            else col.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
-            //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
+            Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);//transforma el offset local a global
+            Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
+            foreach (Collider col in colTouched)
+            {
+                if (col.gameObject.transform.localScale.x == 0.5f) col.gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+                else col.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
+                //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
+            }
+            colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
+            foreach (Collider col in colTouched)
+            {
+                col.GetComponent<NPCAI>().Talk();
+            }
         }
-        colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
-        foreach (Collider col in colTouched)
+        else
         {
-            col.GetComponent<NPCAI>().Talk();
+            if(isNearBoat && !isInsideBoat)
+            {
+                isNearBoat = false;
+                //sentarte en el bote
+                gameObject.GetComponent<Collider>().enabled = false;
+                playerRb.isKinematic = true;
+                playerRb.useGravity = false;
+                gameObject.transform.position = boat.transform.position;
+                gameObject.transform.rotation = boat.transform.rotation;
+                gameObject.transform.SetParent(boat.transform);
+                isInsideBoat = true;
+            }
+            if(isNearLand && isInsideBoat)//este no va
+            {
+                isNearLand = false;
+                //sentarte en el bote
+                gameObject.GetComponent<Collider>().enabled = true;
+                playerRb.isKinematic = false;
+                playerRb.useGravity = true;
+                //poner que sea más flexible la bajada
+                //gameObject.transform.position = exitWaterPoint.position;
+                //gameObject.transform.rotation = exitWaterPoint.rotation;
+                gameObject.transform.parent = null; 
+                isInsideBoat = false;
+            }
         }
     }
     IEnumerator InteractRoutine()
