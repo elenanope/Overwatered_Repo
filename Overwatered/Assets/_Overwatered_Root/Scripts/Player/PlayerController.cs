@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float interactingCooldown = 0.1f;
     [SerializeField] bool canInteract = true;
     [SerializeField] LayerMask interactLayer;
+    [SerializeField] LayerMask NPCLayer;
     //[SerializeField] Transform shootPos;
     [SerializeField] Vector3 interactCubeScale;
     [SerializeField] Vector3 interactCubeOffset;
@@ -54,6 +55,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool hasTurned = false;
     [SerializeField] float rotationTime = 20f;
 
+
+    [SerializeField] float timePassed;
     #endregion
 
     void Update()
@@ -67,9 +70,15 @@ public class PlayerController : MonoBehaviour
         {
             if (interacting) StartCoroutine(InteractRoutine());
         }
-        
 
-        StatsUpdater();
+        foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
+        waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
+        timePassed += Time.deltaTime;
+        if (timePassed >= 5f)
+        {
+            timePassed = 0;
+            StatsUpdater();
+        }
 
         if (waterLeft <= 0) //si la comida se agota, la bebida tmb se agotará más rápido?
         {
@@ -92,8 +101,8 @@ public class PlayerController : MonoBehaviour
     }
     void StatsUpdater()
     {
-        foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
-        waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
+        //foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
+        //waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
         waterBarFill.fillAmount = waterLeft / 100;
         foodBarFill.fillAmount = foodLeft / 100;
     }
@@ -153,7 +162,11 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
             //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
         }
-        
+        colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
+        foreach (Collider col in colTouched)
+        {
+            col.GetComponent<NPCAI>().Talk();
+        }
     }
     IEnumerator InteractRoutine()
     {
