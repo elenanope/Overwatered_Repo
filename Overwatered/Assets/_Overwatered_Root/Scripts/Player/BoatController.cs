@@ -35,5 +35,6 @@ public class BoatController : MonoBehaviour
         closestPoint = objectTouched.ClosestPoint(transform.position);
         closestPoint = new Vector3(closestPoint.x, closestPoint.y + 1, closestPoint.z);
         playerControls.shorePoint = closestPoint;
+        //añadir margen (detectar hacia donde hay/no hay superficie y mandarte más hacia donde si que haya)
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -240,7 +241,7 @@ public class PlayerController : MonoBehaviour
                 //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
             }
             colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
-            if (colTouched[0]!= null)
+            if (colTouched[0]!= null) //aqui sale algun error
             {
                 colTouched[0].GetComponent<NPCAI>().Talk();
                 GameManager.Instance.ChangeCamera();
@@ -313,6 +314,8 @@ public class PlayerController : MonoBehaviour
             {
                 GameManager.Instance.inventoryPanel.SetActive(false);
                 GameManager.Instance.cinemachineCamera.enabled = true;
+                GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = true;
+                GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = true;
                 //poner que mínimo la cámara lerpee hasta su posición actual (o que se mantenga en esa posición aunque muevas el ratón)
                 playerPaused = false;
                 //quitar animación pensativa
@@ -321,6 +324,8 @@ public class PlayerController : MonoBehaviour
             {
                 GameManager.Instance.inventoryPanel.SetActive(true);
                 GameManager.Instance.cinemachineCamera.enabled = false;
+                GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = false;
+                GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = false;
                 playerPaused = true;
                 //poner animación pensativa
             }
