@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WaterObjectScene_Water_01
+  m_Name: MatWaterNoHeight
   m_Shader: {fileID: 4800000, guid: efcaf526ceb1f4efd9eb4e4c30c6ade6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -90,7 +90,7 @@ Material:
     - _CameraDistanceFadeFar: 10
     - _ColorMode: 0
     - _CrestSharpness: 1
-    - _CrestSize: 0.224
+    - _CrestSize: 0.124
     - _Cull: 2
     - _Cutoff: 0.5
     - _Depth: 100
@@ -138,7 +138,7 @@ Material:
     - _UvFadeY: 0.1
     - _WaterClearness: 0.407
     - _WaterDepth: 6.31
-    - _WaveAmplitude: 0.19
+    - _WaveAmplitude: 0.04
     - _WaveDirection: 0
     - _WaveFrequency: 1
     - _WaveMode: 2

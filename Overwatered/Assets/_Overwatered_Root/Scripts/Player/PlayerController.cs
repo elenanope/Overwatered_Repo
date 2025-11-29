@@ -206,6 +206,7 @@ public class PlayerController : MonoBehaviour
             if (moveInput.y != 0)//ver si se puede poner easy in y out, no solo easyout
             {
                 boatRb.AddForce(boat.transform.forward * forceDirection, ForceMode.Impulse);// o velocity change
+                boatRb.AddForce(boat.transform.up * Random.Range(0.2f, 0.7f), ForceMode.Impulse);// o velocity change
             }
             else if (moveInput.x != 0)
             {
