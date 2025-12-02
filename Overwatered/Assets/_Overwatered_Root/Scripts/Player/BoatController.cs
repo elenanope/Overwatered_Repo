@@ -6,6 +6,11 @@ public class BoatController : MonoBehaviour
     PlayerController playerControls;
     Collider objectTouched;
     Vector3 closestPoint;
+    Rigidbody boatRb;
+    private void Start()
+    {
+        boatRb = GetComponent<Rigidbody>();
+    }
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Shore"))
@@ -29,6 +34,8 @@ public class BoatController : MonoBehaviour
     {
         playerControls = playerController;
         hasPlayer = true;
+
+        boatRb.AddForce(transform.up * 1.2f, ForceMode.Force);// o velocity change
     }
     public void SendClosestPoint()
     {
