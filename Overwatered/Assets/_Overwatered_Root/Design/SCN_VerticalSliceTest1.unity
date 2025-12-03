@@ -743,16 +743,17 @@ MonoBehaviour:
   speed: 7
   sprintSpeed: 13
   maxForce: 1
-  sensitivity: 0.1
+  rowingForce: 0.5
+  rowingTurningForce: 0.5
   isSprinting: 0
   interactingCooldown: 0.1
-  interactingDistance: 1
-  interactOffset: 0.5
   canInteract: 0
   interactLayer:
     serializedVersion: 2
     m_Bits: 64
-  shootPos: {fileID: 1295149141}
+  NPCLayer:
+    serializedVersion: 2
+    m_Bits: 0
   interactCubeScale: {x: 0.95, y: 1.57, z: 1.04}
   interactCubeOffset: {x: 0, y: 0, z: 0.69}
   jumpForce: 5
@@ -761,14 +762,21 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  isNearBoat: 0
+  isNearLand: 0
+  canRow: 1
   playerRb: {fileID: 625619863}
   anim: {fileID: 625619856}
   playerSpeaker: {fileID: 625619855}
-  winPanel: {fileID: 2009609852}
-  losePanel: {fileID: 1304735865}
   camTransform: {fileID: 1908764061}
   hasTurned: 0
   rotationTime: 13
+  boat: {fileID: 0}
+  boatController: {fileID: 0}
+  boatRb: {fileID: 0}
+  exitWaterPoint: {fileID: 0}
+  timePassed: 0
+  shorePoint: {x: 0, y: 0, z: 0}
 --- !u!82 &625619855
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2529,6 +2537,7 @@ MonoBehaviour:
   zoomLerpSpeed: 10
   minDistance: 5
   maxDistance: 15
+  zoomReseted: 0
 --- !u!1 &1956392867
 GameObject:
   m_ObjectHideFlags: 0
