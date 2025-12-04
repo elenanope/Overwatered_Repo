@@ -3744,7 +3744,7 @@ Transform:
   m_GameObject: {fileID: 606725511}
   serializedVersion: 2
   m_LocalRotation: {x: 1.7763568e-15, y: -2.9110867e-24, z: -1.4619022e-16, w: 1}
-  m_LocalPosition: {x: -22.08, y: 2.12, z: -21.07}
+  m_LocalPosition: {x: -16.228273, y: 2.3169513, z: -28.675352}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4000,7 +4000,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &625619854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4049,9 +4049,9 @@ MonoBehaviour:
   camTransform: {fileID: 1908764061}
   hasTurned: 0
   rotationTime: 13
-  boat: {fileID: 2074586771}
-  boatController: {fileID: 2074586783}
-  boatRb: {fileID: 2074586775}
+  boat: {fileID: 649667170}
+  boatController: {fileID: 649667173}
+  boatRb: {fileID: 649667175}
   exitWaterPoint: {fileID: 1052458221}
   timePassed: 0
   shorePoint: {x: 0, y: 0, z: 0}
@@ -5613,7 +5613,7 @@ Transform:
   m_GameObject: {fileID: 824043995}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -22.08, y: 2.12, z: -11.07}
+  m_LocalPosition: {x: -16.228273, y: 2.3169513, z: -18.675352}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7840,7 +7840,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1705209627538153076, guid: b5260c43679b25243b4185376c2294f8, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Shore
       objectReference: {fileID: 0}
     - target: {fileID: -1641727436256782892, guid: b5260c43679b25243b4185376c2294f8, type: 3}
       propertyPath: m_Layer
@@ -14898,27 +14898,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.82416743, y: 0.8048451, z: 5.8667445}
   m_Center: {x: 0, y: -0.020166282, z: -2.9297574}
---- !u!1 &2074586771 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8744512143570169132, guid: be4d010906903be448801f63ef4d90f6, type: 3}
-  m_PrefabInstance: {fileID: 3126366709939915653}
-  m_PrefabAsset: {fileID: 0}
---- !u!54 &2074586775 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 4697437947531114958, guid: be4d010906903be448801f63ef4d90f6, type: 3}
-  m_PrefabInstance: {fileID: 3126366709939915653}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2074586783 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7078335972511178448, guid: be4d010906903be448801f63ef4d90f6, type: 3}
-  m_PrefabInstance: {fileID: 3126366709939915653}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2074586771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d93f5606e6be3e74da90fce9db783793, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2075357251 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8203733443486243497, guid: b5260c43679b25243b4185376c2294f8, type: 3}
@@ -15497,7 +15476,6 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 1107626830}
   - {fileID: 194414250}
-  - {fileID: 625619861}
   - {fileID: 1109808690}
   - {fileID: 3126366709939915653}
   - {fileID: 614667267}
@@ -15509,4 +15487,5 @@ SceneRoots:
   - {fileID: 824043996}
   - {fileID: 1908764061}
   - {fileID: 606725516}
+  - {fileID: 625619861}
   - {fileID: 1921588990}
