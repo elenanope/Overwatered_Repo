@@ -236,8 +236,6 @@ public class PlayerController : MonoBehaviour
             Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
             foreach (Collider col in colTouched)
             {
-                if (col.gameObject.transform.localScale.x == 0.5f) col.gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
-                else col.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
                 Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
                 //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
             }
@@ -253,6 +251,7 @@ public class PlayerController : MonoBehaviour
         {
             if(isNearBoat && !isInsideBoat)
             {
+                Debug.Log("Error");
                 isNearBoat = false;
                 //sentarte en el bote
                 gameObject.GetComponent<Collider>().enabled = false;
@@ -262,9 +261,10 @@ public class PlayerController : MonoBehaviour
                 gameObject.transform.rotation = boat.transform.rotation;
                 gameObject.transform.SetParent(boat.transform);
                 isInsideBoat = true;
+                Debug.Log("1" + transform.position);
                 boatController.RegisterPlayer(this);
             }
-            if(isNearLand && isInsideBoat)//este no va
+            else if(isNearLand && isInsideBoat)//este no va
             {
                 isNearLand = false;
                 //sentarte en el bote

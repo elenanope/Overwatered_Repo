@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class PaperShipMinigame : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class PaperShipMinigame : MonoBehaviour
     [SerializeField] Image windDirectionIcon;
     [SerializeField] TMP_Text triesText;
     [SerializeField] Image breathBarFill;
+    [SerializeField] GameObject winPanel;
+    [SerializeField] GameObject drawPanel;
+    [SerializeField] GameObject losePanel;
+    [SerializeField] Image fadePanel;
 
     [Header("Ships References")]
     [SerializeField] Rigidbody shipPlayer;
@@ -31,84 +36,128 @@ public class PaperShipMinigame : MonoBehaviour
     [SerializeField] int breathingPhase; //0 not breathing, 1 breath in, 2 breath out, 3 soplar, 4 coroutina
     [SerializeField] int shipsArrived; //0 ninguno, 1 ya ha frenado el del player, 2 el del npc 1, 3 el del npc 2
 
+    Vector3[] shipsStartPos = new Vector3[3];
+    [SerializeField] Transform goalPos;
+    float goalDistance;
+    int minigameState;//0 fade in, 1 jugar, 2 finalizado, 3 fadeout, 4 fadeout over
+    bool faded;
+    bool fading;
+    int endResult = -1;
+
 
     void Start()
     {
+        minigameState = 0;
+        faded = false;
+        fading = true;
         triesDone = 0;
+        shipsStartPos[0] = shipPlayer.gameObject.transform.position;
+        shipsStartPos[1] = shipNPC1.gameObject.transform.position;
+        shipsStartPos[2] = shipNPC2.gameObject.transform.position;
+        shipsStartPos[0].y += 0.1f;
+        shipsStartPos[1].y += 0.1f;
+        shipsStartPos[2].y += 0.1f;
+        goalDistance = goalPos.position.z;
+        UpdateWind();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (((pointsNPC1 == 1 || pointsNPC2 == 1) && pointsPlayer == 1) || triesDone <= 2) //si lleva dos intentos o está empatado
+        if(minigameState == 1)
         {
-            if (breathingPhase != 0)
+            if (((pointsNPC1 == 1 || pointsNPC2 == 1) && pointsPlayer == 1) || triesDone < 2) //si lleva dos intentos o está empatado
             {
-                breathBarFill.fillAmount = airTaken / 15f;
-                if (breathingPhase == 1)
+                if (breathingPhase != 0)
                 {
-                    breathBarFill.color = Color.blue;
-                    if (airTaken >= 17)
+                    breathBarFill.fillAmount = airTaken / 15f;
+                    if (breathingPhase == 1)
                     {
-                        breathingPhase = 2;
+                        breathBarFill.color = Color.blue;
+                        if (airTaken >= 17)
+                        {
+                            breathingPhase = 2;
+                        }
+                        else
+                        {
+                            airTaken += Time.deltaTime * airTakenSpeed;
+                        }
                     }
-                    else
+                    else if (breathingPhase == 2)
                     {
-                        airTaken += Time.deltaTime * airTakenSpeed;
+                        breathBarFill.color = Color.red;
+                        airTaken -= Time.deltaTime * airTakenSpeed * 2; //suelta el aire más rápido que cuando lo coge
+                        if (airTaken <= 0)
+                        {
+                            airTaken = 0;
+                            breathingPhase = 0;
+                        }
                     }
-                }
-                else if (breathingPhase == 2)
-                {
-                    breathBarFill.color = Color.red;
-                    airTaken -= Time.deltaTime * airTakenSpeed * 2; //suelta el aire más rápido que cuando lo coge
-                    if (airTaken <= 0)
+                    else if (breathingPhase == 3)
                     {
-                        airTaken = 0;
-                        breathingPhase = 0;
-                    }
-                }
-                else if (breathingPhase == 3)
-                {
-                    breathBarFill.color = Color.darkBlue; //o color algo más oscuro del que tiene
-                    triesDone++;
-                    triesText.text = triesDone.ToString();
-                    //añadir sonido de soplido
-                    //añadir fuerza a los barquitos multiplicada por 0.5 si !eastWind (o añadir que sea algo más random)
+                        breathBarFill.color = Color.darkBlue; //o color algo más oscuro del que tiene
+                                                              //añadir sonido de soplido
+                                                              //añadir fuerza a los barquitos multiplicada por 0.5 si !eastWind (o añadir que sea algo más random)
 
-                    //añadir coroutina para que los barcos lleguen al sitio y se te sumen los puntos
-                    breathingPhase = 4;
-                    StartCoroutine(ShipsMovement());
+                        //añadir coroutina para que los barcos lleguen al sitio y se te sumen los puntos
+                        breathingPhase = 4;
+                        StartCoroutine(ShipsMovement());
+                    }
+                    else if (breathingPhase == 4)
+                    {
+                        airTaken -= Time.deltaTime * airTakenSpeed * 2;//más rápido?
+                        if (airTaken <= 0)
+                        {
+                            airTaken = 0;
+                            breathingPhase = 0;
+                        }
+                    }
                 }
-                else if(breathingPhase == 4)
+            }
+            else if (pointsPlayer >= 2) EndGame(2);
+            else if (pointsNPC1 == 1 && pointsPlayer == 1 && pointsPlayer == 1) EndGame(1);
+            else EndGame(0);
+        }
+        if(fading)
+        {
+            if (minigameState == 0)
+            {
+                if (!faded)
                 {
-                    airTaken -= Time.deltaTime * airTakenSpeed * 2;//más rápido?
+                    Fade(0);
+                }
+                else
+                {
+                    fading = false;
+                    StartCoroutine(StartMinigame());
+                }
+            }
+            else if (minigameState == 3)
+            {
+                if (!faded)
+                {
+                    Fade(1);
+                }
+                else
+                {
+                    //minigameState = 4;
+                    MinigameManager.Instance.ExitMinigame(endResult);
                 }
             }
         }
-        else if (pointsPlayer >= 2) WinGame();
-        else if(pointsNPC1 == 1 && pointsPlayer == 1 && pointsPlayer == 1) DrawGame();
-        else LoseGame();
     }
+
     IEnumerator ShipsMovement()
     {
-        wind = Random.Range(-1, 2);
-        if (wind == -1) windMult = 0.5f;
-        else if (wind == 0) windMult = 1f;
-        else windMult = 2f;
         PhaseUpdate();
-        Debug.Log("Barco Player");
-        yield return new WaitForSeconds(5f); // o esperar a que frene
-        shipsArrived = 1;
-        PhaseUpdate();
-        Debug.Log("Barco 1");
-        yield return new WaitForSeconds(5f); // o esperar a que frene
-        shipsArrived = 2;
-        PhaseUpdate();
-        Debug.Log("Barco 2");
-        yield return new WaitForSeconds(5f); // o esperar a que frene
-        shipsArrived = 3;
-
+        for (int i = 1; i < 5; i++)
+        {
+            yield return new WaitForSeconds(3f); // o esperar a que frene
+            shipsArrived = i;
+            PhaseUpdate();
+        }
     }
+
     void PhaseUpdate()
     {
         Rigidbody shipToMove = null;
@@ -120,8 +169,11 @@ public class PaperShipMinigame : MonoBehaviour
         }
         else if(shipsArrived == 3)
         {
-            //calcular distancias de cada bote y sumar puntos
-            Debug.Log("Juego finalizado");
+            CalculateDistances();
+        }
+        else if(shipsArrived == 4)
+        {
+            ResetShips();
         }
         else
         {
@@ -129,13 +181,13 @@ public class PaperShipMinigame : MonoBehaviour
             else if (shipsArrived == 2) shipToMove = shipNPC2;
             if(gameDifficulty == 0) //revisar todo esto
             {
-                shipForce = Random.Range(0.1f, 1.9f);
+                shipForce = Random.Range(0.5f, 1.9f);
             }
             else if(gameDifficulty == 1)
             {
                 if(wind == 0)
                 {
-                    shipForce = Random.Range(0.2f, 1.5f);
+                    shipForce = Random.Range(0.5f, 1.5f);
                 }
                 else if(wind == 1)
                 {
@@ -143,7 +195,7 @@ public class PaperShipMinigame : MonoBehaviour
                 }
                 else if(wind == -1)
                 {
-                    shipForce = Random.Range(0.4f, 2f);
+                    shipForce = Random.Range(0.8f, 2f);
                 }
             }
             else
@@ -158,30 +210,138 @@ public class PaperShipMinigame : MonoBehaviour
                 }
                 else if (wind == -1)
                 {
-                    shipForce = Random.Range(0.6f, 1.6f);
+                    shipForce = Random.Range(1.2f, 2f);
                 }
             }
             shipToMove.AddForce(shipToMove.transform.forward * shipForce * windMult, ForceMode.Impulse);// o velocity change
         }
     }//también puedo sacar diálogos random de personajes de fondo mientras se muevan las barcas
+
+    void CalculateDistances()
+    {
+        int closestShip = -1;
+        float closestShipDistance = 100f;
+        Debug.Log("Se calculan las distancias y ganador escogido");
+        float distancePlayer = shipPlayer.transform.position.z - goalDistance;//repasar esto
+        float distanceNPC1 = shipNPC1.transform.position.z - goalDistance;
+        float distanceNPC2 = shipNPC2.transform.position.z - goalDistance;
+        Debug.Log(distancePlayer);
+        Debug.Log(distanceNPC1);
+        Debug.Log(distanceNPC2);
+        if (distancePlayer >= 0 && distancePlayer < closestShipDistance)
+        {
+            closestShip = 0;
+            closestShipDistance = distancePlayer;
+        }
+        else if(distanceNPC1 >= 0 && distanceNPC1 < closestShipDistance)
+        {
+            closestShip = 1;
+            closestShipDistance = distanceNPC1;
+        }
+        else if(distanceNPC2 >= 0 && distanceNPC2 < closestShipDistance)
+        {
+            closestShip = 2;
+            closestShipDistance = distanceNPC2;
+        }
+
+        if(closestShip == 0)
+        {
+            pointsPlayer++;
+        }
+        else if(closestShip == 1)
+        {
+            pointsNPC1++;
+        }
+        else if(closestShip == 2)
+        {
+            pointsNPC2++;
+        }
+
+    }
+
+    void UpdateWind()
+    {
+        wind = Random.Range(-1, 2);
+        if (wind == -1)
+        {
+            windDirectionIcon.gameObject.SetActive(true);
+            windMult = 0.5f;
+        }
+        else if (wind == 0)
+        {
+            windDirectionIcon.gameObject.SetActive(false);
+            windMult = 1f;
+        }
+        else
+        {
+            windDirectionIcon.gameObject.SetActive(true);
+            windMult = 2f;
+        }
+        windDirectionIcon.rectTransform.eulerAngles = new Vector3(0f, 0f, 90f * wind);
+    }
+
     void ResetShips()
     {
-        //para nueva ronda, todo debe estar como al principio
+        shipsArrived = 0;
+        UpdateWind();
+        triesDone++;
+        triesText.text = triesDone.ToString();
+        breathingPhase = 0;
+        if(triesDone < 3)
+        {
+            shipPlayer.gameObject.transform.position = shipsStartPos[0];
+            shipNPC1.gameObject.transform.position = shipsStartPos[1];
+            shipNPC2.gameObject.transform.position = shipsStartPos[2];
+        }
     }
     #region EndResults
-    void WinGame()
+    void EndGame(int winCondition) // 0 lose, 1 empate, 2 win
     {
-        Debug.Log("You won! Here is a gift");
-    }
-    void DrawGame()
-    {
-        Debug.Log("It is a draw! Here is a gift for your dedication");
-    }
-    void LoseGame()
-    {
-        Debug.Log("It is a draw! Here is a gift for your dedication");
+        minigameState = 2;
+        endResult = winCondition;
+        if(winCondition == 2)
+        {
+            Debug.Log("You won! Here is a gift");
+            winPanel.SetActive(true);
+        }
+        else if(winCondition == 1)
+        {
+            Debug.Log("It is a draw! Here is a gift for your dedication. Try again some other time");
+            drawPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.Log("You lose");
+            losePanel.SetActive(true);
+        }
+        minigameState = 3;
+        StartCoroutine(FinishMinigame());
     }
     #endregion
+    void Fade(int desiredAlpha)
+    {
+        //fadePanel.enabled = true;
+        float currentAlpha = fadePanel.color.a;
+        float goalAlpha = desiredAlpha;
+        currentAlpha = Mathf.MoveTowards(currentAlpha, goalAlpha, 2.0f * Time.deltaTime);
+
+        fadePanel.color = new Vector4(fadePanel.color.r, fadePanel.color.g, fadePanel.color.b, currentAlpha);
+        if(currentAlpha == goalAlpha)
+        {
+            faded = true;
+        }
+    }
+    IEnumerator FinishMinigame()
+    {
+        yield return new WaitForSeconds(2f);
+        fading = true;
+        faded = false;
+    }
+    IEnumerator StartMinigame()
+    {
+        yield return new WaitForSeconds(0.5f);
+        minigameState = 1;
+    }
     public void OnBreathing(InputAction.CallbackContext ctx)
     {
         if(ctx.performed)

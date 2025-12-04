@@ -1,7 +1,6 @@
 using System.Collections;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -39,9 +38,9 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        dialogueCamRot = dialogueCam.GetComponent<CinemachineRotationComposer>();
-         actualXOffset = dialogueCamRot.TargetOffset.x;
-         actualZOffset = dialogueCamRot.TargetOffset.z;
+        dialogueCam.TryGetComponent<CinemachineRotationComposer>(out dialogueCamRot);
+        actualXOffset = dialogueCamRot.TargetOffset.x;
+        actualZOffset = dialogueCamRot.TargetOffset.z;
     }
     private void Update()
     {
@@ -53,6 +52,8 @@ public class GameManager : MonoBehaviour
             if (dialogueCamRot.TargetOffset.x <= -1.9f && dialogueCamRot.TargetOffset.z <= -5.9f) charactersHidden = false;
             dialogueCamRot.TargetOffset = new Vector3(actualXOffset, 0, actualZOffset);
         }
+        //if(winPanel == null) winPanel = GameObject.Find("WinPanel");
+        //if(losePanel == null) losePanel = GameObject.Find("LosePanel");
     }
     public void ChangeCamera()
     {

@@ -11,26 +11,31 @@ public class MinigameManager : MonoBehaviour
         {
             if (instance == null)
             {
-                Debug.Log("GameManager is null!");
+                Debug.Log("MinigameManager is null!");
             }
             return instance;
         }
     }
 
     public bool isInMinigame;
-    public bool waslastGameWon;
+    public int lastMinigameResult; // o lose, 1 empate, 2 ganar
     public int minigameNumber;//mismo orden que las escenas: 0 main menu, 1 normal, 2 papership
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     public void EnterMinigame(int minigame, bool hasSpecialObject) //mirar si en el inventario llevas un objeto especial para ese minijuego
     {
-        waslastGameWon = false;
+        lastMinigameResult = -1;
         minigameNumber = minigame;
         SceneManager.LoadScene(minigameNumber);
     }
     
-    public void ExitMinigame(bool hasWon) // + int gameNumber?
+    public void ExitMinigame(int endResult) // + int gameNumber?
     {
-        waslastGameWon = hasWon;
+        lastMinigameResult = endResult;
         SceneManager.LoadScene(1);
     }
 }
