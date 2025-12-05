@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,23 +20,27 @@ public class MinigameManager : MonoBehaviour
 
     public bool isInMinigame;
     public int lastMinigameResult; // o lose, 1 empate, 2 ganar
-    public int minigameNumber;//mismo orden que las escenas: 0 main menu, 1 normal, 2 papership
+    public int minigameScene;//mismo orden que las escenas: 0 main menu, 1 normal, 2 papership
+    
+
 
     private void Awake()
     {
-        instance = this;
+        instance = this; 
+        DontDestroyOnLoad(this.gameObject);
     }
 
-    public void EnterMinigame(int minigame, bool hasSpecialObject) //mirar si en el inventario llevas un objeto especial para ese minijuego
+    public void EnterMinigame(int minigame, bool hasSpecialObject, Transform npcTransform) //mirar si en el inventario llevas un objeto especial para ese minijuego
     {
         lastMinigameResult = -1;
-        minigameNumber = minigame;
-        SceneManager.LoadScene(minigameNumber);
+        minigameScene = minigame;
+        SceneManager.LoadScene(minigameScene);
     }
     
     public void ExitMinigame(int endResult) // + int gameNumber?
     {
         lastMinigameResult = endResult;
         SceneManager.LoadScene(1);
+        GameManager.Instance.FindReferences();
     }
 }

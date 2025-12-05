@@ -1166,7 +1166,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &560228172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1179,9 +1179,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac8398326d9fb174a929e5f107615872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
   isInMinigame: 0
   lastMinigameResult: 0
-  minigameNumber: 0
+  minigameScene: 0
 --- !u!4 &560228173
 Transform:
   m_ObjectHideFlags: 0
@@ -2564,7 +2565,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1216745095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2577,6 +2578,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdd836a641f88a24dba841e9d0b6350a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneReferences: {fileID: 0}
   camController: {fileID: 0}
   winPanel: {fileID: 395781277}
   losePanel: {fileID: 1846661576}

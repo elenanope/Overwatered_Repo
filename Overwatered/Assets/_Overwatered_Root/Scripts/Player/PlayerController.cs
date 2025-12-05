@@ -3,7 +3,6 @@ using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Splines.Interpolators;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -72,7 +71,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float timePassed;
     public Vector3 shorePoint;
     #endregion
-
+    private void Awake()
+    {
+        if (GameManager.Instance.gameData.gameHasStarted)
+        {
+            GameManager.Instance.gameData.lastPlayerPos = gameObject.transform.position;
+            GameManager.Instance.gameData.lastPlayerRot = gameObject.transform.rotation;
+        }
+    }
     void Update()
     {
         //Groundcheck
@@ -242,7 +248,7 @@ public class PlayerController : MonoBehaviour
             colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
             if (colTouched[0]!= null) //aqui sale algun error
             {
-                colTouched[0].GetComponent<NPCAI>().Talk();
+                colTouched[0].GetComponent<NPCAI>().Talk(gameObject.transform);
                 GameManager.Instance.ChangeCamera();
                 GameManager.Instance.SetNPCTarget(colTouched[0].gameObject.transform);
             }
@@ -251,7 +257,6 @@ public class PlayerController : MonoBehaviour
         {
             if(isNearBoat && !isInsideBoat)
             {
-                Debug.Log("Error");
                 isNearBoat = false;
                 //sentarte en el bote
                 gameObject.GetComponent<Collider>().enabled = false;
@@ -261,7 +266,6 @@ public class PlayerController : MonoBehaviour
                 gameObject.transform.rotation = boat.transform.rotation;
                 gameObject.transform.SetParent(boat.transform);
                 isInsideBoat = true;
-                Debug.Log("1" + transform.position);
                 boatController.RegisterPlayer(this);
             }
             else if(isNearLand && isInsideBoat)//este no va

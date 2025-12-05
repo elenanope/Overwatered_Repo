@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public SceneReferences sceneReferences;
+    public SO_GameData gameData;
+
     public ThirdPersonCamController camController;
     //poner los paneles en el player para que puedan ser privados?
     public GameObject winPanel;
@@ -28,7 +32,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Camera cameraComponent;
     [SerializeField] CinemachineCamera dialogueCam;
     [SerializeField] CinemachineTargetGroup targetGroup;
-    CinemachineRotationComposer dialogueCamRot;
+    [SerializeField] CinemachineRotationComposer dialogueCamRot;
     bool overworldCamActive = true;
     bool charactersHidden = false;
     float actualXOffset;
@@ -38,7 +42,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        dialogueCam.TryGetComponent<CinemachineRotationComposer>(out dialogueCamRot);
+        DontDestroyOnLoad(this.gameObject);
         actualXOffset = dialogueCamRot.TargetOffset.x;
         actualZOffset = dialogueCamRot.TargetOffset.z;
     }
@@ -52,8 +56,6 @@ public class GameManager : MonoBehaviour
             if (dialogueCamRot.TargetOffset.x <= -1.9f && dialogueCamRot.TargetOffset.z <= -5.9f) charactersHidden = false;
             dialogueCamRot.TargetOffset = new Vector3(actualXOffset, 0, actualZOffset);
         }
-        //if(winPanel == null) winPanel = GameObject.Find("WinPanel");
-        //if(losePanel == null) losePanel = GameObject.Find("LosePanel");
     }
     public void ChangeCamera()
     {
@@ -103,4 +105,39 @@ public class GameManager : MonoBehaviour
     {
         targetGroup.Targets[0].Object = npcTransform;
     }
+    public void FindReferences()
+    {
+        GameObject.Find("References").TryGetComponent(out sceneReferences);
+        if(sceneReferences != null)
+        {
+            camController = sceneReferences.camController;
+            winPanel = sceneReferences.winPanel;
+            losePanel = sceneReferences.losePanel;
+            inventoryPanel = sceneReferences.inventoryPanel;
+            cinemachineCamera = sceneReferences.cinemachineCamera;
+            cameraComponent = sceneReferences.cameraComponent;
+            dialogueCam = sceneReferences.dialogueCam;
+            targetGroup = sceneReferences.targetGroup;
+            dialogueCamRot = sceneReferences.dialogueCamRot;
+        }
+        else
+        {
+            Debug.Log("References were not found");
+        }
+    }
+
+    #region Game States Methods [move to other script?]
+    public void LoadScene(int sceneToLoad)
+    {
+        SceneManager.LoadScene(sceneToLoad);
+    }
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+    public void DeleteGame()
+    {
+        gameData.gameHasStarted = false;//y todo un método de reset
+    }
+    #endregion
 }

@@ -23,13 +23,11 @@ public class BuoyancyObject : MonoBehaviour
 
     [SerializeField] bool underwater;
     [SerializeField] int floatersUnderwater;
-    [SerializeField] int floatersOverwater;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         floatersUnderwater = 0;
-        floatersOverwater = floaters.Length;
     }
 
     void FixedUpdate()

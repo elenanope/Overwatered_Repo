@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class PaperShipMinigame : MonoBehaviour
 {
@@ -109,7 +108,6 @@ public class PaperShipMinigame : MonoBehaviour
                         if (airTaken <= 0)
                         {
                             airTaken = 0;
-                            breathingPhase = 0;
                         }
                     }
                 }

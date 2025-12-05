@@ -34,8 +34,6 @@ public class BoatController : MonoBehaviour
     {
         playerControls = playerController;
         hasPlayer = true;
-
-        Debug.Log("2" + playerControls.gameObject.transform.position);
         //boatRb.AddForce(transform.up * 1.2f, ForceMode.Force);// o velocity change
     }
     public void SendClosestPoint()
