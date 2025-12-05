@@ -1,5 +1,6 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SceneReferences : MonoBehaviour
 {
@@ -13,4 +14,10 @@ public class SceneReferences : MonoBehaviour
     public CinemachineCamera dialogueCam;
     public CinemachineTargetGroup targetGroup;
     public CinemachineRotationComposer dialogueCamRot;
+    public Image fadePanel;
+
+    private void Start()
+    {
+        GameManager.Instance.FindReferences();
+    }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 public class NPCAI : MonoBehaviour
 {
     [SerializeField] bool isSuggestingMinigame;
+    [SerializeField] bool isInDialogue = false;
 
     public void Talk(Transform playerTransform)
     {
@@ -18,9 +19,14 @@ public class NPCAI : MonoBehaviour
         }
         else
         {
-            MinigameManager.Instance.EnterMinigame(2, false, gameObject.transform);//poner luego otra opción si sí tiene papel especial
-            GameManager.Instance.gameData.lastPlayerPos = playerTransform.position;
-            GameManager.Instance.gameData.lastPlayerRot = playerTransform.rotation;
+            if(!isInDialogue)
+            {
+                isInDialogue = true;
+                Debug.Log("entering");
+                StartCoroutine(MinigameManager.Instance.EnterMinigame(2, false, gameObject.transform));//poner luego otra opción si sí tiene papel especial
+                GameManager.Instance.gameData.lastPlayerPos = playerTransform.position;
+                GameManager.Instance.gameData.lastPlayerRot = playerTransform.rotation;
+            }
         }
     }
 

@@ -597,6 +597,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &325222715
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 325222717}
+  - component: {fileID: 325222716}
+  m_Layer: 0
+  m_Name: References
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &325222716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325222715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2dc9b1dd03f7744b9779434dd3c850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camController: {fileID: 0}
+  winPanel: {fileID: 395781277}
+  losePanel: {fileID: 1846661576}
+  inventoryPanel: {fileID: 0}
+  cinemachineCamera: {fileID: 0}
+  cameraComponent: {fileID: 0}
+  dialogueCam: {fileID: 0}
+  targetGroup: {fileID: 0}
+  dialogueCamRot: {fileID: 0}
+  fadePanel: {fileID: 641564218}
+--- !u!4 &325222717
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325222715}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &331246482
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1150,54 +1204,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.970083, y: 0.106270015, z: 4.4212446}
   m_Center: {x: -0.00000005960464, y: 0, z: 0}
---- !u!1 &560228171
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 560228173}
-  - component: {fileID: 560228172}
-  m_Layer: 0
-  m_Name: MinigameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &560228172
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 560228171}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac8398326d9fb174a929e5f107615872, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  isInMinigame: 0
-  lastMinigameResult: 0
-  minigameScene: 0
---- !u!4 &560228173
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 560228171}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &571584813
 GameObject:
   m_ObjectHideFlags: 0
@@ -1781,61 +1787,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.59, y: 10.082337, z: 1.58}
   m_Center: {x: -0.07780713, y: 5.0411687, z: 0.0215016}
---- !u!1 &927459885
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 927459886}
-  - component: {fileID: 927459887}
-  m_Layer: 0
-  m_Name: TargetGroup
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &927459886
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 927459885}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &927459887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 927459885}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5eb80d8e62d9d145bb50fb783c0f731, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PositionMode: 0
-  RotationMode: 0
-  UpdateMethod: 2
-  Targets:
-  - Object: {fileID: 0}
-    Weight: 1.6
-    Radius: 0.3
-  - Object: {fileID: 0}
-    Weight: 1
-    Radius: 0.3
-  m_LegacyTargets: []
 --- !u!1 &951495391 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c46d5fd749000af4ba14cb3503208b46, type: 3}
@@ -1872,7 +1823,6 @@ MonoBehaviour:
   passedTime: 0
   underwater: 0
   floatersUnderwater: 0
-  floatersOverwater: 0
 --- !u!65 &951495393
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1983,7 +1933,6 @@ MonoBehaviour:
   passedTime: 0
   underwater: 0
   floatersUnderwater: 0
-  floatersOverwater: 0
 --- !u!65 &1007596493
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2549,59 +2498,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!1 &1216745094
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1216745096}
-  - component: {fileID: 1216745095}
-  m_Layer: 0
-  m_Name: 'GameManager[DELETE]'
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1216745095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1216745094}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdd836a641f88a24dba841e9d0b6350a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneReferences: {fileID: 0}
-  camController: {fileID: 0}
-  winPanel: {fileID: 395781277}
-  losePanel: {fileID: 1846661576}
-  inventoryPanel: {fileID: 0}
-  cinemachineCamera: {fileID: 0}
-  cameraComponent: {fileID: 1198363621}
-  dialogueCam: {fileID: 0}
-  targetGroup: {fileID: 927459887}
---- !u!4 &1216745096
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1216745094}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1217176319
 GameObject:
   m_ObjectHideFlags: 0
@@ -2938,7 +2834,6 @@ MonoBehaviour:
   passedTime: 0
   underwater: 0
   floatersUnderwater: 0
-  floatersOverwater: 0
 --- !u!65 &1278020618
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3374,7 +3269,6 @@ MonoBehaviour:
   winPanel: {fileID: 395781277}
   drawPanel: {fileID: 537500560}
   losePanel: {fileID: 1846661576}
-  fadePanel: {fileID: 641564218}
   shipPlayer: {fileID: 1278020619}
   shipNPC1: {fileID: 951495394}
   shipNPC2: {fileID: 1007596494}
@@ -3386,7 +3280,6 @@ MonoBehaviour:
   airTakenSpeed: 4
   wind: 0
   windMult: 0
-  canBreath: 0
   gameDifficulty: 0
   breathingPhase: 0
   shipsArrived: 0
@@ -11549,7 +11442,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1937924459}
-  - {fileID: 927459886}
   - {fileID: 1356001997}
   - {fileID: 543450652346938296}
   - {fileID: 504423090}
@@ -11559,9 +11451,8 @@ SceneRoots:
   - {fileID: 278488790}
   - {fileID: 323465583}
   - {fileID: 1408945078}
-  - {fileID: 1216745096}
-  - {fileID: 560228173}
   - {fileID: 1278020613}
   - {fileID: 1152392741}
   - {fileID: 499499519}
   - {fileID: 571584814}
+  - {fileID: 325222717}

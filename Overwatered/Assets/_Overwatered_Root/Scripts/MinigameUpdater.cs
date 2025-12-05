@@ -5,7 +5,7 @@ public class MinigameUpdater : MonoBehaviour
     [SerializeField] GameObject player;
     
 
-    private void Start()
+    private void Awake()
     {
         ReloadPlayerPos();
     }

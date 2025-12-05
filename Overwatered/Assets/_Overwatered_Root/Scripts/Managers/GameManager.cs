@@ -3,6 +3,7 @@ using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -38,11 +39,17 @@ public class GameManager : MonoBehaviour
     float actualXOffset;
     float actualZOffset;
 
+    [SerializeField] Image fadePanel;
+    public float fadeTime = 2f;
+    public bool faded;
+    public bool fading;
+    int goalAlpha;
 
     private void Awake()
     {
         instance = this;
         DontDestroyOnLoad(this.gameObject);
+        StartFade(0);
         actualXOffset = dialogueCamRot.TargetOffset.x;
         actualZOffset = dialogueCamRot.TargetOffset.z;
     }
@@ -52,9 +59,20 @@ public class GameManager : MonoBehaviour
         {
             actualZOffset = Mathf.Lerp(dialogueCamRot.TargetOffset.z, -6, Time.deltaTime * 3);
             if (dialogueCamRot.TargetOffset.z < -0.5f) actualXOffset = Mathf.Lerp(dialogueCamRot.TargetOffset.x, -2, Time.deltaTime); //ajustar
-            //if (dialogueCamRot.TargetOffset.z < -0.5f) actualXOffset = Mathf.Lerp(dialogueCamRot.TargetOffset.x, -2, Time.deltaTime); //uno de estos va mal
             if (dialogueCamRot.TargetOffset.x <= -1.9f && dialogueCamRot.TargetOffset.z <= -5.9f) charactersHidden = false;
             dialogueCamRot.TargetOffset = new Vector3(actualXOffset, 0, actualZOffset);
+        }
+        if(fading)
+        {
+            if(!faded)
+            {
+                Fade();
+            }
+            else
+            {
+                fading = false;
+                faded = false;
+            }
         }
     }
     public void ChangeCamera()
@@ -110,22 +128,44 @@ public class GameManager : MonoBehaviour
         GameObject.Find("References").TryGetComponent(out sceneReferences);
         if(sceneReferences != null)
         {
-            camController = sceneReferences.camController;
-            winPanel = sceneReferences.winPanel;
-            losePanel = sceneReferences.losePanel;
-            inventoryPanel = sceneReferences.inventoryPanel;
-            cinemachineCamera = sceneReferences.cinemachineCamera;
-            cameraComponent = sceneReferences.cameraComponent;
-            dialogueCam = sceneReferences.dialogueCam;
-            targetGroup = sceneReferences.targetGroup;
-            dialogueCamRot = sceneReferences.dialogueCamRot;
+            if(sceneReferences.camController != null) camController = sceneReferences.camController;
+            if (sceneReferences.winPanel != null) winPanel = sceneReferences.winPanel;
+            if (sceneReferences.losePanel != null) losePanel = sceneReferences.losePanel;
+            if (sceneReferences.inventoryPanel != null) inventoryPanel = sceneReferences.inventoryPanel;
+            if (sceneReferences.cinemachineCamera != null) cinemachineCamera = sceneReferences.cinemachineCamera;
+            if (sceneReferences.cameraComponent != null) cameraComponent = sceneReferences.cameraComponent;
+            if (sceneReferences.dialogueCam != null) dialogueCam = sceneReferences.dialogueCam;
+            if (sceneReferences.targetGroup != null) targetGroup = sceneReferences.targetGroup;
+            if (sceneReferences.dialogueCamRot != null) dialogueCamRot = sceneReferences.dialogueCamRot;
+            if (sceneReferences.fadePanel != null) fadePanel = sceneReferences.fadePanel;
+            StartFade(0);
         }
         else
         {
             Debug.Log("References were not found");
         }
+        //meter aqui el fadepanel
     }
 
+    public void StartFade(int desiredAlpha)
+    {
+        float goalAlpha = desiredAlpha;
+        fading = true;
+        faded = false;
+    }
+    void Fade()
+    {
+        float currentAlpha = fadePanel.color.a;
+
+        currentAlpha = Mathf.MoveTowards(currentAlpha, goalAlpha, fadeTime * Time.deltaTime);
+
+        fadePanel.color = new Vector4(fadePanel.color.r, fadePanel.color.g, fadePanel.color.b, currentAlpha);
+        if (currentAlpha == goalAlpha)
+        {
+            faded = true;
+        }
+        Debug.Log("Fading");
+    }
     #region Game States Methods [move to other script?]
     public void LoadScene(int sceneToLoad)
     {

@@ -13,7 +13,6 @@ public class PaperShipMinigame : MonoBehaviour
     [SerializeField] GameObject winPanel;
     [SerializeField] GameObject drawPanel;
     [SerializeField] GameObject losePanel;
-    [SerializeField] Image fadePanel;
 
     [Header("Ships References")]
     [SerializeField] Rigidbody shipPlayer;
@@ -30,7 +29,7 @@ public class PaperShipMinigame : MonoBehaviour
     [SerializeField] int wind; //0 no hay, 1 hacia derecha, -1 hacia izquierda
     [SerializeField] float windMult; //1 no hay, 2 hacia derecha, 0.5 hacia izquierda
 
-    [SerializeField] bool canBreath;
+    //[SerializeField] bool canBreath;
     [SerializeField] int gameDifficulty; //0 easy, 1 medium, 2 hard
     [SerializeField] int breathingPhase; //0 not breathing, 1 breath in, 2 breath out, 3 soplar, 4 coroutina
     [SerializeField] int shipsArrived; //0 ninguno, 1 ya ha frenado el del player, 2 el del npc 1, 3 el del npc 2
@@ -39,16 +38,12 @@ public class PaperShipMinigame : MonoBehaviour
     [SerializeField] Transform goalPos;
     float goalDistance;
     int minigameState;//0 fade in, 1 jugar, 2 finalizado, 3 fadeout, 4 fadeout over
-    bool faded;
-    bool fading;
     int endResult = -1;
-
 
     void Start()
     {
         minigameState = 0;
-        faded = false;
-        fading = true;
+        GameManager.Instance.StartFade(0);
         triesDone = 0;
         shipsStartPos[0] = shipPlayer.gameObject.transform.position;
         shipsStartPos[1] = shipNPC1.gameObject.transform.position;
@@ -60,7 +55,6 @@ public class PaperShipMinigame : MonoBehaviour
         UpdateWind();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(minigameState == 1)
@@ -116,32 +110,15 @@ public class PaperShipMinigame : MonoBehaviour
             else if (pointsNPC1 == 1 && pointsPlayer == 1 && pointsPlayer == 1) EndGame(1);
             else EndGame(0);
         }
-        if(fading)
+        //if(GameManager.Instance.fading) //si es posible, mejorar esto (pasarlo al gameManager)
         {
-            if (minigameState == 0)
+            if (GameManager.Instance.faded)
             {
-                if (!faded)
+                if (minigameState == 0)
                 {
-                    Fade(0);
-                }
-                else
-                {
-                    fading = false;
                     StartCoroutine(StartMinigame());
                 }
-            }
-            else if (minigameState == 3)
-            {
-                if (!faded)
-                {
-                    Fade(1);
-                }
-                else
-                {
-                    //minigameState = 4;
-                    MinigameManager.Instance.ExitMinigame(endResult);
-                }
-            }
+            } 
         }
     }
 
@@ -223,9 +200,6 @@ public class PaperShipMinigame : MonoBehaviour
         float distancePlayer = shipPlayer.transform.position.z - goalDistance;//repasar esto
         float distanceNPC1 = shipNPC1.transform.position.z - goalDistance;
         float distanceNPC2 = shipNPC2.transform.position.z - goalDistance;
-        Debug.Log(distancePlayer);
-        Debug.Log(distanceNPC1);
-        Debug.Log(distanceNPC2);
         if (distancePlayer >= 0 && distancePlayer < closestShipDistance)
         {
             closestShip = 0;
@@ -292,48 +266,31 @@ public class PaperShipMinigame : MonoBehaviour
             shipNPC2.gameObject.transform.position = shipsStartPos[2];
         }
     }
-    #region EndResults
+    
     void EndGame(int winCondition) // 0 lose, 1 empate, 2 win
     {
         minigameState = 2;
         endResult = winCondition;
         if(winCondition == 2)
         {
-            Debug.Log("You won! Here is a gift");
             winPanel.SetActive(true);
         }
         else if(winCondition == 1)
         {
-            Debug.Log("It is a draw! Here is a gift for your dedication. Try again some other time");
             drawPanel.SetActive(true);
         }
         else
         {
-            Debug.Log("You lose");
             losePanel.SetActive(true);
         }
         minigameState = 3;
         StartCoroutine(FinishMinigame());
     }
-    #endregion
-    void Fade(int desiredAlpha)
-    {
-        //fadePanel.enabled = true;
-        float currentAlpha = fadePanel.color.a;
-        float goalAlpha = desiredAlpha;
-        currentAlpha = Mathf.MoveTowards(currentAlpha, goalAlpha, 2.0f * Time.deltaTime);
 
-        fadePanel.color = new Vector4(fadePanel.color.r, fadePanel.color.g, fadePanel.color.b, currentAlpha);
-        if(currentAlpha == goalAlpha)
-        {
-            faded = true;
-        }
-    }
     IEnumerator FinishMinigame()
     {
         yield return new WaitForSeconds(2f);
-        fading = true;
-        faded = false;
+        MinigameManager.Instance.ExitMinigame(endResult);
     }
     IEnumerator StartMinigame()
     {
@@ -350,6 +307,5 @@ public class PaperShipMinigame : MonoBehaviour
         {
             if (breathingPhase == 1) breathingPhase = 3;
         }
-
     }
 }

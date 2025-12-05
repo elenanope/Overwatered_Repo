@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float timePassed;
     public Vector3 shorePoint;
     #endregion
-    private void Awake()
+    private void Start()
     {
         if (GameManager.Instance.gameData.gameHasStarted)
         {
