@@ -144,12 +144,11 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("References were not found");
         }
-        //meter aqui el fadepanel
     }
 
     public void StartFade(int desiredAlpha)
     {
-        float goalAlpha = desiredAlpha;
+        goalAlpha = desiredAlpha;
         fading = true;
         faded = false;
     }
@@ -164,7 +163,6 @@ public class GameManager : MonoBehaviour
         {
             faded = true;
         }
-        Debug.Log("Fading");
     }
     #region Game States Methods [move to other script?]
     public void LoadScene(int sceneToLoad)

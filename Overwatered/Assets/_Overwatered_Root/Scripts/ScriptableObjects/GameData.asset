@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33bddff8379d81b4b80f728579ae239b, type: 3}
   m_Name: GameData
   m_EditorClassIdentifier: 
-  gameHasStarted: 1
-  initialPlayerPos: {x: 9, y: 2.64, z: 30}
+  gameHasStarted: 0
+  initialPlayerPos: {x: -6.3, y: 2.64, z: -31}
   initialPlayerRot: {x: 0, y: 0, z: 0, w: 0}
-  lastPlayerPos: {x: 2.4121437, y: 1.8174953, z: 29.858425}
-  lastPlayerRot: {x: -0, y: 0.42108026, z: -0, w: -0.9070234}
+  lastPlayerPos: {x: -6.3, y: 2.64, z: -31}
+  lastPlayerRot: {x: -0, y: -0, z: -0, w: 1}

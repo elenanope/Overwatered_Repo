@@ -205,12 +205,12 @@ public class PaperShipMinigame : MonoBehaviour
             closestShip = 0;
             closestShipDistance = distancePlayer;
         }
-        else if(distanceNPC1 >= 0 && distanceNPC1 < closestShipDistance)
+         if(distanceNPC1 >= 0 && distanceNPC1 < closestShipDistance)
         {
             closestShip = 1;
             closestShipDistance = distanceNPC1;
         }
-        else if(distanceNPC2 >= 0 && distanceNPC2 < closestShipDistance)
+         if(distanceNPC2 >= 0 && distanceNPC2 < closestShipDistance)
         {
             closestShip = 2;
             closestShipDistance = distanceNPC2;
@@ -290,7 +290,7 @@ public class PaperShipMinigame : MonoBehaviour
     IEnumerator FinishMinigame()
     {
         yield return new WaitForSeconds(2f);
-        MinigameManager.Instance.ExitMinigame(endResult);
+        StartCoroutine(MinigameManager.Instance.ExitMinigame(endResult));
     }
     IEnumerator StartMinigame()
     {
