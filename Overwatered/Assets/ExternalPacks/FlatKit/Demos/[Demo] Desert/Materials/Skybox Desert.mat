@@ -101,8 +101,9 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Intensity: 1
+    - _Intensity: 1.481
     - _Metallic: 0
+    - _NoiseIntensity: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
@@ -118,12 +119,13 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color1: {r: 0.97, g: 0.67, b: 0.51, a: 1}
-    - _Color2: {r: 0.0835484, g: 0.6922581, b: 0.74, a: 1}
+    - _Color1: {r: 1, g: 0.82276976, b: 0.4764151, a: 1}
+    - _Color2: {r: 0.12629052, g: 0.6850031, b: 0.8113208, a: 1}
     - _Direction: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &1590795572792051320
 MonoBehaviour:
   m_ObjectHideFlags: 11

@@ -150,7 +150,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0, g: 1, b: 0.7287984, a: 1}
     - _ColorDeep: {r: 0.43827873, g: 0.5733492, b: 0.6320754, a: 1}
-    - _ColorShallow: {r: 0.41266155, g: 0.5728427, b: 0.67295593, a: 1}
+    - _ColorShallow: {r: 0.32013172, g: 0.50601125, b: 0.6226415, a: 1}
     - _ColorTop: {r: 1, g: 1, b: 1, a: 0}
     - _CrestColor: {r: 1, g: 1, b: 1, a: 0.7058824}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

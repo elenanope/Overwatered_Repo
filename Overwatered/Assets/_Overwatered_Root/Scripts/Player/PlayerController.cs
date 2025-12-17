@@ -69,6 +69,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform exitWaterPoint;
 
     [SerializeField] float timePassed;
+    [SerializeField] float timeSinceMove;
     public Vector3 shorePoint;
     #endregion
     private void Start()
@@ -94,6 +95,16 @@ public class PlayerController : MonoBehaviour
         foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
         waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
         timePassed += Time.deltaTime;
+        if(!isInsideBoat)
+        {
+            timeSinceMove += Time.deltaTime;
+
+            if (timeSinceMove >= 20f)
+            {
+                anim.SetTrigger("varyIdle");
+                timeSinceMove = -10;
+            }
+        }
         if (timePassed >= 5f)
         {
             timePassed = 0;
@@ -150,6 +161,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
+                if (!anim.GetBool("inBoat")) anim.SetBool("inBoat", true);
                 if(canRow)BoatMovement();
             }
         }
@@ -184,13 +196,19 @@ public class PlayerController : MonoBehaviour
         {
             if(movementMult != 2) movementMult = 2f;
             if(!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
-            //anim.SetBool("isWalking", true);
+            timeSinceMove = 0;
+            anim.SetInteger("playerState", isSprinting? 2 : 1);
         }
         else
         {
             movementMult = 1f;
             isSprinting = false;
-            //anim.SetBool("isWalking", false);
+            if(anim.GetInteger("playerState") != 0)
+            {
+                timeSinceMove = 0;
+                anim.SetInteger("playerState", 0);
+            }
+                
         }
         playerRb.AddForce(velocityChange, ForceMode.VelocityChange);
     }
@@ -207,16 +225,20 @@ public class PlayerController : MonoBehaviour
             {
                 if (movementMult != 2) movementMult = 2f;
                 if (!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
-                //anim.SetBool("isWalking", true);
             }
             if (moveInput.y != 0)//ver si se puede poner easy in y out, no solo easyout
             {
                 boatRb.AddForce(boat.transform.forward * forceDirection, ForceMode.Impulse);// o velocity change
                 boatRb.AddForce(boat.transform.up * Random.Range(0.2f, 0.7f), ForceMode.Impulse);// o velocity change
+                if (moveInput.y == 1) anim.SetInteger("rowDirection", 0);
+                else anim.SetInteger("rowDirection", 2);
             }
             else if (moveInput.x != 0)
             {
                 boatRb.AddTorque(Vector3.up * forceRotation, ForceMode.Impulse);
+                //moveInput.x = 1 ? anim.SetInteger("rowDirection", 1) : anim.SetInteger("rowDirection", 3);
+                if (moveInput.x == 1) anim.SetInteger("rowDirection", 1);
+                else anim.SetInteger("rowDirection", 3);
             }
             canRow = false;
             StartCoroutine(RowingCoroutine());
@@ -230,6 +252,7 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator RowingCoroutine()
     {
+        anim.SetTrigger("row");
         yield return new WaitForSeconds(1);
         canRow = true;
         yield break;
@@ -317,6 +340,7 @@ public class PlayerController : MonoBehaviour
         {
             if(menuOpened)
             {
+                anim.SetInteger("playerState", -1);
                 GameManager.Instance.inventoryPanel.SetActive(false);
                 GameManager.Instance.cinemachineCamera.enabled = true;
                 GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = true;
@@ -327,6 +351,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
+                anim.SetInteger("playerState", 0);
                 GameManager.Instance.inventoryPanel.SetActive(true);
                 GameManager.Instance.cinemachineCamera.enabled = false;
                 GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = false;
