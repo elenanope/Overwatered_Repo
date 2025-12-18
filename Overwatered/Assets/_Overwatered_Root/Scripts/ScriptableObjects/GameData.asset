@@ -15,5 +15,5 @@ MonoBehaviour:
   gameHasStarted: 1
   initialPlayerPos: {x: -6.3, y: 2.64, z: -31}
   initialPlayerRot: {x: 0, y: 0, z: 0, w: 0}
-  lastPlayerPos: {x: 2.412113, y: 1.8174951, z: 29.9447}
-  lastPlayerRot: {x: 1.8051266e-16, y: 0.52160496, z: -4.9469024e-17, w: -0.85318714}
+  lastPlayerPos: {x: -6.3, y: 2.64, z: -31}
+  lastPlayerRot: {x: -0, y: -0, z: -0, w: 1}

@@ -71,6 +71,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float timePassed;
     [SerializeField] float timeSinceMove;
     public Vector3 shorePoint;
+
+    //bool maintainRow;
     #endregion
     private void Start()
     {
@@ -162,6 +164,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 if (!anim.GetBool("inBoat")) anim.SetBool("inBoat", true);
+                if (anim.GetInteger("playerState") != 0) anim.SetInteger("playerState", 0);
                 if(canRow)BoatMovement();
             }
         }
@@ -214,46 +217,66 @@ public class PlayerController : MonoBehaviour
     }
     void BoatMovement()
     {
-        //moveInput.x rota la barca y moveInput.y acelera o mueve hacia atrás
-        //poner preferencia en alguna si son pulsadas a la vez?
-        float forceDirection = rowingForce * moveInput.y; //quizá poner directamente si 1 o -1
-        float forceRotation = rowingTurningForce * moveInput.x;
-
         if (moveInput.sqrMagnitude > 0.001f)
         {
-            if (moveInput.x != 0 || moveInput.y != 0)
-            {
-                if (movementMult != 2) movementMult = 2f;
-                if (!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
-            }
-            if (moveInput.y != 0)//ver si se puede poner easy in y out, no solo easyout
-            {
-                boatRb.AddForce(boat.transform.forward * forceDirection, ForceMode.Impulse);// o velocity change
-                boatRb.AddForce(boat.transform.up * Random.Range(0.2f, 0.7f), ForceMode.Impulse);// o velocity change
-                if (moveInput.y == 1) anim.SetInteger("rowDirection", 0);
-                else anim.SetInteger("rowDirection", 2);
-            }
-            else if (moveInput.x != 0)
-            {
-                boatRb.AddTorque(Vector3.up * forceRotation, ForceMode.Impulse);
-                //moveInput.x = 1 ? anim.SetInteger("rowDirection", 1) : anim.SetInteger("rowDirection", 3);
-                if (moveInput.x == 1) anim.SetInteger("rowDirection", 1);
-                else anim.SetInteger("rowDirection", 3);
-            }
-            canRow = false;
+            //maintainRow = true;
             StartCoroutine(RowingCoroutine());
         }
         else
         {
             movementMult = 1f;
             isSprinting = false;
-            //anim.SetBool("isWalking", false);
+            anim.SetBool("maintainRow", false);
         }
     }
     IEnumerator RowingCoroutine()
     {
+        //moveInput.x rota la barca y moveInput.y acelera o mueve hacia atrás
+        //poner preferencia en alguna si son pulsadas a la vez?
+        float forceDirection = rowingForce * moveInput.y; //quizá poner directamente si 1 o -1
+        float forceRotation = rowingTurningForce * moveInput.x;
+        float lastMoveInputX = moveInput.x;
+        float lastMoveInputY = moveInput.y;
+
+        anim.SetBool("maintainRow", true);
+
+        if (moveInput.y != 0)
+        {
+            if (moveInput.y == 1) anim.SetInteger("rowDirection", 0);
+            else anim.SetInteger("rowDirection", 2);
+        }
+        else if (moveInput.x != 0)
+        {
+            if (moveInput.x == 1) anim.SetInteger("rowDirection", 1);
+            else anim.SetInteger("rowDirection", 3);
+        }
+
+        canRow = false;
+
         anim.SetTrigger("row");
         yield return new WaitForSeconds(1);
+        //rema
+        if (lastMoveInputX != 0 || lastMoveInputY != 0)
+        {
+            if (movementMult != 2) movementMult = 2f;
+            if (!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
+        }
+        if (lastMoveInputY != 0)//ver si se puede poner easy in y out, no solo easyout
+        {
+            boatRb.AddForce(boat.transform.forward * forceDirection, ForceMode.Impulse);// o velocity change
+            boatRb.AddForce(boat.transform.up * Random.Range(0.2f, 0.7f), ForceMode.Impulse);// o velocity change
+        }
+        else if (lastMoveInputX != 0)
+        {
+            boatRb.AddTorque(Vector3.up * forceRotation, ForceMode.Impulse);
+            //moveInput.x = 1 ? anim.SetInteger("rowDirection", 1) : anim.SetInteger("rowDirection", 3);
+        }
+
+        yield return new WaitForSeconds(1);
+        //hasta aqui verá si se sigue manteniendo o no
+
+        yield return new WaitForSeconds(0.1f);
+        //puede volver a remar
         canRow = true;
         yield break;
     }

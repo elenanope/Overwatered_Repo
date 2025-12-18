@@ -400,7 +400,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -421,15 +421,15 @@ ModelImporter:
       name: AN_Player_RowFront
       takeName: rig.001|AC_Player_RowFront
       internalID: -6756655765172520736
-      firstFrame: 0
-      lastFrame: 80
+      firstFrame: 12
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -480,14 +480,14 @@ ModelImporter:
       takeName: rig.001|AC_Player_RowLeft
       internalID: -1597842483008575838
       firstFrame: 0
-      lastFrame: 67
+      lastFrame: 48
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -509,14 +509,14 @@ ModelImporter:
       takeName: rig.001|AC_Player_RowRight
       internalID: 4544156172695877629
       firstFrame: 0
-      lastFrame: 67
+      lastFrame: 48
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
