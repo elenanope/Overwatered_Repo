@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     #region General Variables
+    [SerializeField] GameObject walkDust;
     [SerializeField] float waterLeft = 100;
     [SerializeField] float foodLeft = 100;
     [SerializeField] float movementMult = 1;//cuando el player se mueva, consumirá más
@@ -54,6 +55,8 @@ public class PlayerController : MonoBehaviour
     [Header("Player References")]
     [SerializeField] Rigidbody playerRb;
     [SerializeField] Animator anim;
+    [SerializeField] Animator animatorL;
+    [SerializeField] Animator animatorR;
     //[SerializeField] GameObject camHolder;
     //[SerializeField] Camera cam;
     [SerializeField] AudioSource playerSpeaker;
@@ -72,7 +75,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float timeSinceMove;
     public Vector3 shorePoint;
 
-    //bool maintainRow;
+    bool maintainedRow;
     #endregion
     private void Start()
     {
@@ -163,7 +166,13 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if (!anim.GetBool("inBoat")) anim.SetBool("inBoat", true);
+                if (!anim.GetBool("inBoat"))
+                {
+                    anim.SetBool("inBoat", true);
+                    walkDust.SetActive(false);
+                    animatorL.gameObject.SetActive(true);
+                    animatorR.gameObject.SetActive(true);
+                }
                 if (anim.GetInteger("playerState") != 0) anim.SetInteger("playerState", 0);
                 if(canRow)BoatMovement();
             }
@@ -220,13 +229,15 @@ public class PlayerController : MonoBehaviour
         if (moveInput.sqrMagnitude > 0.001f)
         {
             //maintainRow = true;
+
+            canRow = false;
             StartCoroutine(RowingCoroutine());
         }
         else
         {
             movementMult = 1f;
             isSprinting = false;
-            anim.SetBool("maintainRow", false);
+            //anim.SetBool("maintainRow", false);
         }
     }
     IEnumerator RowingCoroutine()
@@ -238,46 +249,96 @@ public class PlayerController : MonoBehaviour
         float lastMoveInputX = moveInput.x;
         float lastMoveInputY = moveInput.y;
 
-        anim.SetBool("maintainRow", true);
+        //anim.SetBool("maintainRow", true);
 
         if (moveInput.y != 0)
         {
-            if (moveInput.y == 1) anim.SetInteger("rowDirection", 0);
-            else anim.SetInteger("rowDirection", 2);
+            if (moveInput.y == 1)
+            {
+                anim.SetInteger("rowDirection", 0);
+                animatorL.SetBool("moveForward", true);
+                animatorR.SetBool("moveForward", true);
+                animatorL.SetTrigger("row");
+                animatorR.SetTrigger("row");
+            }
+            else
+            {
+                anim.SetInteger("rowDirection", 2);
+                animatorL.SetBool("moveForward", false);
+                animatorR.SetBool("moveForward", false);
+                animatorL.SetTrigger("row");
+                animatorR.SetTrigger("row");
+            }
         }
         else if (moveInput.x != 0)
         {
-            if (moveInput.x == 1) anim.SetInteger("rowDirection", 1);
-            else anim.SetInteger("rowDirection", 3);
-        }
+            if (moveInput.x == 1)
+            {
+                anim.SetInteger("rowDirection", 1);
 
-        canRow = false;
+                animatorR.SetBool("moveForward", true);
+                animatorR.SetTrigger("row");
+            }
+            else
+            {
+                anim.SetInteger("rowDirection", 3);
+
+                animatorL.SetBool("moveForward", true);
+                animatorL.SetTrigger("row");
+            }
+        }
 
         anim.SetTrigger("row");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.3f);
+        anim.ResetTrigger("row");
+        animatorL.ResetTrigger("row");
+        animatorR.ResetTrigger("row");
+        if(lastMoveInputX != 0) yield return new WaitForSeconds(0.7f);
+        else if(lastMoveInputY > 0) yield return new WaitForSeconds(0.5f);
+        else if (lastMoveInputY < 0) yield return new WaitForSeconds(1.1f);
         //rema
-        if (lastMoveInputX != 0 || lastMoveInputY != 0)
+        if (!anim.GetCurrentAnimatorStateInfo(0).IsName("AN_Player_RowIdle") && !anim.GetCurrentAnimatorStateInfo(0).IsName("AN_Player_RowTired"))
         {
-            if (movementMult != 2) movementMult = 2f;
-            if (!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
-        }
-        if (lastMoveInputY != 0)//ver si se puede poner easy in y out, no solo easyout
-        {
-            boatRb.AddForce(boat.transform.forward * forceDirection, ForceMode.Impulse);// o velocity change
-            boatRb.AddForce(boat.transform.up * Random.Range(0.2f, 0.7f), ForceMode.Impulse);// o velocity change
-        }
-        else if (lastMoveInputX != 0)
-        {
-            boatRb.AddTorque(Vector3.up * forceRotation, ForceMode.Impulse);
-            //moveInput.x = 1 ? anim.SetInteger("rowDirection", 1) : anim.SetInteger("rowDirection", 3);
+            if (lastMoveInputX != 0 || lastMoveInputY != 0)
+            {
+                if (movementMult != 2) movementMult = 2f;
+                if (!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
+            }
+            if (lastMoveInputY != 0)//ver si se puede poner easy in y out, no solo easyout
+            {
+                boatRb.AddForce(boat.transform.forward * forceDirection, ForceMode.Impulse);// o velocity change
+                boatRb.AddForce(boat.transform.up * Random.Range(0.2f, 0.7f), ForceMode.Impulse);// o velocity change
+            }
+            else if (lastMoveInputX != 0)
+            {
+                boatRb.AddTorque(Vector3.up * forceRotation, ForceMode.Impulse);
+            }
         }
 
-        yield return new WaitForSeconds(1);
+        if (lastMoveInputX != 0) yield return new WaitForSeconds(1f);
+        else if (lastMoveInputY > 0) yield return new WaitForSeconds(1.2f);
+        else if (lastMoveInputY < 0) yield return new WaitForSeconds(0.9f);
         //hasta aqui verá si se sigue manteniendo o no
 
-        yield return new WaitForSeconds(0.1f);
         //puede volver a remar
-        canRow = true;
+        //canRow = true;
+
+        if(maintainedRow)
+        {
+            StartCoroutine(ResetRow());
+        }
+        else
+        {
+            canRow = true; //hace falta poner esto en más sitios
+
+        }
+            yield break;
+    }
+
+    IEnumerator ResetRow()
+    {
+        yield return new WaitForSeconds(0.1f); //se reproduce idle de row (transición entre barridos)
+        if(maintainedRow) StartCoroutine(RowingCoroutine());
         yield break;
     }
     void Interact()
@@ -292,7 +353,8 @@ public class PlayerController : MonoBehaviour
                 //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
             }
             colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
-            if (colTouched[0]!= null) //aqui sale algun error
+            //if(Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer))
+            if (colTouched.Length > 0) //aqui sale algun error
             {
                 colTouched[0].GetComponent<NPCAI>().Talk(gameObject.transform);
                 GameManager.Instance.ChangeCamera();
@@ -326,7 +388,17 @@ public class PlayerController : MonoBehaviour
                 gameObject.transform.position = shorePoint;
                 gameObject.transform.parent = null; 
                 isInsideBoat = false;
+
+                //
+                if (anim.GetBool("inBoat"))
+                {
+                    anim.SetBool("inBoat", false);
+                    animatorL.gameObject.SetActive(false);
+                    animatorR.gameObject.SetActive(false);
+                }
                 boatController.hasPlayer = false;
+                boatController.sticks.SetActive(true);
+                walkDust.SetActive(true);
             }
         }
     }
@@ -346,6 +418,15 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext ctx)
     {
         moveInput = ctx.ReadValue<Vector2>();
+        if(isInsideBoat)
+        {
+            if (moveInput.x != 0 || moveInput.y != 0)
+            {
+                maintainedRow = true;
+            }
+            else maintainedRow = false;
+        }
+        else maintainedRow = false;
     }
 
     public void OnInteract(InputAction.CallbackContext ctx)

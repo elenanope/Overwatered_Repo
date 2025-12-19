@@ -392,8 +392,8 @@ ModelImporter:
       name: AN_Player_RowBack
       takeName: rig.001|AC_Player_RowBack
       internalID: 7781845609383839322
-      firstFrame: 0
-      lastFrame: 80
+      firstFrame: 12
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -421,8 +421,8 @@ ModelImporter:
       name: AN_Player_RowFront
       takeName: rig.001|AC_Player_RowFront
       internalID: -6756655765172520736
-      firstFrame: 12
-      lastFrame: 60
+      firstFrame: 0
+      lastFrame: 48
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

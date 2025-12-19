@@ -7,6 +7,7 @@ public class BoatController : MonoBehaviour
     Collider objectTouched;
     Vector3 closestPoint;
     Rigidbody boatRb;
+    public GameObject sticks;
     private void Start()
     {
         boatRb = GetComponent<Rigidbody>();
@@ -34,6 +35,7 @@ public class BoatController : MonoBehaviour
     {
         playerControls = playerController;
         hasPlayer = true;
+        sticks.SetActive(false);
         //boatRb.AddForce(transform.up * 1.2f, ForceMode.Force);// o velocity change
     }
     public void SendClosestPoint()
