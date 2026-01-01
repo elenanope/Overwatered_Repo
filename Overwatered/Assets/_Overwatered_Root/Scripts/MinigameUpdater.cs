@@ -27,5 +27,7 @@ public class MinigameUpdater : MonoBehaviour
             player.transform.rotation = GameManager.Instance.gameData.initialPlayerRot;
             GameManager.Instance.gameData.gameHasStarted = true;
         }
+        Debug.Log(GameManager.Instance.gameData.initialPlayerPos);
+        Debug.Log(GameManager.Instance.gameData.lastPlayerPos);
     }
 }

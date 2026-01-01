@@ -447,7 +447,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: AN_Player_RowIdle
+      name: AN_Player_RowIdle1
       takeName: rig.001|AC_Player_RowIdle0
       internalID: -1497304642890672091
       firstFrame: 0
