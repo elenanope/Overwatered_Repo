@@ -7,6 +7,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: a2d883d520e080d4fb0779142d056f6f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: hojas.001
     second: {fileID: 2100000, guid: 50e22c21ddc74904ba5834298b5b9121, type: 2}
   materials:

@@ -27,6 +27,7 @@ Material:
   m_ValidKeywords:
   - DR_RIM_ON
   - DR_SPECULAR_ON
+  - DR_VERTEX_COLORS_ON
   - _CELPRIMARYMODE_SINGLE
   - _DETAILMAPBLENDINGMODE_MULTIPLY
   - _GRADIENTSPACE_WORLD
@@ -212,7 +213,7 @@ Material:
     - _GradientSize: 10
     - _GradientSpace: 0
     - _HeightTransition: 0
-    - _LightContribution: 0
+    - _LightContribution: 0.959
     - _LightFalloffSize: 0
     - _LightmapDirectionPitch: 0
     - _LightmapDirectionYaw: 0
@@ -254,7 +255,7 @@ Material:
     - _UnityShadowOcclusion: 0
     - _UnityShadowPower: 0.2
     - _UnityShadowSharpness: 1
-    - _VertexColorsEnabled: 0
+    - _VertexColorsEnabled: 1
     - _VertexExtrusionSmoothNormals: 0
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1

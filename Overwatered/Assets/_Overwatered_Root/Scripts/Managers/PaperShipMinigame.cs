@@ -13,6 +13,7 @@ public class PaperShipMinigame : MonoBehaviour
     [SerializeField] GameObject winPanel;
     [SerializeField] GameObject drawPanel;
     [SerializeField] GameObject losePanel;
+    [SerializeField] Animator playerAnimator;
 
     [Header("Ships References")]
     [SerializeField] Rigidbody shipPlayer;
@@ -141,6 +142,7 @@ public class PaperShipMinigame : MonoBehaviour
         if(shipsArrived == 0)
         {
             shipPlayer.AddForce(shipPlayer.transform.forward * airTaken * windMult, ForceMode.Impulse);
+            playerAnimator.SetBool("isBreathing", false);
         }
         else if(shipsArrived == 3)
         {
@@ -152,6 +154,11 @@ public class PaperShipMinigame : MonoBehaviour
         }
         else
         {
+            if (playerAnimator.GetBool("inPos"))
+            {
+
+                playerAnimator.SetBool("inPos", false);
+            }
             if (shipsArrived == 1) shipToMove = shipNPC1;
             else if (shipsArrived == 2) shipToMove = shipNPC2;
             if(gameDifficulty == 0) //revisar todo esto
@@ -265,6 +272,8 @@ public class PaperShipMinigame : MonoBehaviour
             shipNPC1.gameObject.transform.position = shipsStartPos[1];
             shipNPC2.gameObject.transform.position = shipsStartPos[2];
         }
+
+        playerAnimator.SetBool("inPos", true);
     }
     
     void EndGame(int winCondition) // 0 lose, 1 empate, 2 win
@@ -296,12 +305,19 @@ public class PaperShipMinigame : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         minigameState = 1;
+
+        playerAnimator.SetBool("inPos", true);
     }
     public void OnBreathing(InputAction.CallbackContext ctx)
     {
         if(ctx.performed)
         {
-            if (breathingPhase == 0) breathingPhase = 1;
+            if (breathingPhase == 0)
+            {
+                breathingPhase = 1;
+
+                playerAnimator.SetBool("isBreathing", true);
+            }
         }
         if (ctx.canceled)
         {
