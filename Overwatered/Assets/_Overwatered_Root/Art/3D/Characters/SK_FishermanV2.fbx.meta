@@ -1,9 +1,24 @@
 fileFormatVersion: 2
-guid: 24963bb2087022749ab715d0f2713129
+guid: 00f9ff8174057534eaa85bc685a5836b
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat_Crystal
+    second: {fileID: 2100000, guid: 5df2c9aad47e32c44b28e838f578808e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat_FishermanBody
+    second: {fileID: 2100000, guid: 0a93619da073ca2489ed35ea19b9d276, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat_FishermanClothes
+    second: {fileID: 2100000, guid: 1527695932bdc5845bbb8a5ff2421bbf, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -42,7 +57,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0

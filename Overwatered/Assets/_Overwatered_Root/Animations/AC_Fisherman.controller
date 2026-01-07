@@ -8,7 +8,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: AN_Fisherman_Idle
-  m_Speed: 1
+  m_Speed: 0.85
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -20,7 +20,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -7920324487241668126, guid: 24963bb2087022749ab715d0f2713129, type: 3}
+  m_Motion: {fileID: -7920324487241668126, guid: 00f9ff8174057534eaa85bc685a5836b, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
