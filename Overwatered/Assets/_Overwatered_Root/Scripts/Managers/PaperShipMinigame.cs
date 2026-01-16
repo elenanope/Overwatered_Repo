@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class PaperShipMinigame : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] Image windDirectionIcon;
+    [SerializeField] Animator windDirectionIcon;
     [SerializeField] TMP_Text triesText;
     [SerializeField] Image breathBarFill;
     [SerializeField] GameObject winPanel;
@@ -26,7 +26,7 @@ public class PaperShipMinigame : MonoBehaviour
     [SerializeField] int pointsNPC1;
     [SerializeField] int pointsNPC2;
     [SerializeField] float airTaken;
-    [SerializeField] float airTakenSpeed = 4f;
+    //[SerializeField] float airTakenSpeed = 1.5f;
     [SerializeField] int wind; //0 no hay, 1 hacia derecha, -1 hacia izquierda
     [SerializeField] float windMult; //1 no hay, 2 hacia derecha, 0.5 hacia izquierda
 
@@ -64,23 +64,23 @@ public class PaperShipMinigame : MonoBehaviour
             {
                 if (breathingPhase != 0)
                 {
-                    breathBarFill.fillAmount = airTaken / 15f;
+                    breathBarFill.fillAmount = airTaken / 8f;
                     if (breathingPhase == 1)
                     {
-                        breathBarFill.color = Color.blue;
-                        if (airTaken >= 17)
+                        breathBarFill.color = Color.white;
+                        if (airTaken >= 8.1f)
                         {
                             breathingPhase = 2;
                         }
                         else
                         {
-                            airTaken += Time.deltaTime * airTakenSpeed;
+                            airTaken += Time.deltaTime; //* airTakenSpeed;
                         }
                     }
                     else if (breathingPhase == 2)
                     {
                         breathBarFill.color = Color.red;
-                        airTaken -= Time.deltaTime * airTakenSpeed * 2; //suelta el aire más rápido que cuando lo coge
+                        airTaken -= Time.deltaTime * 2; //* airTakenSpeed  //suelta el aire más rápido que cuando lo coge
                         if (airTaken <= 0)
                         {
                             airTaken = 0;
@@ -89,7 +89,7 @@ public class PaperShipMinigame : MonoBehaviour
                     }
                     else if (breathingPhase == 3)
                     {
-                        breathBarFill.color = Color.darkBlue; //o color algo más oscuro del que tiene
+                        breathBarFill.color = Color.lightGray; //o color algo más oscuro del que tiene
                                                               //añadir sonido de soplido
                                                               //añadir fuerza a los barquitos multiplicada por 0.5 si !eastWind (o añadir que sea algo más random)
 
@@ -99,7 +99,7 @@ public class PaperShipMinigame : MonoBehaviour
                     }
                     else if (breathingPhase == 4)
                     {
-                        airTaken -= Time.deltaTime * airTakenSpeed * 2;//más rápido?
+                        airTaken -= Time.deltaTime * 2; //* airTakenSpeed * 2;//más rápido?
                         if (airTaken <= 0)
                         {
                             airTaken = 0;
@@ -141,7 +141,7 @@ public class PaperShipMinigame : MonoBehaviour
 
         if(shipsArrived == 0)
         {
-            shipPlayer.AddForce(shipPlayer.transform.forward * airTaken * windMult, ForceMode.Impulse);
+            shipPlayer.AddForce(shipPlayer.transform.forward * (airTaken/1) * windMult, ForceMode.Impulse);
             playerAnimator.SetBool("isBreathing", false);
         }
         else if(shipsArrived == 3)
@@ -163,7 +163,19 @@ public class PaperShipMinigame : MonoBehaviour
             else if (shipsArrived == 2) shipToMove = shipNPC2;
             if(gameDifficulty == 0) //revisar todo esto
             {
-                shipForce = Random.Range(0.5f, 1.9f);
+                //shipForce = Random.Range(0.5f, 1.9f);
+                if (wind == 0)
+                {
+                    shipForce = Random.Range(3f, 5.5f);
+                }
+                else if (wind == 1)
+                {
+                    shipForce = Random.Range(1f, 3f);
+                }
+                else if (wind == -1)
+                {
+                    shipForce = Random.Range(5f, 8f);
+                }
             }
             else if(gameDifficulty == 1)
             {
@@ -243,20 +255,17 @@ public class PaperShipMinigame : MonoBehaviour
         wind = Random.Range(-1, 2);
         if (wind == -1)
         {
-            windDirectionIcon.gameObject.SetActive(true);
             windMult = 0.5f;
         }
         else if (wind == 0)
         {
-            windDirectionIcon.gameObject.SetActive(false);
             windMult = 1f;
         }
         else
         {
-            windDirectionIcon.gameObject.SetActive(true);
             windMult = 2f;
         }
-        windDirectionIcon.rectTransform.eulerAngles = new Vector3(0f, 0f, 90f * wind);
+        windDirectionIcon.SetInteger("windDirection", wind);
     }
 
     void ResetShips()

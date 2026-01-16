@@ -14,6 +14,7 @@ public class SceneReferences : MonoBehaviour
     public CinemachineCamera dialogueCam;
     public CinemachineTargetGroup targetGroup;
     public CinemachineRotationComposer dialogueCamRot;
+    public Transform mapCamera;
     public Image fadePanel;
 
     private void Start()

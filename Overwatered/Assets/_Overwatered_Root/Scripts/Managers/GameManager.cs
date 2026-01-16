@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] CinemachineCamera dialogueCam;
     [SerializeField] CinemachineTargetGroup targetGroup;
     [SerializeField] CinemachineRotationComposer dialogueCamRot;
+    public Transform mapCamera;
     bool overworldCamActive = true;
     bool charactersHidden = false;
     float actualXOffset;
@@ -138,6 +139,7 @@ public class GameManager : MonoBehaviour
             if (sceneReferences.targetGroup != null) targetGroup = sceneReferences.targetGroup;
             if (sceneReferences.dialogueCamRot != null) dialogueCamRot = sceneReferences.dialogueCamRot;
             if (sceneReferences.fadePanel != null) fadePanel = sceneReferences.fadePanel;
+            if (sceneReferences.mapCamera != null) mapCamera = sceneReferences.mapCamera;
             StartFade(0);
         }
         else

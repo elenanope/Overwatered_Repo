@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Animator animatorR;
     //[SerializeField] GameObject camHolder;
     //[SerializeField] Camera cam;
+    [SerializeField] RectTransform camCompass;
     [SerializeField] AudioSource playerSpeaker;
 
     [SerializeField] Transform camTransform;
@@ -74,7 +75,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float timePassed;
     [SerializeField] float timeSinceMove;
     public Vector3 shorePoint;
-
+    Quaternion mapRotation;
     bool maintainedRow;
     #endregion
     private void Start()
@@ -175,6 +176,15 @@ public class PlayerController : MonoBehaviour
                 }
                 if (anim.GetInteger("playerState") != 0) anim.SetInteger("playerState", 0);
                 if(canRow)BoatMovement();
+            }
+            //poner que la siga a la camara en vez de al personaje
+            if(camCompass != null)
+            {
+                //rota flecha
+                camCompass.rotation = Quaternion.Euler (0f, 0f, -GameManager.Instance.camController.transform.eulerAngles.y);
+                //rota cámara
+                mapRotation = GameManager.Instance.mapCamera.rotation;
+                GameManager.Instance.mapCamera.rotation = Quaternion.Euler (90f, -GameManager.Instance.camController.transform.eulerAngles.y, 0f);
             }
         }
     }
@@ -338,7 +348,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator ResetRow()
     {
         yield return new WaitForSeconds(0.1f); //se reproduce idle de row (transición entre barridos)
-        if(maintainedRow) StartCoroutine(RowingCoroutine());
+        if (maintainedRow) canRow = true;
         yield break;
     }
     void Interact()
