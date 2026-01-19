@@ -9,8 +9,10 @@ public class PlayerController : MonoBehaviour
 {
     #region General Variables
     [SerializeField] GameObject walkDust;
-    [SerializeField] float waterLeft = 100;
-    [SerializeField] float foodLeft = 100;
+    [SerializeField] float waterLeft = 150;
+    [SerializeField] float maxWater = 150;
+    [SerializeField] float foodLeft = 150;
+    [SerializeField] float maxFood = 150;
     [SerializeField] float movementMult = 1;//cuando el player se mueva, consumirá más
     [SerializeField] Image waterBarFill;
     [SerializeField] Image foodBarFill;
@@ -154,8 +156,8 @@ public class PlayerController : MonoBehaviour
     {
         //foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
         //waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
-        waterBarFill.fillAmount = waterLeft / 100;
-        foodBarFill.fillAmount = foodLeft / 100;
+        waterBarFill.fillAmount = waterLeft / maxWater;
+        foodBarFill.fillAmount = foodLeft / maxFood;
     }
     private void FixedUpdate()
     {
@@ -181,10 +183,10 @@ public class PlayerController : MonoBehaviour
             if(camCompass != null)
             {
                 //rota flecha
-                camCompass.rotation = Quaternion.Euler (0f, 0f, -GameManager.Instance.camController.transform.eulerAngles.y);
+                camCompass.rotation = Quaternion.Euler (0f, 0f, GameManager.Instance.camController.transform.eulerAngles.y);
                 //rota cámara
                 mapRotation = GameManager.Instance.mapCamera.rotation;
-                GameManager.Instance.mapCamera.rotation = Quaternion.Euler (90f, -GameManager.Instance.camController.transform.eulerAngles.y, 0f);
+                GameManager.Instance.mapCamera.rotation = Quaternion.Euler (90f, GameManager.Instance.camController.transform.eulerAngles.y, 0f);
             }
         }
     }
