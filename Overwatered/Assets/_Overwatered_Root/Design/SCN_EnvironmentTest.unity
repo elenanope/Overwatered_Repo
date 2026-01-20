@@ -32978,7 +32978,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &732047346
 Transform:
   m_ObjectHideFlags: 0
@@ -65133,6 +65133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 625619853}
+  boat: {fileID: 649667170}
 --- !u!1 &1718366999 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 053116c7e78643b45b161ca7da901322, type: 3}
@@ -83683,7 +83684,7 @@ PrefabInstance:
       objectReference: {fileID: 649667175}
     - target: {fileID: 7379920930478948665, guid: 2369a1cae8b83484bbc92b68d60f0cfc, type: 3}
       propertyPath: foodLeft
-      value: 100
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 7379920930478948665, guid: 2369a1cae8b83484bbc92b68d60f0cfc, type: 3}
       propertyPath: walkDust
@@ -83691,7 +83692,7 @@ PrefabInstance:
       objectReference: {fileID: 431316036}
     - target: {fileID: 7379920930478948665, guid: 2369a1cae8b83484bbc92b68d60f0cfc, type: 3}
       propertyPath: waterLeft
-      value: 100
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 7379920930478948665, guid: 2369a1cae8b83484bbc92b68d60f0cfc, type: 3}
       propertyPath: camCompass

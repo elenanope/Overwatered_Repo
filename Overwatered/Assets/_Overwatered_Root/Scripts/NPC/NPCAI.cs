@@ -24,8 +24,7 @@ public class NPCAI : MonoBehaviour
                 isInDialogue = true;
                 Debug.Log("entering");
                 StartCoroutine(MinigameManager.Instance.EnterMinigame(2, false, gameObject.transform));//poner luego otra opción si sí tiene papel especial
-                GameManager.Instance.gameData.lastPlayerPos = playerTransform.position;
-                GameManager.Instance.gameData.lastPlayerRot = playerTransform.rotation;
+                MinigameUpdater.Instance.SavePos(playerTransform);
             }
         }
     }

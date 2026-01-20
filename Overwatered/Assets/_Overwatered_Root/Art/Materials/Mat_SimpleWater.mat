@@ -99,7 +99,7 @@ Material:
     - _FadeDistance: 0.07
     - _FoamAmount: 0.1
     - _FoamDepth: 0.03
-    - _FoamDirection: 0
+    - _FoamDirection: 0.36
     - _FoamFromTexture: 1
     - _FoamMode: 1
     - _FoamNoiseAmount: 1

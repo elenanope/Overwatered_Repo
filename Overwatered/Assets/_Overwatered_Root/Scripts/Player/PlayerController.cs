@@ -9,9 +9,9 @@ public class PlayerController : MonoBehaviour
 {
     #region General Variables
     [SerializeField] GameObject walkDust;
-    [SerializeField] float waterLeft = 150;
+    public float waterLeft = 150;
     [SerializeField] float maxWater = 150;
-    [SerializeField] float foodLeft = 150;
+    public float foodLeft = 150;
     [SerializeField] float maxFood = 150;
     [SerializeField] float movementMult = 1;//cuando el player se mueva, consumirá más
     [SerializeField] Image waterBarFill;
@@ -400,8 +400,7 @@ public class PlayerController : MonoBehaviour
                 gameObject.transform.position = shorePoint;
                 gameObject.transform.parent = null; 
                 isInsideBoat = false;
-
-                //
+                MinigameUpdater.Instance.SaveBoatPos(boatController.gameObject.transform);
                 if (anim.GetBool("inBoat"))
                 {
                     anim.SetBool("inBoat", false);

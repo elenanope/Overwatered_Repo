@@ -37,9 +37,11 @@ public class PaperShipMinigame : MonoBehaviour
 
     Vector3[] shipsStartPos = new Vector3[3];
     [SerializeField] Transform goalPos;
+    [SerializeField] Transform flag;
     float goalDistance;
     int minigameState;//0 fade in, 1 jugar, 2 finalizado, 3 fadeout, 4 fadeout over
     int endResult = -1;
+    bool extraRound;
 
     void Start()
     {
@@ -60,7 +62,7 @@ public class PaperShipMinigame : MonoBehaviour
     {
         if(minigameState == 1)
         {
-            if (((pointsNPC1 == 1 || pointsNPC2 == 1) && pointsPlayer == 1) || triesDone < 2) //si lleva dos intentos o está empatado
+            if ((pointsNPC2 == 1 && pointsPlayer == 1 && pointsNPC1 != 1) || (pointsNPC1 == 1 && pointsPlayer == 1 && pointsNPC2 != 1) || triesDone < 2) //si lleva dos intentos o está empatado
             {
                 if (breathingPhase != 0)
                 {
@@ -68,14 +70,8 @@ public class PaperShipMinigame : MonoBehaviour
                     if (breathingPhase == 1)
                     {
                         breathBarFill.color = Color.white;
-                        if (airTaken >= 8.1f)
-                        {
-                            breathingPhase = 2;
-                        }
-                        else
-                        {
-                            airTaken += Time.deltaTime; //* airTakenSpeed;
-                        }
+                        if (airTaken >= 8.1f) breathingPhase = 2;
+                        else airTaken += Time.deltaTime; //* airTakenSpeed;
                     }
                     else if (breathingPhase == 2)
                     {
@@ -89,21 +85,15 @@ public class PaperShipMinigame : MonoBehaviour
                     }
                     else if (breathingPhase == 3)
                     {
-                        breathBarFill.color = Color.lightGray; //o color algo más oscuro del que tiene
-                                                              //añadir sonido de soplido
-                                                              //añadir fuerza a los barquitos multiplicada por 0.5 si !eastWind (o añadir que sea algo más random)
-
-                        //añadir coroutina para que los barcos lleguen al sitio y se te sumen los puntos
+                        breathBarFill.color = Color.lightGray;
+                        //añadir sonido de soplido
                         breathingPhase = 4;
                         StartCoroutine(ShipsMovement());
                     }
                     else if (breathingPhase == 4)
                     {
-                        airTaken -= Time.deltaTime * 2; //* airTakenSpeed * 2;//más rápido?
-                        if (airTaken <= 0)
-                        {
-                            airTaken = 0;
-                        }
+                        airTaken -= Time.deltaTime * 2;
+                        if (airTaken <= 0) airTaken = 0;
                     }
                 }
             }
@@ -111,7 +101,7 @@ public class PaperShipMinigame : MonoBehaviour
             else if (pointsNPC1 == 1 && pointsPlayer == 1 && pointsPlayer == 1) EndGame(1);
             else EndGame(0);
         }
-        //if(GameManager.Instance.fading) //si es posible, mejorar esto (pasarlo al gameManager)
+
         {
             if (GameManager.Instance.faded)
             {
@@ -156,7 +146,6 @@ public class PaperShipMinigame : MonoBehaviour
         {
             if (playerAnimator.GetBool("inPos"))
             {
-
                 playerAnimator.SetBool("inPos", false);
             }
             if (shipsArrived == 1) shipToMove = shipNPC1;
@@ -247,7 +236,11 @@ public class PaperShipMinigame : MonoBehaviour
         {
             pointsNPC2++;
         }
-
+        else
+        {
+            Debug.Log("Punto para nadie!");
+            //O poner que se repita la ronda
+        }
     }
 
     void UpdateWind()
@@ -255,25 +248,33 @@ public class PaperShipMinigame : MonoBehaviour
         wind = Random.Range(-1, 2);
         if (wind == -1)
         {
-            windMult = 0.5f;
+            windMult = 0.65f;
+            flag.rotation = Quaternion.Euler(flag.rotation.eulerAngles.x, -100f, 0f);
+            //-100
         }
         else if (wind == 0)
         {
             windMult = 1f;
+            flag.rotation = Quaternion.Euler(flag.rotation.eulerAngles.x, -30f, 0f);
+            //-30
         }
         else
         {
-            windMult = 2f;
+            windMult = 1.25f;
+            flag.rotation = Quaternion.Euler(flag.rotation.eulerAngles.x, 0f, 0f);
+            //0
         }
         windDirectionIcon.SetInteger("windDirection", wind);
     }
 
     void ResetShips()
     {
+        float roundNumber;
         shipsArrived = 0;
         UpdateWind();
         triesDone++;
-        triesText.text = triesDone.ToString();
+        roundNumber = triesDone + 1;
+        triesText.text = roundNumber.ToString();
         breathingPhase = 0;
         if(triesDone < 3)
         {
@@ -281,7 +282,6 @@ public class PaperShipMinigame : MonoBehaviour
             shipNPC1.gameObject.transform.position = shipsStartPos[1];
             shipNPC2.gameObject.transform.position = shipsStartPos[2];
         }
-
         playerAnimator.SetBool("inPos", true);
     }
     
@@ -302,9 +302,12 @@ public class PaperShipMinigame : MonoBehaviour
             losePanel.SetActive(true);
         }
         minigameState = 3;
-        StartCoroutine(FinishMinigame());
+        //StartCoroutine(FinishMinigame());
     }
-
+    public void FinishButton()
+    {
+        StartCoroutine(MinigameManager.Instance.ExitMinigame(endResult));
+    }
     IEnumerator FinishMinigame()
     {
         yield return new WaitForSeconds(2f);

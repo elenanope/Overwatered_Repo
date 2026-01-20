@@ -8,4 +8,8 @@ public class SO_GameData : ScriptableObject
     public Quaternion initialPlayerRot;
     public Vector3 lastPlayerPos;
     public Quaternion lastPlayerRot;
+    public float foodLeft;
+    public float waterLeft;
+    public Vector3 lastBoatPos;
+    public Quaternion lastBoatRot;
 }
