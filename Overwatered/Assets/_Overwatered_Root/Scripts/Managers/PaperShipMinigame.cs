@@ -13,6 +13,8 @@ public class PaperShipMinigame : MonoBehaviour
     [SerializeField] GameObject winPanel;
     [SerializeField] GameObject drawPanel;
     [SerializeField] GameObject losePanel;
+    [SerializeField] GameObject winnerSign;
+    [SerializeField] Vector3 winnerSignPos = new Vector3 (0f, 0.47f, 0f);
     [SerializeField] Animator playerAnimator;
 
     [Header("Ships References")]
@@ -42,6 +44,8 @@ public class PaperShipMinigame : MonoBehaviour
     int minigameState;//0 fade in, 1 jugar, 2 finalizado, 3 fadeout, 4 fadeout over
     int endResult = -1;
     bool extraRound;
+    bool adviceOpened;
+    [SerializeField] DialogueManager dialogueManager;
 
     void Start()
     {
@@ -159,7 +163,7 @@ public class PaperShipMinigame : MonoBehaviour
                 }
                 else if (wind == 1)
                 {
-                    shipForce = Random.Range(1f, 3f);
+                    shipForce = Random.Range(2f, 4.5f);
                 }
                 else if (wind == -1)
                 {
@@ -227,14 +231,17 @@ public class PaperShipMinigame : MonoBehaviour
         if(closestShip == 0)
         {
             pointsPlayer++;
+            ActivateWinnerSign(shipPlayer.transform);
         }
         else if(closestShip == 1)
         {
             pointsNPC1++;
+            ActivateWinnerSign(shipNPC1.transform);
         }
         else if(closestShip == 2)
         {
             pointsNPC2++;
+            ActivateWinnerSign(shipNPC2.transform);
         }
         else
         {
@@ -242,7 +249,12 @@ public class PaperShipMinigame : MonoBehaviour
             //O poner que se repita la ronda
         }
     }
-
+    void ActivateWinnerSign(Transform winner)
+    {
+        winnerSign.transform.parent = winner;
+        winnerSign.transform.localPosition = winnerSignPos;
+        winnerSign.SetActive(true);
+    }
     void UpdateWind()
     {
         wind = Random.Range(-1, 2);
@@ -282,6 +294,7 @@ public class PaperShipMinigame : MonoBehaviour
             shipNPC1.gameObject.transform.position = shipsStartPos[1];
             shipNPC2.gameObject.transform.position = shipsStartPos[2];
         }
+        winnerSign.SetActive(false);
         playerAnimator.SetBool("inPos", true);
     }
     
@@ -322,18 +335,21 @@ public class PaperShipMinigame : MonoBehaviour
     }
     public void OnBreathing(InputAction.CallbackContext ctx)
     {
-        if(ctx.performed)
+        if(dialogueManager.dialogueOver)
         {
-            if (breathingPhase == 0)
+            if (ctx.performed)
             {
-                breathingPhase = 1;
+                if (breathingPhase == 0)
+                {
+                    breathingPhase = 1;
 
-                playerAnimator.SetBool("isBreathing", true);
+                    playerAnimator.SetBool("isBreathing", true);
+                }
             }
-        }
-        if (ctx.canceled)
-        {
-            if (breathingPhase == 1) breathingPhase = 3;
+            if (ctx.canceled)
+            {
+                if (breathingPhase == 1) breathingPhase = 3;
+            }
         }
     }
 }
