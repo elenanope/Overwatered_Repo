@@ -36,7 +36,7 @@ public class MinigameManager : MonoBehaviour
         lastMinigameResult = -1;
         minigameScene = minigame;
         isInMinigame = true;
-        GameManager.Instance.StartFade(1);
+        GameManager.Instance.StartFade(1);//unificar esto (en gameManager en el futuro)
         yield return new WaitForSeconds(GameManager.Instance.fadeTime);
         SceneManager.LoadScene(minigameScene);
         GameManager.Instance.FindReferences();
@@ -46,6 +46,7 @@ public class MinigameManager : MonoBehaviour
     {
         lastMinigameResult = endResult;
         isInMinigame = false;
+        GameManager.Instance.menuOpened = false;
         GameManager.Instance.StartFade(1);
         yield return new WaitForSeconds(GameManager.Instance.fadeTime);
         SceneManager.LoadScene(1);

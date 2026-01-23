@@ -33,12 +33,11 @@ public class MinigameUpdater : MonoBehaviour
         GameManager.Instance.gameData.foodLeft = player.GetComponent<PlayerController>().foodLeft;
         GameManager.Instance.gameData.waterLeft = player.GetComponent<PlayerController>().waterLeft;
 
+        GameManager.Instance.gameData.lastBoatPos = boat.transform.position;
+        GameManager.Instance.gameData.lastBoatRot = boat.transform.rotation;
+
     }
-    public void SaveBoatPos(Transform boatTransform)
-    {
-        GameManager.Instance.gameData.lastBoatPos = boatTransform.position;
-        GameManager.Instance.gameData.lastBoatRot = boatTransform.rotation;
-    }
+    //public void SaveBoatPos(Transform boatTrans)
     void ReloadPlayerPos()
     {
         if(GameManager.Instance.gameData.gameHasStarted)

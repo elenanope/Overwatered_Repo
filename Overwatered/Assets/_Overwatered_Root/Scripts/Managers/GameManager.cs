@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -34,7 +35,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] CinemachineCamera dialogueCam;
     [SerializeField] CinemachineTargetGroup targetGroup;
     [SerializeField] CinemachineRotationComposer dialogueCamRot;
+    public EventSystem eventSystem;
     public Transform mapCamera;
+    public bool menuOpened;
     bool overworldCamActive = true;
     bool charactersHidden = false;
     float actualXOffset;
@@ -44,15 +47,22 @@ public class GameManager : MonoBehaviour
     public float fadeTime = 2f;
     public bool faded;
     public bool fading;
+    int nextScene = -1;
     int goalAlpha;
 
     private void Awake()
     {
         instance = this;
         DontDestroyOnLoad(this.gameObject);
+        if (dialogueCamRot != null) 
+        {
+            actualXOffset = dialogueCamRot.TargetOffset.x;
+            actualZOffset = dialogueCamRot.TargetOffset.z;
+        } 
+    }
+    private void Start()
+    {
         StartFade(0);
-        actualXOffset = dialogueCamRot.TargetOffset.x;
-        actualZOffset = dialogueCamRot.TargetOffset.z;
     }
     private void Update()
     {
@@ -73,6 +83,8 @@ public class GameManager : MonoBehaviour
             {
                 fading = false;
                 faded = false;
+                if (nextScene > 0) LoadScene(nextScene);
+                if (goalAlpha == 0) fadePanel.gameObject.SetActive(false);
             }
         }
     }
@@ -140,6 +152,7 @@ public class GameManager : MonoBehaviour
             if (sceneReferences.dialogueCamRot != null) dialogueCamRot = sceneReferences.dialogueCamRot;
             if (sceneReferences.fadePanel != null) fadePanel = sceneReferences.fadePanel;
             if (sceneReferences.mapCamera != null) mapCamera = sceneReferences.mapCamera;
+            if (sceneReferences.eventSystem != null) eventSystem = sceneReferences.eventSystem;
             StartFade(0);
         }
         else
@@ -150,6 +163,7 @@ public class GameManager : MonoBehaviour
 
     public void StartFade(int desiredAlpha)
     {
+        fadePanel.gameObject.SetActive(true);
         goalAlpha = desiredAlpha;
         fading = true;
         faded = false;
@@ -167,9 +181,15 @@ public class GameManager : MonoBehaviour
         }
     }
     #region Game States Methods [move to other script?]
-    public void LoadScene(int sceneToLoad)
+    public void StartLoading(int sceneToLoad)
+    {
+        nextScene = sceneToLoad;
+        StartFade(1);
+    }
+     void LoadScene(int sceneToLoad)
     {
         SceneManager.LoadScene(sceneToLoad);
+        nextScene = -1;
     }
     public void ExitGame()
     {

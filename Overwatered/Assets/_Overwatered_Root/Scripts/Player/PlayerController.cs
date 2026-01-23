@@ -82,11 +82,8 @@ public class PlayerController : MonoBehaviour
     #endregion
     private void Start()
     {
-        if (GameManager.Instance.gameData.gameHasStarted)
-        {
-            GameManager.Instance.gameData.lastPlayerPos = gameObject.transform.position;
-            GameManager.Instance.gameData.lastPlayerRot = gameObject.transform.rotation;
-        }
+            StatsUpdater();
+        //GameManager.Instance.StartFade(0);
     }
     void Update()
     {
@@ -400,7 +397,7 @@ public class PlayerController : MonoBehaviour
                 gameObject.transform.position = shorePoint;
                 gameObject.transform.parent = null; 
                 isInsideBoat = false;
-                MinigameUpdater.Instance.SaveBoatPos(boatController.gameObject.transform);
+                //MinigameUpdater.Instance.SaveBoatPos(boatController.gameObject.transform);
                 if (anim.GetBool("inBoat"))
                 {
                     anim.SetBool("inBoat", false);
@@ -449,7 +446,7 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed) isSprinting = true; //gestionar que deje de sprintear al dejar de moverse
         //cambiar input actions para que sea doble toque de tecla/(movimiento rápido/apretar joystick)
     }
-    public void OnMenuInteraction(InputAction.CallbackContext ctx)
+    public void OnMenuInteraction(InputAction.CallbackContext ctx) //pasar al gameManager
     {
         if (ctx.performed)
         {

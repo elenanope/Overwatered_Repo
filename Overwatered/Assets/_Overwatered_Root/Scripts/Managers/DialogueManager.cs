@@ -74,22 +74,25 @@ public class DialogueManager : MonoBehaviour
 
     public void OnInfo(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && !GameManager.Instance.menuOpened)
         {
             if(!areaDialogue || (areaDialogue && playerInRange))
-            if(!didDialogueStart)
             {
-                StartDialogue();
-            }
-            else if(dialogueText.maxVisibleCharacters == dialogueLines[lineIndex].Length)
-            {
-                NextDialogueLine();
-            }
-            else
-            {
-                StopAllCoroutines();
-                dialogueText.maxVisibleCharacters = dialogueLines[lineIndex].Length;
-                //dialogueText.text = dialogueLines[lineIndex];
+                if (!didDialogueStart)
+                {
+                    StartDialogue();
+                }
+                else if (dialogueText.maxVisibleCharacters == dialogueLines[lineIndex].Length)
+                {
+                    NextDialogueLine();
+                }
+                else
+                {
+                    StopAllCoroutines();
+                    dialogueText.maxVisibleCharacters = dialogueLines[lineIndex].Length;
+                    //dialogueText.text = dialogueLines[lineIndex];
+                }
+
             }
         }
     }

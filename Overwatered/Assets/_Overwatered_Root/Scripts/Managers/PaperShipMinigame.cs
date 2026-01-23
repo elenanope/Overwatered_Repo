@@ -302,17 +302,21 @@ public class PaperShipMinigame : MonoBehaviour
     {
         minigameState = 2;
         endResult = winCondition;
+        GameManager.Instance.menuOpened = true;
         if(winCondition == 2)
         {
             winPanel.SetActive(true);
+            GameManager.Instance.eventSystem.SetSelectedGameObject(winPanel.transform.GetChild(1).gameObject);
         }
         else if(winCondition == 1)
         {
             drawPanel.SetActive(true);
+            GameManager.Instance.eventSystem.SetSelectedGameObject(drawPanel.transform.GetChild(1).gameObject);
         }
         else
         {
             losePanel.SetActive(true);
+            GameManager.Instance.eventSystem.SetSelectedGameObject(losePanel.transform.GetChild(1).gameObject);
         }
         minigameState = 3;
         //StartCoroutine(FinishMinigame());

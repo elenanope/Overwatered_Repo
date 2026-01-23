@@ -2566,6 +2566,7 @@ MonoBehaviour:
   dialogueCamRot: {fileID: 0}
   mapCamera: {fileID: 0}
   fadePanel: {fileID: 641564218}
+  eventSystem: {fileID: 323465582}
 --- !u!4 &325222717
 Transform:
   m_ObjectHideFlags: 0
@@ -5805,6 +5806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueMark: {fileID: 717929700}
+  areaDialogue: 0
   dialoguePanel: {fileID: 877428069}
   dialogueText: {fileID: 1317635496}
   dialogueLines:

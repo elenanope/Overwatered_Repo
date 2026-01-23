@@ -1,5 +1,6 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class SceneReferences : MonoBehaviour
@@ -16,9 +17,14 @@ public class SceneReferences : MonoBehaviour
     public CinemachineRotationComposer dialogueCamRot;
     public Transform mapCamera;
     public Image fadePanel;
+    public EventSystem eventSystem;
 
-    private void Start()
+    private void Awake()
     {
         GameManager.Instance.FindReferences();
+    }
+    private void Start()
+    {
+        GameManager.Instance.StartFade(0);
     }
 }
