@@ -6,23 +6,19 @@ using UnityEngine.InputSystem;
 public class DialogueManager : MonoBehaviour
 {
     [Header("Dialogue Manager")]
-    [SerializeField] GameObject dialogueMark = null;
-    //[SerializeField] DialogueActivator dialoguerInfo = null;
-
-    bool playerInRange;
-    [Tooltip("Mark this if your dialogue appears only when player is in range")]
-    [SerializeField] bool areaDialogue;
 
     [SerializeField] GameObject dialoguePanel;
     //[SerializeField] GameObject dialogueSubpanel = null;
     //[SerializeField] TMP_Text dialoguerName = null;
     [SerializeField] TMP_Text dialogueText;
-    [SerializeField, TextArea(4, 6)] string[] dialogueLines;
+    [Tooltip("Do not reference, unless it is a minigame/is not area activated")]
+    public DialogueActivator currentDialoguer;
 
     float typingTime;
     bool didDialogueStart;
     int lineIndex;
     public bool dialogueOver;
+    bool customLine;
 
     //falta impedir que se muevan
 
@@ -37,7 +33,7 @@ public class DialogueManager : MonoBehaviour
         didDialogueStart = true;
         dialogueOver = false;
         dialoguePanel.SetActive(true);
-        dialogueMark.SetActive(false);
+        if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(false);
         lineIndex = 0;
         //show emotion and name of the person
         StartCoroutine(ShowLine());
@@ -45,26 +41,40 @@ public class DialogueManager : MonoBehaviour
     private void NextDialogueLine()
     {
         lineIndex++;
-        if(lineIndex < dialogueLines.Length)
+        if(lineIndex < currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines.Length)
         {
+            //mostrar emoción correspondiente
+
+            //si el objeto para el nombre no es null, sale el nombre 
             StartCoroutine(ShowLine());
         }
         else
         {
-            didDialogueStart = false;
-            dialoguePanel.SetActive(false);
-            dialogueMark.SetActive(true);
-            dialogueOver = true;
+            if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueStopper)
+            {
+                didDialogueStart = false;
+                dialoguePanel.SetActive(false);
+                if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
+                dialogueOver = true;
+                if (currentDialoguer.dialogueInfo.Length > 1 && currentDialoguer.dialogueInfo.Length < currentDialoguer.lineToRead) currentDialoguer.lineToRead++; // o esto tmb se cambiará por NPC AI
+                if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame)
+                {
+                    StartCoroutine(MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference));
+                }
+            }
+            else
+            {
+                //sigue a siguiente linea como si fuera otro diálogo
+            }
         }
     }
-
     private IEnumerator ShowLine()
     {
         dialogueText.text = string.Empty;
         dialogueText.maxVisibleCharacters = 0;
-        dialogueText.text = dialogueLines[lineIndex];
+        dialogueText.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines[lineIndex];
 
-        foreach(char ch in dialogueLines[lineIndex])
+        foreach(char ch in currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines[lineIndex])
         {
             //dialogueText.text += ch;
             dialogueText.maxVisibleCharacters ++;
@@ -72,85 +82,28 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void OnInfo(InputAction.CallbackContext ctx)
+    public void DialogueCall()
     {
-        if (ctx.performed && !GameManager.Instance.menuOpened)
-        {
-            if(!areaDialogue || (areaDialogue && playerInRange))
-            {
-                if (!didDialogueStart)
-                {
-                    StartDialogue();
-                }
-                else if (dialogueText.maxVisibleCharacters == dialogueLines[lineIndex].Length)
-                {
-                    NextDialogueLine();
-                }
-                else
-                {
-                    StopAllCoroutines();
-                    dialogueText.maxVisibleCharacters = dialogueLines[lineIndex].Length;
-                    //dialogueText.text = dialogueLines[lineIndex];
-                }
-
-            }
-        }
-    }
-
-    /*#region Dialogue Management
-    void StartDialogue()
-    {
-        didDialogueStart = true;
-        dialoguePanel.SetActive(true);
-        StartCoroutine(ShowLine());
-    }
-
-    void NextDialogueLine()
-    {
-        didDialogueStart = false;
-        dialogueOver = true;
-        dialoguePanel.SetActive(false);
-    }
-
-    private IEnumerator ShowLine()
-    {
-        dialogueText.text = string.Empty;
-
-        foreach (char ch in dialogueLines[lineIndex])
-        {
-            dialogueText.text += ch;
-            yield return new WaitForSecondsRealtime(typingTime);
-        }
-        if (lineIndex < 5 || lineIndex == 6) yield return new WaitForSecondsRealtime(2);
-        else yield return new WaitForSecondsRealtime(1);
-        NextDialogueLine();
-    }
-
-    public void Dialogue()
-    {
+        Debug.Log("Dialogue 2");
         if (!didDialogueStart)
         {
-            StopCoroutine(ShowLine());
             StartDialogue();
+            Debug.Log("Start");
+        }
+        else if (dialogueText.maxVisibleCharacters == currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines[lineIndex].Length)
+        {
+            NextDialogueLine();
+            Debug.Log("Next");
         }
         else
         {
-            StopCoroutine(ShowLine());
-            StartDialogue();
+            StopAllCoroutines();
+            Debug.Log("End");
+
+            //else se queda en esa útlima/ se resetea a 0
+            dialogueText.maxVisibleCharacters = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines[lineIndex].Length;
+            //dialogueText.text = dialogueLines[lineIndex];
         }
     }
-    #endregion
-    public void ShowNotification(bool isPositive)
-    {
-        Debug.Log("se llega aqui");
-        //StartCoroutine(ActivateText(isPositive));
-    }
-    /*IEnumerator ActivateText(bool isPositive)
-    {
-        if (isPositive) pointsText.SetActive(true);
-        else strikesText.SetActive(true);
-        yield return new WaitForSeconds(2);
-        if (isPositive) pointsText.SetActive(false);
-        else strikesText.SetActive(false);
-    }*/
+
 }

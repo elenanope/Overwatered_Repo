@@ -15,9 +15,10 @@ MonoBehaviour:
   gameHasStarted: 1
   initialPlayerPos: {x: -6.3, y: 2.64, z: -31}
   initialPlayerRot: {x: 0, y: 0, z: 0, w: 0}
-  lastPlayerPos: {x: 1.6408747, y: 1.8174955, z: 30.98789}
-  lastPlayerRot: {x: -7.638575e-24, y: -0.53754264, z: -9.4555506e-23, w: 0.8432366}
-  foodLeft: 113.094894
-  waterLeft: 43.095173
-  lastBoatPos: {x: 11.888924, y: 1.1358572, z: 27.719988}
-  lastBoatRot: {x: -0.00020966347, y: -0.8872119, z: -0.0025961064, w: 0.4613548}
+  lastPlayerPos: {x: 1.7023098, y: 1.8174951, z: 30.991806}
+  lastPlayerRot: {x: -0, y: 0.049506336, z: -0, w: -0.9987738}
+  foodLeft: 63.487164
+  waterLeft: 36.19105
+  lastBoatPos: {x: 11.89393, y: 1.1399231, z: 27.712458}
+  lastBoatRot: {x: -0.00020868258, y: -0.88246596, z: -0.0025825186, w: 0.47036916}
+  lastActivator: {fileID: 0}

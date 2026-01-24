@@ -78,6 +78,7 @@ GameObject:
   - component: {fileID: 7379920930478948665}
   - component: {fileID: 4398619810024575755}
   - component: {fileID: 4407899757688487212}
+  - component: {fileID: -2820380880347564962}
   m_Layer: 0
   m_Name: PlayerBody
   m_TagString: Untagged
@@ -359,8 +360,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f48715cd48b9e3e449ad46d5bf1b350b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  walkDust: {fileID: 0}
   waterLeft: 100
+  maxWater: 150
   foodLeft: 100
+  maxFood: 150
   movementMult: 1
   waterBarFill: {fileID: 0}
   foodBarFill: {fileID: 0}
@@ -393,6 +397,7 @@ MonoBehaviour:
   anim: {fileID: 5997161335495516209}
   animatorL: {fileID: 2856140757158603693}
   animatorR: {fileID: 1083576004524455062}
+  camCompass: {fileID: 0}
   playerSpeaker: {fileID: 8787189752811386695}
   camTransform: {fileID: 0}
   hasTurned: 0
@@ -454,6 +459,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &-2820380880347564962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2716050805363498969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1794fed97afc61a40bcdc156e81b6fdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &556519083757235734
 PrefabInstance:
   m_ObjectHideFlags: 0

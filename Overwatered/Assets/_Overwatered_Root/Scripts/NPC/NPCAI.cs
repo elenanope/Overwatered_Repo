@@ -23,10 +23,9 @@ public class NPCAI : MonoBehaviour
             {
                 isInDialogue = true;
                 Debug.Log("entering");
-                StartCoroutine(MinigameManager.Instance.EnterMinigame(2, false, gameObject.transform));//poner luego otra opción si sí tiene papel especial
+                //StartCoroutine(MinigameManager.Instance.EnterMinigame(2, false, gameObject.GetComponent<DialogueActivator>()));//poner luego otra opción si sí tiene papel especial
                 MinigameUpdater.Instance.SavePos(playerTransform);
             }
         }
     }
-
 }

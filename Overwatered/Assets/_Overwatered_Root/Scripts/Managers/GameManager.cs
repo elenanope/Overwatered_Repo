@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
 
     public SceneReferences sceneReferences;
     public SO_GameData gameData;
+    public DialogueManager dialogueManager;
+    public NPCManager npcManager;
 
     public ThirdPersonCamController camController;
     //poner los paneles en el player para que puedan ser privados?
@@ -47,6 +49,7 @@ public class GameManager : MonoBehaviour
     public float fadeTime = 2f;
     public bool faded;
     public bool fading;
+    public bool exitingGame;
     int nextScene = -1;
     int goalAlpha;
 
@@ -153,6 +156,8 @@ public class GameManager : MonoBehaviour
             if (sceneReferences.fadePanel != null) fadePanel = sceneReferences.fadePanel;
             if (sceneReferences.mapCamera != null) mapCamera = sceneReferences.mapCamera;
             if (sceneReferences.eventSystem != null) eventSystem = sceneReferences.eventSystem;
+            if (sceneReferences.dialogueManager != null) dialogueManager = sceneReferences.dialogueManager;
+            if (sceneReferences.npcManager != null) npcManager = sceneReferences.npcManager;
             StartFade(0);
         }
         else

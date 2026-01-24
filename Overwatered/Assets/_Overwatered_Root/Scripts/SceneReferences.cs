@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class SceneReferences : MonoBehaviour
 {
-    public ThirdPersonCamController camController;
+    public ThirdPersonCamController camController; 
+    public DialogueManager dialogueManager; 
+    public NPCManager npcManager;
     //poner los paneles en el player para que puedan ser privados?
     public GameObject winPanel;
     public GameObject losePanel;

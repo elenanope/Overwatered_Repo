@@ -12,4 +12,5 @@ public class SO_GameData : ScriptableObject
     public float waterLeft;
     public Vector3 lastBoatPos;
     public Quaternion lastBoatRot;
+    public int lastNPCNumber;
 }
