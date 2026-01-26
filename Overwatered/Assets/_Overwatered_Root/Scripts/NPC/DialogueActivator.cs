@@ -6,7 +6,11 @@ public class DialogueActivator : MonoBehaviour
     [System.Serializable]
     public struct DialogueLine
     {
-        [TextArea(4, 6)] public string[] dialogueLines;
+        [Tooltip("These will not be randomized")]
+        [TextArea(4, 6)] public string[] dialogueLinesDefault;
+        //Click and maintain to start breathing in!
+        //When you have enough air, release it 
+        //Lastly, beware the direction of the wind!!
         public GameObject dialogueMark;
         public bool dialogueStopper;
         //[SerializeField] DialogueActivator dialoguerInfo = null;
@@ -39,6 +43,13 @@ public class DialogueActivator : MonoBehaviour
     }
     public int lineToRead; //si tiene que seguir un orden, sino, que desde otro sitio se declare la randomness
     public int activatorReference; //número de este activator en el manager NPC
+    [Tooltip("These will be randomized, dialogue lines default will be ignored")]
+    public bool isRandom;
+    [TextArea(4, 6)] public string[] greetings;
+    [TextArea(4, 6)] public string[] funFacts;
+    [TextArea(4, 6)] public string[] goodbyes;
+    [TextArea(4, 6)] public string[] positive;
+    [TextArea(4, 6)] public string[] negative;
     public DialogueLine[] dialogueInfo;
     //public dialogueLineIndex para marcar por qué número del array dialogueInfo va
     //por si hay pausas como entrar/salir del minijuego

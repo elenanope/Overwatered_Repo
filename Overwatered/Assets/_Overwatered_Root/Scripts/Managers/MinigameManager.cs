@@ -45,7 +45,7 @@ public class MinigameManager : MonoBehaviour
     
     public IEnumerator ExitMinigame(int endResult) // + int gameNumber?
     {
-        lastMinigameResult = endResult;
+        GameManager.Instance.gameOutcome = endResult;
         isInMinigame = false;
         GameManager.Instance.menuOpened = false;
         GameManager.Instance.StartFade(1);

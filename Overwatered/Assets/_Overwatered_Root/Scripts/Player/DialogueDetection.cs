@@ -16,7 +16,11 @@ public class DialogueDetection : MonoBehaviour
         {
             GameManager.Instance.dialogueManager.currentDialoguer = GameManager.Instance.npcManager.npcDialogueActivator[GameManager.Instance.gameData.lastNPCNumber];
             //se da por hecho que esto solo se llama una vez (quien tenga ese activator)
-            GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 1;
+            // o lose, 1 empate, 2 ganar
+            if (GameManager.Instance.gameOutcome == 0) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 1;
+            else if (GameManager.Instance.gameOutcome == 1) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 2;
+            else if (GameManager.Instance.gameOutcome == 2) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 3;
+            GameManager.Instance.ChangeCamera();
             manager.DialogueCall();
         }
     }
@@ -42,11 +46,8 @@ public class DialogueDetection : MonoBehaviour
     {
         if (ctx.performed && !GameManager.Instance.menuOpened && npcActivator != null)
         {
-            Debug.Log("Dialogue Call0");
             if (!npcActivator.dialogueInfo[npcActivator.lineToRead].areaDialogue || (npcActivator.dialogueInfo[npcActivator.lineToRead].areaDialogue && playerInRange))
             {
-
-                Debug.Log("Dialogue Call1");
                 manager.DialogueCall();
             }
         }

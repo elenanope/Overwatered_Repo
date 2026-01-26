@@ -17,8 +17,11 @@ public class DialogueManager : MonoBehaviour
     float typingTime;
     bool didDialogueStart;
     int lineIndex;
+    int dialogueIndex; //0 greeting, 1 mainpart, 2 goodbye
     public bool dialogueOver;
-    bool customLine;
+    bool randomized;
+    int randomNumber;
+    string textToRead;
 
     //falta impedir que se muevan
 
@@ -30,80 +33,136 @@ public class DialogueManager : MonoBehaviour
 
     private void StartDialogue()
     {
+        GameManager.Instance.playerInDialogue = true;
+        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue) GameManager.Instance.ChangeCamera();
+        GameManager.Instance.SetNPCTarget(currentDialoguer.gameObject.transform);
         didDialogueStart = true;
         dialogueOver = false;
         dialoguePanel.SetActive(true);
         if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(false);
-        lineIndex = 0;
+        lineIndex = dialogueIndex = 0;
         //show emotion and name of the person
-        StartCoroutine(ShowLine());
+        ShowLine();
     }
     private void NextDialogueLine()
     {
         lineIndex++;
-        if(lineIndex < currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines.Length)
+        dialogueIndex++;
+        if (!randomized)
         {
-            //mostrar emoción correspondiente
+            if (lineIndex < currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault.Length)
+            {
+                //mostrar emoción correspondiente
 
-            //si el objeto para el nombre no es null, sale el nombre 
-            StartCoroutine(ShowLine());
+                //si el objeto para el nombre no es null, sale el nombre 
+                ShowLine();
+            }
+            else
+            {
+                if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueStopper)
+                {
+                    didDialogueStart = false;
+                    dialoguePanel.SetActive(false);
+                    if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
+                    dialogueOver = true;
+                    if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame)
+                    {
+                        StartCoroutine(MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference));
+                    }
+                    if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue && !currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame) GameManager.Instance.ChangeCamera();
+                    if (currentDialoguer.dialogueInfo.Length > 1 && currentDialoguer.lineToRead < currentDialoguer.dialogueInfo.Length) currentDialoguer.lineToRead++; // o esto tmb se cambiará por NPC AI
+                    if (GameManager.Instance.gameOutcome >= 0) currentDialoguer.lineToRead = 0;
+                    GameManager.Instance.playerInDialogue = false;
+                }
+                else
+                {
+                    //sigue a siguiente linea como si fuera otro diálogo
+                }
+            }
         }
         else
         {
-            if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueStopper)
+            //if(dialogueIndex == 0 && lineIndex < currentDialoguer.greetings[randomNumber].Length))
+            if(dialogueIndex >= 3)
             {
                 didDialogueStart = false;
                 dialoguePanel.SetActive(false);
                 if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
                 dialogueOver = true;
-                if (currentDialoguer.dialogueInfo.Length > 1 && currentDialoguer.dialogueInfo.Length < currentDialoguer.lineToRead) currentDialoguer.lineToRead++; // o esto tmb se cambiará por NPC AI
-                if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame)
-                {
-                    StartCoroutine(MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference));
-                }
+                if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue && !currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame) GameManager.Instance.ChangeCamera();
+                GameManager.Instance.playerInDialogue = false;
             }
             else
             {
-                //sigue a siguiente linea como si fuera otro diálogo
+                ShowLine();
+
             }
+
         }
     }
-    private IEnumerator ShowLine()
+    private void ShowLine()
     {
         dialogueText.text = string.Empty;
         dialogueText.maxVisibleCharacters = 0;
-        dialogueText.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines[lineIndex];
-
-        foreach(char ch in currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines[lineIndex])
+        if(randomized)
         {
-            //dialogueText.text += ch;
-            dialogueText.maxVisibleCharacters ++;
+            if(dialogueIndex == 0) randomNumber = Random.Range(0, currentDialoguer.greetings.Length);
+            else if(dialogueIndex == 1) randomNumber = Random.Range(0, currentDialoguer.funFacts.Length);
+            else if(dialogueIndex == 2) randomNumber = Random.Range(0, currentDialoguer.goodbyes.Length);
+            if (dialogueIndex == 0) textToRead = currentDialoguer.greetings[randomNumber];
+            else if (dialogueIndex == 1) textToRead = currentDialoguer.funFacts[randomNumber];
+            else if (dialogueIndex == 2) textToRead = currentDialoguer.goodbyes[randomNumber];
+        }
+        else
+        {
+            textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
+        }
+
+        dialogueText.text = textToRead;
+        StartCoroutine(ShowingLine());
+    }
+    IEnumerator ShowingLine()
+    {
+        foreach (char ch in textToRead)
+        {
+            dialogueText.maxVisibleCharacters++;
             yield return new WaitForSeconds(typingTime);
         }
     }
-
     public void DialogueCall()
     {
-        Debug.Log("Dialogue 2");
+        DialoguerOrder();
+        //Debug.Log("Dialogue 2");
         if (!didDialogueStart)
         {
             StartDialogue();
-            Debug.Log("Start");
+            //Debug.Log("Start");
         }
-        else if (dialogueText.maxVisibleCharacters == currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines[lineIndex].Length)
+        else if ( dialogueText.maxVisibleCharacters == textToRead.Length)
         {
             NextDialogueLine();
-            Debug.Log("Next");
+            //Debug.Log("Next");
         }
         else
         {
             StopAllCoroutines();
-            Debug.Log("End");
+            //Debug.Log("End");
 
             //else se queda en esa útlima/ se resetea a 0
-            dialogueText.maxVisibleCharacters = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLines[lineIndex].Length;
+            dialogueText.maxVisibleCharacters = textToRead.Length;
             //dialogueText.text = dialogueLines[lineIndex];
         }
     }
 
+    void DialoguerOrder()
+    {
+        if(currentDialoguer.isRandom)
+        {
+            randomized = true;
+        }
+        else
+        {
+            randomized = false;
+        }
+    }
 }

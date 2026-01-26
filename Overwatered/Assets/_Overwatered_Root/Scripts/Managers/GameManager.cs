@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     public EventSystem eventSystem;
     public Transform mapCamera;
     public bool menuOpened;
+    public bool playerInDialogue;
     bool overworldCamActive = true;
     bool charactersHidden = false;
     float actualXOffset;
@@ -50,6 +51,7 @@ public class GameManager : MonoBehaviour
     public bool faded;
     public bool fading;
     public bool exitingGame;
+    public int gameOutcome = -1;
     int nextScene = -1;
     int goalAlpha;
 
@@ -129,8 +131,8 @@ public class GameManager : MonoBehaviour
                 //dialogueCamRot.TargetOffset.x = -3f;
                 //dialogueCamRot.TargetOffset.z = -5f;
             }
-            Debug.Log("NPC está a " + NPCToCam.x);
-            Debug.Log("Player está a " + PlayerToCam.x);
+            //Debug.Log("NPC está a " + NPCToCam.x);
+            //Debug.Log("Player está a " + PlayerToCam.x);
             overworldCamActive = !overworldCamActive;
             yield break;
         }

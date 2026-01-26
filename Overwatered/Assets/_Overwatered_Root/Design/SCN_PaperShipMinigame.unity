@@ -5827,10 +5827,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineToRead: 0
   activatorReference: 0
+  isRandom: 0
+  greetings: []
+  funFacts: []
+  goodbyes: []
+  positive: []
+  negative: []
   dialogueInfo:
-  - dialogueLines:
-    - Click and maintain to start breathing in!
-    - 'When you have enough air, release it '
+  - dialogueLinesDefault:
+    - "\rClick and maintain to start breathing in!"
+    - "\rWhen you have enough air, release it "
     - Lastly, beware the direction of the wind!!
     dialogueMark: {fileID: 717929700}
     dialogueStopper: 1

@@ -158,7 +158,7 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (!playerPaused)
+        if (!playerPaused || !GameManager.Instance.playerInDialogue)
         {
             if (!isInsideBoat)
             {
@@ -366,8 +366,6 @@ public class PlayerController : MonoBehaviour
             if (colTouched.Length > 0) //aqui sale algun error
             {
                 colTouched[0].GetComponent<NPCAI>().Talk(gameObject.transform);
-                GameManager.Instance.ChangeCamera();
-                GameManager.Instance.SetNPCTarget(colTouched[0].gameObject.transform);
             }
         }
         else
