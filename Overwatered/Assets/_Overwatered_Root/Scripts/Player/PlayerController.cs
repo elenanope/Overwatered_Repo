@@ -45,8 +45,8 @@ public class PlayerController : MonoBehaviour
     bool isGrounded;
 
     //Input Variables
-    bool playerPaused;//quitar esta o la siguiente? o no?
-    bool menuOpened;
+    [SerializeField] GameObject menuCamera;
+    [SerializeField]bool playerPaused;//quitar esta o la siguiente? o no?
     bool interacting;
     bool isInsideBoat = false;
     [SerializeField] bool isNearBoat;
@@ -173,7 +173,7 @@ public class PlayerController : MonoBehaviour
                     animatorL.gameObject.SetActive(true);
                     animatorR.gameObject.SetActive(true);
                 }
-                if (anim.GetInteger("playerState") != 0) anim.SetInteger("playerState", 0);
+                if (anim.GetInteger("playerState") > 0) anim.SetInteger("playerState", 0);
                 if(canRow)BoatMovement();
             }
             //poner que la siga a la camara en vez de al personaje
@@ -224,7 +224,7 @@ public class PlayerController : MonoBehaviour
         {
             movementMult = 1f;
             isSprinting = false;
-            if(anim.GetInteger("playerState") != 0)
+            if(anim.GetInteger("playerState") >= 0)
             {
                 timeSinceMove = 0;
                 anim.SetInteger("playerState", 0);
@@ -437,39 +437,39 @@ public class PlayerController : MonoBehaviour
 
     public void OnInteract(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed) interacting = true;
+        if (ctx.performed && !playerPaused) interacting = true;
     }
     public void OnSprint(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed) isSprinting = true; //gestionar que deje de sprintear al dejar de moverse
+        if (ctx.performed && !playerPaused) isSprinting = true; //gestionar que deje de sprintear al dejar de moverse
         //cambiar input actions para que sea doble toque de tecla/(movimiento rápido/apretar joystick)
     }
     public void OnMenuInteraction(InputAction.CallbackContext ctx) //pasar al gameManager
     {
         if (ctx.performed)
         {
-            if(menuOpened)
+            if(GameManager.Instance.menuOpened)
             {
-                anim.SetInteger("playerState", -1);
-                GameManager.Instance.inventoryPanel.SetActive(false);
-                GameManager.Instance.cinemachineCamera.enabled = true;
-                GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = true;
-                GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = true;
-                //poner que mínimo la cámara lerpee hasta su posición actual (o que se mantenga en esa posición aunque muevas el ratón)
-                playerPaused = false;
-                //quitar animación pensativa
+                anim.SetInteger("playerState", 0);
+
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
             else
             {
-                anim.SetInteger("playerState", 0);
-                GameManager.Instance.inventoryPanel.SetActive(true);
-                GameManager.Instance.cinemachineCamera.enabled = false;
-                GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = false;
-                GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = false;
-                playerPaused = true;
-                //poner animación pensativa
+
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+                anim.SetInteger("playerState", -1);
             }
-            menuOpened = !menuOpened;
+            GameManager.Instance.inventoryPanel.SetActive(!GameManager.Instance.menuOpened);
+            GameManager.Instance.SetNPCTarget(null);
+            menuCamera.SetActive(!GameManager.Instance.menuOpened);
+            GameManager.Instance.cinemachineCamera.enabled = GameManager.Instance.menuOpened;
+            GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = GameManager.Instance.menuOpened;
+            GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = GameManager.Instance.menuOpened;
+            playerPaused = !GameManager.Instance.menuOpened;
+            GameManager.Instance.menuOpened = !GameManager.Instance.menuOpened;
         }
     }
 

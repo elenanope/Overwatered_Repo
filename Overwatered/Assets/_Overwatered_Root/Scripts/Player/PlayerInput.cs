@@ -299,9 +299,18 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             ""id"": ""ee0c921b-d235-4231-8663-d1f4ccfc8561"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
+                    ""name"": ""Select"",
                     ""type"": ""Button"",
                     ""id"": ""62b19e04-0062-45a0-a722-a07cecf51985"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SelectOptions"",
+                    ""type"": ""Button"",
+                    ""id"": ""b9a7af59-af68-4f2f-bbaf-48507418f80e"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -312,11 +321,22 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""e76b3913-4a8c-41c1-ab02-f2d77a814460"",
-                    ""path"": """",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""acec55ce-be85-4f52-b1a5-331d0b05382f"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelectOptions"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -435,7 +455,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
-        m_UI_Newaction = m_UI.FindAction("New action", throwIfNotFound: true);
+        m_UI_Select = m_UI.FindAction("Select", throwIfNotFound: true);
+        m_UI_SelectOptions = m_UI.FindAction("SelectOptions", throwIfNotFound: true);
         // CameraControls
         m_CameraControls = asset.FindActionMap("CameraControls", throwIfNotFound: true);
         m_CameraControls_CameraLook = m_CameraControls.FindAction("CameraLook", throwIfNotFound: true);
@@ -663,7 +684,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     // UI
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
-    private readonly InputAction m_UI_Newaction;
+    private readonly InputAction m_UI_Select;
+    private readonly InputAction m_UI_SelectOptions;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -676,9 +698,13 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// </summary>
         public UIActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "UI/Newaction".
+        /// Provides access to the underlying input action "UI/Select".
         /// </summary>
-        public InputAction @Newaction => m_Wrapper.m_UI_Newaction;
+        public InputAction @Select => m_Wrapper.m_UI_Select;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/SelectOptions".
+        /// </summary>
+        public InputAction @SelectOptions => m_Wrapper.m_UI_SelectOptions;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -705,9 +731,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_UIActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_UIActionsCallbackInterfaces.Add(instance);
-            @Newaction.started += instance.OnNewaction;
-            @Newaction.performed += instance.OnNewaction;
-            @Newaction.canceled += instance.OnNewaction;
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
+            @SelectOptions.started += instance.OnSelectOptions;
+            @SelectOptions.performed += instance.OnSelectOptions;
+            @SelectOptions.canceled += instance.OnSelectOptions;
         }
 
         /// <summary>
@@ -719,9 +748,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UIActions" />
         private void UnregisterCallbacks(IUIActions instance)
         {
-            @Newaction.started -= instance.OnNewaction;
-            @Newaction.performed -= instance.OnNewaction;
-            @Newaction.canceled -= instance.OnNewaction;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
+            @SelectOptions.started -= instance.OnSelectOptions;
+            @SelectOptions.performed -= instance.OnSelectOptions;
+            @SelectOptions.canceled -= instance.OnSelectOptions;
         }
 
         /// <summary>
@@ -924,12 +956,19 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     public interface IUIActions
     {
         /// <summary>
-        /// Method invoked when associated input action "New action" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Select" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SelectOptions" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelectOptions(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "CameraControls" which allows adding and removing callbacks.

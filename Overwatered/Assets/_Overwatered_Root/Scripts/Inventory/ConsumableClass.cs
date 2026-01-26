@@ -9,9 +9,7 @@ public class ConsumableClass : ItemClass
     public int waterAdded;
     public enum ConsumableType
     {
-        water,
-        bread,
-        worm
+        food, liquid
     }
     public override ItemClass GetItem() { return this; }
     public override ToolClass GetTool() { return null; }

@@ -213,9 +213,18 @@
             "id": "ee0c921b-d235-4231-8663-d1f4ccfc8561",
             "actions": [
                 {
-                    "name": "New action",
+                    "name": "Select",
                     "type": "Button",
                     "id": "62b19e04-0062-45a0-a722-a07cecf51985",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SelectOptions",
+                    "type": "Button",
+                    "id": "b9a7af59-af68-4f2f-bbaf-48507418f80e",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -226,11 +235,22 @@
                 {
                     "name": "",
                     "id": "e76b3913-4a8c-41c1-ab02-f2d77a814460",
-                    "path": "",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "acec55ce-be85-4f52-b1a5-331d0b05382f",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectOptions",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

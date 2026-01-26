@@ -9,10 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90d67238b724bc44f85ae2ae0bf3b6da, type: 3}
-  m_Name: Hammer
+  m_Script: {fileID: 11500000, guid: b1d029d60d2319a488a254f11b6e2cbe, type: 3}
+  m_Name: Bread
   m_EditorClassIdentifier: 
-  itemName: Hammer
-  itemIcon: {fileID: 21300000, guid: 8285c51eebaf8a543bb6ffa0c2194616, type: 3}
+  itemName: Bread
+  itemIcon: {fileID: 21300000, guid: 0ae16a976f80ea24389481b8a92705c7, type: 3}
   itemDescription: 
-  toolType: 3
+  isStackable: 1
+  consumableType: 0
+  foodAdded: 3
+  waterAdded: 1

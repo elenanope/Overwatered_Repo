@@ -123,14 +123,18 @@ public class GameManager : MonoBehaviour
             cinemachineCamera.Priority = 0;
             yield return new WaitForSeconds(0.5f);
             //hacerlo midiendo distancias entre cámara y cada personaje
-            NPCToCam = cameraComponent.WorldToScreenPoint(targetGroup.Targets[0].Object.position);
             PlayerToCam = cameraComponent.WorldToScreenPoint(targetGroup.Targets[1].Object.position);
-            if(Mathf.Abs(NPCToCam.x - PlayerToCam.x) < 50f) //esto va raro
+            if (targetGroup.Targets[0].Object != null)
             {
-                charactersHidden = true;
-                //dialogueCamRot.TargetOffset.x = -3f;
-                //dialogueCamRot.TargetOffset.z = -5f;
+                NPCToCam = cameraComponent.WorldToScreenPoint(targetGroup.Targets[0].Object.position);
+                if (Mathf.Abs(NPCToCam.x - PlayerToCam.x) < 50f) //esto va raro
+                {
+                    charactersHidden = true;
+                    //dialogueCamRot.TargetOffset.x = -3f;
+                    //dialogueCamRot.TargetOffset.z = -5f;
+                }
             }
+                
             //Debug.Log("NPC está a " + NPCToCam.x);
             //Debug.Log("Player está a " + PlayerToCam.x);
             overworldCamActive = !overworldCamActive;
