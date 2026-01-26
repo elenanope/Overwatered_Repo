@@ -41961,12 +41961,12 @@ GameObject:
   - component: {fileID: 930350327}
   - component: {fileID: 930350329}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: GameManager---APAGAR---
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &930350327
 MonoBehaviour:
   m_ObjectHideFlags: 0

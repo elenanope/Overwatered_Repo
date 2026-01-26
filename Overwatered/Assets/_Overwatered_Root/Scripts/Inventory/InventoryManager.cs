@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
@@ -9,19 +11,56 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] ItemClass itemToRemove;
 
     [SerializeField] private GameObject slotHolder;
-    public List<SlotClass> items = new List<SlotClass>();
+    [SerializeField] private SlotClass[] startingItems;
+    private SlotClass[] items;
 
     GameObject[] slots;
-
+    private SlotClass movingSlot;
+    private SlotClass tempSlot;
+    private SlotClass originalSlot;
+    bool interacting;
+    [SerializeField]bool isMovingItem;
     private void Start()
     {
         slots = new GameObject[slotHolder.transform.childCount];
+        items = new SlotClass[slots.Length];
+
+        for (int i = 0; i < items.Length; i++)
+        {
+            items[i] = new SlotClass();
+        }
+
+        for (int i = 0; i < startingItems.Length; i++)
+        {
+            items[i] = startingItems[i];
+        }
+
         for (int i = 0; i < slotHolder.transform.childCount; i++) slots[i] = slotHolder.transform.GetChild(i).gameObject;
-        Add(itemToAdd);
+        Add(itemToAdd, 1);
         Remove(itemToRemove);
         RefreshUI();
     }
 
+    private void Update()
+    {
+        if(interacting)
+        {
+            interacting = false;
+            if(isMovingItem)
+            {
+                EndItemMove();
+            }
+            else
+            {
+                BeginItemMove();
+            }
+        }
+    }
+    public void OnTouch(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed) interacting = true;
+    }
+    #region Inventory Bases
     public void RefreshUI()
     {
         for(int i = 0; i < slots.Length; i++)
@@ -44,7 +83,7 @@ public class InventoryManager : MonoBehaviour
             }
         }
     }
-    public bool Add(ItemClass item)
+    public bool Add(ItemClass item, int quantity)
     {
         //items.Add(item);
 
@@ -53,7 +92,15 @@ public class InventoryManager : MonoBehaviour
         if (slot != null && slot.GetItem().isStackable) slot.AddQuantity(1); //añadir tmb límite de stack
         else
         {
-            if(items.Count < slots.Length)
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (items[i].GetItem() == null)//está vacío
+                {
+                    items[i].AddItem(item, quantity);
+                    break;
+                }
+            }
+            /*if(items.Count < slots.Length)
             {
                 items.Add(new SlotClass(item, 1));
             }
@@ -61,7 +108,7 @@ public class InventoryManager : MonoBehaviour
             {
                 Debug.Log("No te cabe!");
                 return false;
-            }
+            }*/
         }
 
         RefreshUI();
@@ -77,16 +124,16 @@ public class InventoryManager : MonoBehaviour
             temp.SubQuantity(1);
             else
             {
-                SlotClass slotToRemove = new SlotClass();
-                foreach (SlotClass slot in items)
+                int slotToRemoveIndex = 0;
+                for (int i = 0; i < items.Length; i++)
                 {
-                    if (slot.GetItem() == item)
+                    if (items[i].GetItem() == item)
                     {
-                        slotToRemove = slot;
+                        slotToRemoveIndex = i;
                         break;
                     }
                 }
-                    items.Remove(slotToRemove);
+                items[slotToRemoveIndex].Clear();
             }
         }
         else
@@ -99,10 +146,89 @@ public class InventoryManager : MonoBehaviour
 
     public SlotClass Contains(ItemClass item)
     {
-        foreach(SlotClass slot in items)
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i].GetItem() == item)//está vacío
+            {
+                return items[i];
+            }
+        }
+        return null;
+
+        /*foreach (SlotClass slot in items)
         {
             if(slot.GetItem() == item) return slot;
+        }*/
+    }
+#endregion
+    #region Moving Objects
+    private bool BeginItemMove()
+    {
+        originalSlot = GetClosestSlot();
+        if (originalSlot == null || originalSlot.GetItem() == null) return false;
+
+        movingSlot = new SlotClass(originalSlot);
+        originalSlot.Clear();
+        isMovingItem = true;
+        RefreshUI();
+        return true;
+    }
+    private bool EndItemMove()
+    {
+        tempSlot = GetClosestSlot();
+        //poner el originalSlot para que devuelva el objeto a donde estaba al principio
+
+        if (tempSlot == null)//si lo sueltas en un sitio random
+        {
+            originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
+            movingSlot.Clear();
+        }
+        else
+        {
+            if (tempSlot.GetItem() != null)
+            {
+                if (tempSlot.GetItem() == movingSlot.GetItem())
+                {
+                    if (tempSlot.GetItem().isStackable)
+                    {
+                        tempSlot.AddQuantity(movingSlot.GetQuantity());
+                        movingSlot.Clear();
+                    }
+                    else
+                    {
+                        //Add(movingSlot.GetItem(), movingSlot.GetQuantity());
+                        originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
+                        movingSlot.Clear();
+
+                        //return false;
+                    }
+                }
+                else//si no lo puedes dejar: vuelve al inicio
+                {
+                    originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
+                    movingSlot.Clear();
+                }
+            }
+            else
+            {
+                tempSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
+                movingSlot.Clear();
+            }
+        }
+
+        isMovingItem = false;
+        RefreshUI();
+        return true;
+    }
+
+    SlotClass GetClosestSlot()
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (Vector2.Distance(slots[i].transform.position, Mouse.current.position.ReadValue()) <= 32) //añadir opción tmb para mando?
+                return items[i];
         }
         return null;
     }
+    #endregion
 }
