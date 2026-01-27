@@ -17,6 +17,7 @@ MonoBehaviour:
   itemNumber: 0
   itemDescription: 
   isStackable: 1
+  itemPrefab: {fileID: 5039989895272105700, guid: 90c741e7a9184254697b449d8094fac9, type: 3}
   consumableType: 0
   foodAdded: 15
   waterAdded: 5

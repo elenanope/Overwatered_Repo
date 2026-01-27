@@ -159,7 +159,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.6017657, y: 0.0382874}
   m_AnchorMax: {x: 0.83757776, y: 0.469}
-  m_AnchoredPosition: {x: -2, y: -6.2880096}
+  m_AnchoredPosition: {x: -2, y: -6.288025}
   m_SizeDelta: {x: 2.515365, y: -8.544708}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &73860916
@@ -1518,7 +1518,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+
+    eee'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2672,6 +2674,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63a69e4cdfebb141878232102680583, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 0}
   itemToAdd: {fileID: 0}
   itemToRemove: {fileID: 0}
   itemCursor: {fileID: 1391758919}

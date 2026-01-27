@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEditorInternal.VersionControl.ListControl;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -18,7 +16,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject slotHolder;
     [SerializeField] private SlotClass[] startingItems;
     private SlotClass[] items;
-
+    //poner bool para ver si está lleno, en refreshUI
     GameObject[] slots;
     private SlotClass movingSlot;
     private SlotClass tempSlot;
@@ -173,9 +171,6 @@ public class InventoryManager : MonoBehaviour
     }
     public bool Add(ItemClass item, int quantity)
     {
-        //items.Add(item);
-
-
         SlotClass slot = Contains(item);
         if (slot != null && slot.GetItem().isStackable) slot.AddQuantity(1); //añadir tmb límite de stack
         else
@@ -188,15 +183,6 @@ public class InventoryManager : MonoBehaviour
                     break;
                 }
             }
-            /*if(items.Count < slots.Length)
-            {
-                items.Add(new SlotClass(item, 1));
-            }
-            else
-            {
-                Debug.Log("No te cabe!");
-                return false;
-            }*/
         }
 
         RefreshUI();
@@ -208,8 +194,7 @@ public class InventoryManager : MonoBehaviour
         SlotClass temp = Contains(item);
         if (temp != null)
         {
-            if(temp.GetQuantity() > 1)
-            temp.SubQuantity(1);
+            if(temp.GetQuantity() > 1) temp.SubQuantity(1);
             else
             {
                 int slotToRemoveIndex = 0;
@@ -234,19 +219,16 @@ public class InventoryManager : MonoBehaviour
 
     public SlotClass Contains(ItemClass item)
     {
-        for (int i = 0; i < items.Length; i++)
+        for (int i = 0; i < items.Length; i++)//sale error al recogerlos del suelo
         {
-            if (items[i].GetItem() == item)//está vacío
+            if (items[i].GetItem() == item && items[i].GetQuantity() < 3)//está vacío
             {
                 return items[i];
             }
         }
         return null;
 
-        /*foreach (SlotClass slot in items)
-        {
-            if(slot.GetItem() == item) return slot;
-        }*/
+        
     }
 #endregion
     #region Moving Objects

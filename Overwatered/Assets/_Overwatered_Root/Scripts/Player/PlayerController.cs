@@ -42,10 +42,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject groundCheck;
     [SerializeField] float groundCheckRadius = 0.3f;
     [SerializeField] LayerMask groundLayer;
-    bool isGrounded;
+    [SerializeField] bool isGrounded;
+
+    [SerializeField] bool willBeGrounded;
+    [SerializeField] GameObject futureGroundCheck;
+    [SerializeField] GameObject futureGroundCheck2;
+    [SerializeField] Vector3 futureGroundCheckBox;
 
     //Input Variables
     [SerializeField] GameObject menuCamera;
+    [SerializeField] InventoryManager inventoryManager;
+    //[SerializeField] GameObject movablePoint;
+    [SerializeField] ItemClass water;
+    [SerializeField] ItemClass bread;
     [SerializeField]bool playerPaused;//quitar esta o la siguiente? o no?
     bool interacting;
     bool isInsideBoat = false;
@@ -53,14 +62,11 @@ public class PlayerController : MonoBehaviour
     public bool isNearLand;
     [SerializeField] bool canRow = true;
     Vector2 moveInput;
-    //[SerializeField] SO_GameManager gameManager;
     [Header("Player References")]
     [SerializeField] Rigidbody playerRb;
     [SerializeField] Animator anim;
     [SerializeField] Animator animatorL;
     [SerializeField] Animator animatorR;
-    //[SerializeField] GameObject camHolder;
-    //[SerializeField] Camera cam;
     [SerializeField] RectTransform camCompass;
     [SerializeField] AudioSource playerSpeaker;
 
@@ -79,7 +85,13 @@ public class PlayerController : MonoBehaviour
     public Vector3 shorePoint;
     Quaternion mapRotation;
     bool maintainedRow;
+    GameObject consumable;//cambiar esto como pueda
     #endregion
+    private void Awake()
+    {
+        GameManager.Instance.inventoryPanel.SetActive(true);
+        GameManager.Instance.inventoryPanel.SetActive(false);
+    }
     private void Start()
     {
             StatsUpdater();
@@ -91,6 +103,18 @@ public class PlayerController : MonoBehaviour
         else playerPaused = false;
         //Groundcheck
         isGrounded = Physics.CheckSphere(groundCheck.transform.position, groundCheckRadius, groundLayer);
+        if(isSprinting)
+        {
+            if (Physics.CheckBox(futureGroundCheck.transform.position, futureGroundCheckBox * 0.2f, this.gameObject.transform.rotation, groundLayer) && Physics.CheckBox(futureGroundCheck2.transform.position, futureGroundCheckBox * 0.2f, this.gameObject.transform.rotation, groundLayer))
+                willBeGrounded = true;
+            else willBeGrounded = false;
+        }
+        else
+        {
+            if (Physics.CheckBox(futureGroundCheck.transform.position, futureGroundCheckBox, this.gameObject.transform.rotation, groundLayer) && Physics.CheckBox(futureGroundCheck2.transform.position, futureGroundCheckBox, this.gameObject.transform.rotation, groundLayer))
+                willBeGrounded = true;
+            else willBeGrounded = false;
+        }
         //Debug ray: visible only in Scene
         //Debug.DrawRay(camHolder.transform.position, camHolder.transform.forward * 100f, Color.red);
 
@@ -163,9 +187,16 @@ public class PlayerController : MonoBehaviour
         {
             foodLeft += foodAdded;
             anim.SetTrigger("eat");
+            consumable = Instantiate(bread.itemPrefab);
         }
-        else anim.SetTrigger("drink");
-        waterLeft += waterAdded;
+        else
+        {
+            anim.SetTrigger("drink");
+
+            consumable = Instantiate(water.itemPrefab);
+        }
+        consumable.SetActive(false);
+    waterLeft += waterAdded;
         timePassed = 0;
         //+ spawneo de objeto
         StartCoroutine(LunchTime());
@@ -173,8 +204,14 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator LunchTime()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1);
+        consumable.SetActive(true); //queda raro, pero sin hacer animacion, es decente, lo mejor sería poner un empty a la altura de lo que pone en la siguiente línea y animarlo
+        consumable.transform.parent = this.gameObject.transform.GetChild(0).transform;
+        consumable.transform.position = new Vector3(3.2539069652557375f, 3.0444953441619875f, 30.1272029876709f);
+        consumable.transform.rotation = new Quaternion(-0.41532638669013979f, 0.5759165287017822f, 0.5595366954803467f, 0.42748478055000307f);
+        yield return new WaitForSeconds(2);
         StatsUpdater();
+        consumable.SetActive(false);
         yield return new WaitForSeconds(1);
         GameManager.Instance.isEating = false;
     }
@@ -231,29 +268,44 @@ public class PlayerController : MonoBehaviour
         Vector3 targetVelocity = moveDirection;
         targetVelocity *= isSprinting ? sprintSpeed : speed;
 
-        // Calcular el cambio de velocidad (aceleración)
-        Vector3 velocityChange = (targetVelocity - currentVelocity);
-        velocityChange = new Vector3(velocityChange.x, 0, velocityChange.z);
-        velocityChange = Vector3.ClampMagnitude(velocityChange, maxForce);
-        if (moveInput.x != 0 || moveInput.y != 0)
+        if(willBeGrounded)
         {
-            if(movementMult != 2) movementMult = 2f;
-            if(!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
-            timeSinceMove = 0;
-            anim.SetInteger("playerState", isSprinting? 2 : 1);
+            // Calcular el cambio de velocidad (aceleración)
+            Vector3 velocityChange = (targetVelocity - currentVelocity);
+            velocityChange = new Vector3(velocityChange.x, 0, velocityChange.z);
+            velocityChange = Vector3.ClampMagnitude(velocityChange, maxForce);
+            if (moveInput.x != 0 || moveInput.y != 0)
+            {
+                if (movementMult != 2) movementMult = 2f;
+                if (!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
+                timeSinceMove = 0;
+                anim.SetInteger("playerState", isSprinting ? 2 : 1);
+            }
+            else
+            {
+                movementMult = 1f;
+                isSprinting = false;
+                if (anim.GetInteger("playerState") >= 0)
+                {
+                    timeSinceMove = 0;
+                    anim.SetInteger("playerState", 0);
+                }
+
+            }
+            playerRb.AddForce(velocityChange, ForceMode.VelocityChange);
         }
         else
         {
+            if(isGrounded)playerRb.linearVelocity = Vector3.zero;
             movementMult = 1f;
             isSprinting = false;
-            if(anim.GetInteger("playerState") >= 0)
+            if (anim.GetInteger("playerState") >= 0)
             {
                 timeSinceMove = 0;
                 anim.SetInteger("playerState", 0);
             }
-                
         }
-        playerRb.AddForce(velocityChange, ForceMode.VelocityChange);
+        
     }
     void BoatMovement()
     {
@@ -369,7 +421,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator ResetRow()
     {
         yield return new WaitForSeconds(0.1f); //se reproduce idle de row (transición entre barridos)
-        if (maintainedRow) canRow = true;
+        canRow = true;
         yield break;
     }
     void Interact()
@@ -379,12 +431,22 @@ public class PlayerController : MonoBehaviour
             Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);//transforma el offset local a global
             Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
             foreach (Collider col in colTouched)
-            {
+            {//si no está lleno el inventario
+                if(col.gameObject.name == "SM_Bread")
+                {
+                    col.gameObject.SetActive(false);
+                    inventoryManager.Add(bread, 1);
+                    break;
+                }
+                else if(col.gameObject.name == "SM_Water")  
+                {
+                    col.gameObject.SetActive(false);
+                    inventoryManager.Add(water, 1);
+                    break;
+                }
                 Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
-                //col.SendMessage("AddDamage");// creo que trygetcomponent es mejor opción
             }
             colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
-            //if(Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer))
             if (colTouched.Length > 0) //aqui sale algun error
             {
                 colTouched[0].GetComponent<NPCAI>().Talk(gameObject.transform);
@@ -500,6 +562,8 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);
         Gizmos.DrawCube(worldOffset, interactCubeScale);
+        Gizmos.DrawCube(futureGroundCheck.transform.position, futureGroundCheckBox );
+        Gizmos.DrawCube(futureGroundCheck2.transform.position, futureGroundCheckBox );
         //Gizmos.DrawSphere(worldOffset, interactingDistance);
         Gizmos.color = Color.blue;
     }

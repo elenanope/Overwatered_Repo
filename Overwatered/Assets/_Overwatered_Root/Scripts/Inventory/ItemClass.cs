@@ -8,7 +8,7 @@ public abstract class ItemClass : ScriptableObject
     public int itemNumber;
     public string itemDescription;
     public bool isStackable;
-    //public GameObject itemPrefab;
+    public GameObject itemPrefab;
     public abstract ItemClass GetItem();
     public abstract ToolClass GetTool();
     public abstract MiscClass GetMisc();
