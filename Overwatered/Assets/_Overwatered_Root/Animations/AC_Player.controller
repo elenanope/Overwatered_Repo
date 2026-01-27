@@ -289,7 +289,7 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.25
-  m_TransitionOffset: 0
+  m_TransitionOffset: 0.09
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
@@ -1114,7 +1114,7 @@ AnimatorStateMachine:
     m_Position: {x: 210, y: -230, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -103866151049685327}
-    m_Position: {x: 10, y: -10, z: 0}
+    m_Position: {x: 10, y: -20, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8397240146263851105}
     m_Position: {x: 60, y: -130, z: 0}
@@ -1953,8 +1953,8 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
-  m_TransitionOffset: 0
+  m_TransitionDuration: 0.07
+  m_TransitionOffset: 0.14
   m_ExitTime: 0.75
   m_HasExitTime: 0
   m_HasFixedDuration: 1
@@ -1969,7 +1969,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: AN_Player_Drink
-  m_Speed: 1
+  m_Speed: 0.7
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 6666592053877668062}

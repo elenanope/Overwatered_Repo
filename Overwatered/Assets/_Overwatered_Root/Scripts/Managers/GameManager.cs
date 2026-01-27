@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     public Transform mapCamera;
     public bool menuOpened;
     public bool playerInDialogue;
+    public bool isEating;
     bool overworldCamActive = true;
     bool charactersHidden = false;
     float actualXOffset;

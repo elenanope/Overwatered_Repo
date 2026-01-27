@@ -87,6 +87,8 @@ public class PlayerController : MonoBehaviour
     }
     void Update()
     {
+        if(GameManager.Instance.playerInDialogue) playerPaused = true;
+        else playerPaused = false;
         //Groundcheck
         isGrounded = Physics.CheckSphere(groundCheck.transform.position, groundCheckRadius, groundLayer);
         //Debug ray: visible only in Scene
@@ -151,10 +153,30 @@ public class PlayerController : MonoBehaviour
     }
     void StatsUpdater()
     {
-        //foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
-        //waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
         waterBarFill.fillAmount = waterLeft / maxWater;
         foodBarFill.fillAmount = foodLeft / maxFood;
+    }
+    public void Consume(bool isDrinkable ,int itemNumber, int waterAdded, int foodAdded)//añadir el tipo de objeto para spawnear ese
+    {
+        GameManager.Instance.isEating = true;
+        if(!isDrinkable)
+        {
+            foodLeft += foodAdded;
+            anim.SetTrigger("eat");
+        }
+        else anim.SetTrigger("drink");
+        waterLeft += waterAdded;
+        timePassed = 0;
+        //+ spawneo de objeto
+        StartCoroutine(LunchTime());
+        
+    }
+    IEnumerator LunchTime()
+    {
+        yield return new WaitForSeconds(3);
+        StatsUpdater();
+        yield return new WaitForSeconds(1);
+        GameManager.Instance.isEating = false;
     }
     private void FixedUpdate()
     {
@@ -446,7 +468,7 @@ public class PlayerController : MonoBehaviour
     }
     public void OnMenuInteraction(InputAction.CallbackContext ctx) //pasar al gameManager
     {
-        if (ctx.performed)
+        if (ctx.performed && !GameManager.Instance.playerInDialogue && !GameManager.Instance.isEating)//a menos que esté tradeando, que el tradeo puede handlear abrir y cerrar el menú)
         {
             if(GameManager.Instance.menuOpened)
             {

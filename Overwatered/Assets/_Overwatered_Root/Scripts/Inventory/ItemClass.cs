@@ -5,6 +5,7 @@ public abstract class ItemClass : ScriptableObject
     [Header ("Item")]
     public string itemName;
     public Sprite itemIcon;
+    public int itemNumber;
     public string itemDescription;
     public bool isStackable;
     //public GameObject itemPrefab;

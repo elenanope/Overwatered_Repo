@@ -8,6 +8,7 @@ using static UnityEditorInternal.VersionControl.ListControl;
 
 public class InventoryManager : MonoBehaviour
 {
+    [SerializeField] PlayerController playerController;
     [SerializeField] ItemClass itemToAdd;
     [SerializeField] ItemClass itemToRemove;
 
@@ -26,6 +27,7 @@ public class InventoryManager : MonoBehaviour
     int clickState; // 0 no pulsado, 1 izquierdo, 2 derecho
     [SerializeField]bool isMovingItem;
     [SerializeField]bool bubbleOpened;
+    bool singleMove;
     private void Start()
     {
         slots = new GameObject[slotHolder.transform.childCount];
@@ -51,19 +53,29 @@ public class InventoryManager : MonoBehaviour
     {
         itemCursor.SetActive(isMovingItem);
         itemCursor.transform.position = Mouse.current.position.ReadValue();
+        selectionBubble.transform.GetChild(1).gameObject.GetComponent<Button>().interactable = !GameManager.Instance.isEating;//hacer más óptimo?
     }
     public void OnTouch(InputAction.CallbackContext ctx)
     {
         if (ctx.performed && !bubbleOpened)
         {
-            if (isMovingItem)
+            if(!bubbleOpened)
             {
-                EndItemMove();
+                if (isMovingItem)
+                {
+                    EndItemMove();
+                }
+                else
+                {
+                    BeginItemMove();
+                }
             }
             else
             {
-                BeginItemMove(false);
+                bubbleOpened = false;
+                selectionBubble.SetActive(false);
             }
+            
         }
     }
     public void OnOptions(InputAction.CallbackContext ctx)
@@ -71,54 +83,54 @@ public class InventoryManager : MonoBehaviour
         if (ctx.performed && !bubbleOpened && !isMovingItem)
         {
             currentSlot = GetClosestSlot();
-            Vector3 selectedSlotTrans = new Vector3(0f, 0f, 0f);
-            //encontrar slotApretado y a X distancia (esquiina inferior a menos que sea el último slot, se lleva ahí la selectionBubble)
-            bubbleOpened = true;
-            for (int i = 0; i < slots.Length; i++)
+            if(currentSlot != null)
             {
-                if (items[i] == currentSlot)
+                Vector3 selectedSlotTrans = new Vector3(0f, 0f, 0f);
+                //encontrar slotApretado y a X distancia (esquiina inferior a menos que sea el último slot, se lleva ahí la selectionBubble)
+                bubbleOpened = true;
+                for (int i = 0; i < slots.Length; i++)
                 {
-                    selectedSlotTrans = slots[i].transform.position;
-                    break;
+                    if (items[i] == currentSlot)
+                    {
+                        if (i == 4) i = 3;
+                        selectedSlotTrans = slots[i].transform.position;
+                        break;
+                    }
                 }
+                //if (selectedSlotIndex >= 4 && (selectedSlotIndex - 4) % 5 == 0) selectionBubble.transform.position = new Vector3(selectedSlotTrans.x - 10, selectedSlotTrans.y + 10, selectedSlotTrans.z);
+                
+                 selectionBubble.transform.position = new Vector3(selectedSlotTrans.x , selectedSlotTrans.y , selectedSlotTrans.z);
+                selectionBubble.SetActive(true);
+                if (currentSlot.GetQuantity() > 1) selectionBubble.transform.GetChild(0).gameObject.SetActive(true);
+                else selectionBubble.transform.GetChild(0).gameObject.SetActive(false);
+
+                if (currentSlot.GetItem().GetConsumable() != null) selectionBubble.transform.GetChild(1).gameObject.SetActive(true);
+                else selectionBubble.transform.GetChild(1).gameObject.SetActive(false);
+
+                if (currentSlot.GetItem().GetMisc() != null) selectionBubble.transform.GetChild(2).gameObject.SetActive(true);
+                else selectionBubble.transform.GetChild(2).gameObject.SetActive(false);
             }
-            selectionBubble.transform.position = new Vector3(selectedSlotTrans.x + 10, selectedSlotTrans.y + 10, selectedSlotTrans.z);
-            selectionBubble.SetActive(true);
-            if (currentSlot.GetQuantity()>1)
-            {
-                selectionBubble.transform.GetChild(0).gameObject.SetActive(true);
-            }
-            else
-            {
-                selectionBubble.transform.GetChild(0).gameObject.SetActive(false);
-            }
-            if(currentSlot.GetItem().GetConsumable() != null)
-            {
-                selectionBubble.transform.GetChild(1).gameObject.SetActive(true);
-            }
-            else
-            {
-                selectionBubble.transform.GetChild(1).gameObject.SetActive(false);
-            }
+            
         }
     }
     public void SelectionBubble(int selectionNumber)
     {
         if(selectionNumber == 0)
         {
-            BeginItemMove(true);
+            singleMove = true;
+            BeginItemMove();
         }
         else if(selectionNumber == 1)
         {
             if((int)currentSlot.GetItem().GetConsumable().consumableType == 0)
             {
                 Debug.Log("Se ha añadido la siguiente cantidad de comida:" + currentSlot.GetItem().GetConsumable().foodAdded + "y la siguiente cantidad de agua:" + currentSlot.GetItem().GetConsumable().waterAdded);
-                //playerController Eat(currentSlot.GetItem().GetConsumable().foodAdded, currentSlot.GetItem().GetConsumable().waterAdded)
+                playerController.Consume(false, currentSlot.GetItem().itemNumber, currentSlot.GetItem().GetConsumable().waterAdded, currentSlot.GetItem().GetConsumable().foodAdded);
             }
             else if((int)currentSlot.GetItem().GetConsumable().consumableType == 1)
             {
                 Debug.Log("Se ha añadido la siguiente cantidad de agua:" + currentSlot.GetItem().GetConsumable().waterAdded);
-                //playerController Drink(currentSlot.GetItem().GetConsumable().waterAdded)
+                playerController.Consume(true, currentSlot.GetItem().itemNumber, currentSlot.GetItem().GetConsumable().waterAdded, currentSlot.GetItem().GetConsumable().foodAdded);
             }
             currentSlot.SubQuantity(1);
             if(currentSlot.GetQuantity() <= 0) currentSlot.Clear();
@@ -126,6 +138,10 @@ public class InventoryManager : MonoBehaviour
             //lo consume, se va el objeto al mundo real, se lo come/bebe depende de lo que sea y gana vida
         }
         else if(selectionNumber == 2)
+        {
+            Debug.Log("se usa el objeto");
+        }
+        else if (selectionNumber == 3)
         {
             //back
         }
@@ -234,81 +250,84 @@ public class InventoryManager : MonoBehaviour
     }
 #endregion
     #region Moving Objects
-    private bool BeginItemMove(bool singleMove)
+    private bool BeginItemMove()
     {
         originalSlot = !singleMove ? GetClosestSlot() : currentSlot;
         if (originalSlot == null || originalSlot.GetItem() == null) return false;
 
         if (!singleMove)
         {
-
-            Debug.Log("first");
             movingSlot = new SlotClass(originalSlot);
             originalSlot.Clear();
-            itemCursor.GetComponent<Image>().sprite = movingSlot.GetItem().itemIcon;
-            isMovingItem = true;
-            RefreshUI();
-            return true;
 
         }
         else
         {
-            Debug.Log("second");
-            if (originalSlot.GetQuantity() > 1)
-            {
-                movingSlot = new SlotClass(originalSlot.GetItem(), 1);
-                originalSlot.SubQuantity(1);
-                itemCursor.GetComponent<Image>().sprite = movingSlot.GetItem().itemIcon;
-                isMovingItem = true;
-                RefreshUI();
-                return true;
-            }
-            else return false;
+            movingSlot = new SlotClass(originalSlot.GetItem(), 1);
+            originalSlot.SubQuantity(1);
         }
+        itemCursor.GetComponent<Image>().sprite = movingSlot.GetItem().itemIcon;
+        isMovingItem = true;
+        RefreshUI();
+        return true;
     }
     private bool EndItemMove()
     {
         tempSlot = GetClosestSlot();
         //poner el originalSlot para que devuelva el objeto a donde estaba al principio
-
-        if (tempSlot == null)//si lo sueltas en un sitio random
+        if(originalSlot != null)
         {
-            originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
-            movingSlot.Clear();
-        }
-        else
-        {
-            if (tempSlot.GetItem() != null)
+            if (tempSlot == null)//si lo sueltas en un sitio random
             {
-                if (tempSlot.GetItem() == movingSlot.GetItem())
-                {
-                    if (tempSlot.GetItem().isStackable)
-                    {
-                        tempSlot.AddQuantity(movingSlot.GetQuantity());
-                        movingSlot.Clear();
-                    }
-                    else
-                    {
-                        //Add(movingSlot.GetItem(), movingSlot.GetQuantity());
-                        originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
-                        movingSlot.Clear();
-
-                        //return false;
-                    }
-                }
-                else//si no lo puedes dejar: vuelve al sitio original (otra opción sería intercambiar objetos, pero entonces ya complica si tiene que volver a su origen)
-                {
-                    originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
-                    movingSlot.Clear();
-                }
+                if (singleMove) originalSlot.AddQuantity(1);
+                else originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
             }
             else
             {
-                tempSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
-                movingSlot.Clear();
+                if (tempSlot.GetItem() != null)
+                {
+                    if (tempSlot.GetItem() == movingSlot.GetItem())
+                    {
+                        if (tempSlot.GetItem().isStackable && (movingSlot.GetQuantity() + tempSlot.GetQuantity() <= 3))//ajustar cantidad
+                        {
+                            tempSlot.AddQuantity(movingSlot.GetQuantity());
+                        }
+                        else
+                        {
+                            //poner sonido de X
+                            if (singleMove) originalSlot.AddQuantity(1);
+                            else originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
+                        }
+                    }
+                    else//si no lo puedes dejar: vuelve al sitio original (otra opción sería intercambiar objetos, pero entonces ya complica si tiene que volver a su origen)
+                    {
+                        //o hacerlo para que si originalSlot == null, se ponga en el primero disponible 
+                        currentSlot = new SlotClass(tempSlot);//a=b
+                        tempSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());//b=c 
+                        movingSlot.AddItem(currentSlot.GetItem(), currentSlot.GetQuantity());//a=c 
+                        itemCursor.GetComponent<Image>().sprite = movingSlot.GetItem().itemIcon;
+
+                        if (singleMove) singleMove = false;
+                        RefreshUI();
+                        return true;
+                        /* NO SE INTERCAMBIAN EL QUE LLEVAS Y EL QUE TOCAS, EL QUE LLEVAS VUELVO A SU LUGAR ORIGINAL
+                         * if (singleMove) originalSlot.AddQuantity(1);
+                        else originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());*/
+                    }
+                }
+                else
+                {
+                    tempSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
+                }
             }
         }
-
+        else
+        {
+            Add(movingSlot.GetItem(), movingSlot.GetQuantity());
+        }
+        
+        movingSlot.Clear();
+        if (singleMove) singleMove = false;
         isMovingItem = false;
         RefreshUI();
         return true;

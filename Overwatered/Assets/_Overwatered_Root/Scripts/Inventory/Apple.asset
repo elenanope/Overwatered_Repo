@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Apple
   itemIcon: {fileID: 21300000, guid: 0092360ff5b407146824d861f3274b6a, type: 3}
+  itemNumber: 0
   itemDescription: 
   isStackable: 1
   consumableType: 0
-  foodAdded: 4
-  waterAdded: 2
+  foodAdded: 30
+  waterAdded: 15
