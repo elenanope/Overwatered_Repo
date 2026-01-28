@@ -153,7 +153,6 @@ public class DialogueManager : MonoBehaviour
             //dialogueText.text = dialogueLines[lineIndex];
         }
     }
-
     void DialoguerOrder()
     {
         if(currentDialoguer.isRandom)
@@ -165,4 +164,22 @@ public class DialogueManager : MonoBehaviour
             randomized = false;
         }
     }
+    /*
+     
+    Hey, it's mom!
+    
+    Don't worry darling, we're safe here.
+    No need to come here!
+
+    Though I think your area may be in a bit of danger...
+
+    Just to be safe, head to the <b> dock </b>, as you know, where the shops are.
+
+    The flags mark the way, remember?
+
+    Take care +emoji
+
+
+    */
+
 }

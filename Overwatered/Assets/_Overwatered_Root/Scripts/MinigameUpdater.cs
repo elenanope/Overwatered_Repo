@@ -4,6 +4,8 @@ public class MinigameUpdater : MonoBehaviour
 {
     [SerializeField] GameObject player;
     [SerializeField] GameObject boat;
+    [SerializeField] GameObject messagesManager;
+    [SerializeField] GameObject phonePanel;
     private static MinigameUpdater instance;
 
     public static MinigameUpdater Instance
@@ -42,6 +44,8 @@ public class MinigameUpdater : MonoBehaviour
     {
         if(GameManager.Instance.gameData.gameHasStarted)
         {
+            messagesManager.SetActive(false);
+            phonePanel.SetActive(true);
             player.transform.SetPositionAndRotation(GameManager.Instance.gameData.lastPlayerPos, GameManager.Instance.gameData.lastPlayerRot);
             boat.transform.SetPositionAndRotation(GameManager.Instance.gameData.lastBoatPos, GameManager.Instance.gameData.lastBoatRot);
             player.GetComponent<PlayerController>().foodLeft = GameManager.Instance.gameData.foodLeft;

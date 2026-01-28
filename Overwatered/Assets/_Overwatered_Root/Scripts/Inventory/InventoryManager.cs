@@ -172,7 +172,12 @@ public class InventoryManager : MonoBehaviour
     public bool Add(ItemClass item, int quantity)
     {
         SlotClass slot = Contains(item);
-        if (slot != null && slot.GetItem().isStackable) slot.AddQuantity(1); //añadir tmb límite de stack
+        if (slot != null && slot.GetItem().isStackable)
+        {
+            slot.AddQuantity(1); //añadir tmb límite de stack
+            RefreshUI();
+            return true;
+        }
         else
         {
             for (int i = 0; i < items.Length; i++)
@@ -180,13 +185,13 @@ public class InventoryManager : MonoBehaviour
                 if (items[i].GetItem() == null)//está vacío
                 {
                     items[i].AddItem(item, quantity);
-                    break;
+
+                    RefreshUI();
+                    return true;
                 }
             }
         }
-
-        RefreshUI();
-        return true;
+        return false;
     }
     public bool Remove(ItemClass item)
     {
@@ -215,8 +220,7 @@ public class InventoryManager : MonoBehaviour
         }
         RefreshUI();
         return true;
-    }
-
+    } 
     public SlotClass Contains(ItemClass item)
     {
         for (int i = 0; i < items.Length; i++)//sale error al recogerlos del suelo

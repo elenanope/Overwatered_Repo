@@ -52,7 +52,9 @@ public class PlayerController : MonoBehaviour
     //Input Variables
     [SerializeField] GameObject menuCamera;
     [SerializeField] InventoryManager inventoryManager;
-    //[SerializeField] GameObject movablePoint;
+    [SerializeField] GameObject movablePoint;
+    [SerializeField] GameObject breadObject;
+    [SerializeField] GameObject waterObject;
     [SerializeField] ItemClass water;
     [SerializeField] ItemClass bread;
     [SerializeField]bool playerPaused;//quitar esta o la siguiente? o no?
@@ -65,6 +67,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player References")]
     [SerializeField] Rigidbody playerRb;
     [SerializeField] Animator anim;
+    [SerializeField] Animator animHand;
     [SerializeField] Animator animatorL;
     [SerializeField] Animator animatorR;
     [SerializeField] RectTransform camCompass;
@@ -182,37 +185,40 @@ public class PlayerController : MonoBehaviour
     }
     public void Consume(bool isDrinkable ,int itemNumber, int waterAdded, int foodAdded)//añadir el tipo de objeto para spawnear ese
     {
+        string consumeTrigger = "";
         GameManager.Instance.isEating = true;
-        if(!isDrinkable)
+        if (!isDrinkable)
         {
+            animHand.SetTrigger("eat");
+            consumeTrigger = "eat";
+            //animHand.ResetTrigger("eat");
             foodLeft += foodAdded;
-            anim.SetTrigger("eat");
-            consumable = Instantiate(bread.itemPrefab);
+            consumable = breadObject;
+            //consumable = Instantiate(bread.itemPrefab);
         }
         else
         {
-            anim.SetTrigger("drink");
-
-            consumable = Instantiate(water.itemPrefab);
+            animHand.SetTrigger("drink");
+            consumeTrigger = "drink";
+            //animHand.ResetTrigger("drink");
+            consumable = waterObject;
         }
         consumable.SetActive(false);
     waterLeft += waterAdded;
         timePassed = 0;
         //+ spawneo de objeto
-        StartCoroutine(LunchTime());
+        StartCoroutine(LunchTime(consumeTrigger));
         
     }
-    IEnumerator LunchTime()
+    IEnumerator LunchTime(string order)
     {
-        yield return new WaitForSeconds(1);
-        consumable.SetActive(true); //queda raro, pero sin hacer animacion, es decente, lo mejor sería poner un empty a la altura de lo que pone en la siguiente línea y animarlo
-        consumable.transform.parent = this.gameObject.transform.GetChild(0).transform;
-        consumable.transform.position = new Vector3(3.2539069652557375f, 3.0444953441619875f, 30.1272029876709f);
-        consumable.transform.rotation = new Quaternion(-0.41532638669013979f, 0.5759165287017822f, 0.5595366954803467f, 0.42748478055000307f);
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(0.1f);//para que se coordinen lo máximo posible las anims
+        anim.SetTrigger(order);
+        consumable.SetActive(true);
+        yield return new WaitForSeconds(3f);
         StatsUpdater();
         consumable.SetActive(false);
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.1f);
         GameManager.Instance.isEating = false;
     }
     private void FixedUpdate()
@@ -426,71 +432,74 @@ public class PlayerController : MonoBehaviour
     }
     void Interact()
     {
-        if(!isNearBoat && !isNearLand) // && !isInsideBoat? ya veremos
+        if (!GameManager.Instance.menuOpened)
         {
-            Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);//transforma el offset local a global
-            Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
-            foreach (Collider col in colTouched)
-            {//si no está lleno el inventario
-                if(col.gameObject.name == "SM_Bread")
-                {
-                    col.gameObject.SetActive(false);
-                    inventoryManager.Add(bread, 1);
-                    break;
-                }
-                else if(col.gameObject.name == "SM_Water")  
-                {
-                    col.gameObject.SetActive(false);
-                    inventoryManager.Add(water, 1);
-                    break;
-                }
-                Debug.Log("Puedes interactuar con el objeto llamado " + col.name);
-            }
-            colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
-            if (colTouched.Length > 0) //aqui sale algun error
+            if (!isNearBoat && !isNearLand) // && !isInsideBoat? ya veremos
             {
-                colTouched[0].GetComponent<NPCAI>().Talk(gameObject.transform);
+                Vector3 worldOffset = transform.TransformPoint(interactCubeOffset);//transforma el offset local a global
+                Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
+                foreach (Collider col in colTouched)
+                {//si no está lleno el inventario
+                    ItemClass item = null;
+                    if (col.gameObject.name == "SM_Bread") item = bread; 
+                    else if (col.gameObject.name == "SM_Water") item = water; 
+                    if(item != null)
+                    {
+                        if (inventoryManager.Add(item, 1))
+                        {
+                            col.gameObject.SetActive(false);
+                            anim.SetTrigger("pocketSearch");
+                        }
+                        else Debug.Log("No tienes espacio");//sacar nube de diálogo que te diga eso, mientras no se apague, no puede volver a aparecer
+                    }
+                }
+                colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
+                if (colTouched.Length > 0) //aqui sale algun error
+                {
+                    colTouched[0].GetComponent<NPCAI>().Talk(gameObject.transform);
+                }
+            }
+            else
+            {
+                if (isNearBoat && !isInsideBoat)
+                {
+                    isNearBoat = false;
+                    //sentarte en el bote
+                    gameObject.GetComponent<Collider>().enabled = false;
+                    playerRb.isKinematic = true;
+                    playerRb.useGravity = false;
+                    gameObject.transform.position = boat.transform.position;
+                    gameObject.transform.rotation = boat.transform.rotation;
+                    gameObject.transform.SetParent(boat.transform);
+                    isInsideBoat = true;
+                    boatController.RegisterPlayer(this);
+                }
+                else if (isNearLand && isInsideBoat)//este no va
+                {
+                    isNearLand = false;
+                    //sentarte en el bote
+                    gameObject.GetComponent<Collider>().enabled = true;
+                    playerRb.isKinematic = false;
+                    playerRb.useGravity = true;
+                    //poner que sea más flexible la bajada
+                    boatController.SendClosestPoint();
+                    gameObject.transform.position = shorePoint;
+                    gameObject.transform.parent = null;
+                    isInsideBoat = false;
+                    //MinigameUpdater.Instance.SaveBoatPos(boatController.gameObject.transform);
+                    if (anim.GetBool("inBoat"))
+                    {
+                        anim.SetBool("inBoat", false);
+                        animatorL.gameObject.SetActive(false);
+                        animatorR.gameObject.SetActive(false);
+                    }
+                    boatController.hasPlayer = false;
+                    boatController.sticks.SetActive(true);
+                    walkDust.SetActive(true);
+                }
             }
         }
-        else
-        {
-            if(isNearBoat && !isInsideBoat)
-            {
-                isNearBoat = false;
-                //sentarte en el bote
-                gameObject.GetComponent<Collider>().enabled = false;
-                playerRb.isKinematic = true;
-                playerRb.useGravity = false;
-                gameObject.transform.position = boat.transform.position;
-                gameObject.transform.rotation = boat.transform.rotation;
-                gameObject.transform.SetParent(boat.transform);
-                isInsideBoat = true;
-                boatController.RegisterPlayer(this);
-            }
-            else if(isNearLand && isInsideBoat)//este no va
-            {
-                isNearLand = false;
-                //sentarte en el bote
-                gameObject.GetComponent<Collider>().enabled = true;
-                playerRb.isKinematic = false;
-                playerRb.useGravity = true;
-                //poner que sea más flexible la bajada
-                boatController.SendClosestPoint();
-                gameObject.transform.position = shorePoint;
-                gameObject.transform.parent = null; 
-                isInsideBoat = false;
-                //MinigameUpdater.Instance.SaveBoatPos(boatController.gameObject.transform);
-                if (anim.GetBool("inBoat"))
-                {
-                    anim.SetBool("inBoat", false);
-                    animatorL.gameObject.SetActive(false);
-                    animatorR.gameObject.SetActive(false);
-                }
-                boatController.hasPlayer = false;
-                boatController.sticks.SetActive(true);
-                walkDust.SetActive(true);
-            }
-        }
+       
     }
     IEnumerator InteractRoutine()
     {
@@ -552,8 +561,8 @@ public class PlayerController : MonoBehaviour
             GameManager.Instance.cinemachineCamera.enabled = GameManager.Instance.menuOpened;
             GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = GameManager.Instance.menuOpened;
             GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = GameManager.Instance.menuOpened;
-            playerPaused = !GameManager.Instance.menuOpened;
             GameManager.Instance.menuOpened = !GameManager.Instance.menuOpened;
+            //playerPaused = GameManager.Instance.menuOpened;
         }
     }
 
