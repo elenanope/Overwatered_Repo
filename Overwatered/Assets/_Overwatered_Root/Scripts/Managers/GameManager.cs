@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
     public bool menuOpened;
     public bool playerInDialogue;
     public bool isEating;
+    public bool gameOver;
     bool overworldCamActive = true;
     bool charactersHidden = false;
     float actualXOffset;

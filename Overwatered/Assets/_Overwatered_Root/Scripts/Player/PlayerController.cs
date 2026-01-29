@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -50,7 +51,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Vector3 futureGroundCheckBox;
 
     //Input Variables
+    [Header("References for UI")]
     [SerializeField] GameObject menuCamera;
+
+    [SerializeField] GameObject adviceDialogue;//pasar a dialogueManager? o notification manager
+    [SerializeField] TMP_Text adviceText;
+
     [SerializeField] InventoryManager inventoryManager;
     [SerializeField] GameObject movablePoint;
     [SerializeField] GameObject breadObject;
@@ -145,15 +151,10 @@ public class PlayerController : MonoBehaviour
             StatsUpdater();
         }
 
-        if (waterLeft <= 0) //si la comida se agota, la bebida tmb se agotará más rápido?
+        if (waterLeft <= 0 && !GameManager.Instance.gameOver) //si la comida se agota, la bebida tmb se agotará más rápido?
         {
-            //Método de perder
-            //pantalla negra y se escucha un golpe en el suelo (thump)
-            GameManager.Instance.losePanel.SetActive(true);
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
-            Time.timeScale = 0f;
-            Debug.Log("Game over!!");
+            GameManager.Instance.gameOver = true;
+            StartCoroutine(GameOver());
         }
         /*//else if (condicion de ganar)
         {
@@ -182,6 +183,19 @@ public class PlayerController : MonoBehaviour
     {
         waterBarFill.fillAmount = waterLeft / maxWater;
         foodBarFill.fillAmount = foodLeft / maxFood;
+    }
+    IEnumerator GameOver()
+    {
+        playerPaused = true;
+        anim.SetTrigger("faint");
+        yield return new WaitForSeconds(1.2f);
+        //pantalla negra y se escucha un golpe en el suelo (thump)
+        GameManager.Instance.losePanel.SetActive(true);//añadirle fade a esto
+        //GameManager.Instance.menuOpened = true;
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+        Time.timeScale = 0f;
+        Debug.Log("Game over!!");
     }
     public void Consume(bool isDrinkable ,int itemNumber, int waterAdded, int foodAdded)//añadir el tipo de objeto para spawnear ese
     {
@@ -450,7 +464,14 @@ public class PlayerController : MonoBehaviour
                             col.gameObject.SetActive(false);
                             anim.SetTrigger("pocketSearch");
                         }
-                        else Debug.Log("No tienes espacio");//sacar nube de diálogo que te diga eso, mientras no se apague, no puede volver a aparecer
+                        else
+                        {
+                            //Debug.Log("No tienes espacio");//sacar nube de diálogo que te diga eso, mientras no se apague, no puede volver a aparecer
+                            adviceDialogue.SetActive(false);
+                            adviceDialogue.SetActive(true);
+                            adviceText.text = "No te queda espacio en el inventario!";
+                            //después apagar
+                        }
                     }
                 }
                 colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, NPCLayer);
