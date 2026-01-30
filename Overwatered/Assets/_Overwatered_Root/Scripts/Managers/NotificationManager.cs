@@ -34,5 +34,22 @@ public class NotificationManager : MonoBehaviour
         yield return new WaitForSeconds(14f);
         messages[index].SetActive(false);
         if(index == messages.Length - 1) phoneWithChat.SetActive(true);
-    }
+    }    
+    /*
+     
+    Hey, it's mom!
+    
+    Don't worry darling, we're safe here.
+    No need to come here!
+
+    Though I think your area may be in a bit of danger...
+
+    Just to be safe, head to the <b> dock </b>, as you know, where the shops are.
+
+    The flags mark the way, remember?
+
+    Don't forget to stay <b>hydrated</b>
+and <b>sate</b>!! XXX
+
+    */
 }

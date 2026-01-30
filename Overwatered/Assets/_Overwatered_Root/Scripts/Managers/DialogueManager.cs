@@ -8,9 +8,13 @@ public class DialogueManager : MonoBehaviour
     [Header("Dialogue Manager")]
 
     [SerializeField] GameObject dialoguePanel;
+    [SerializeField] GameObject selectionPanel;
     //[SerializeField] GameObject dialogueSubpanel = null;
     //[SerializeField] TMP_Text dialoguerName = null;
     [SerializeField] TMP_Text dialogueText;
+    [SerializeField] TMP_Text options1Text;
+    [SerializeField] TMP_Text options2Text;
+    [SerializeField] TMP_Text options3Text;
     [Tooltip("Do not reference, unless it is a minigame/is not area activated")]
     public DialogueActivator currentDialoguer;
 
@@ -22,6 +26,7 @@ public class DialogueManager : MonoBehaviour
     bool randomized;
     int randomNumber;
     string textToRead;
+    bool choiceMade;
 
     //falta impedir que se muevan
 
@@ -59,25 +64,31 @@ public class DialogueManager : MonoBehaviour
             }
             else
             {
-                if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueStopper)
+                if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].multiOption)
                 {
-                    didDialogueStart = false;
-                    dialoguePanel.SetActive(false);
-                    if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
-                    dialogueOver = true;
-                    if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame)
-                    {
-                        StartCoroutine(MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference));
-                    }
-                    if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue && !currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame) GameManager.Instance.ChangeCamera();
-                    if (currentDialoguer.dialogueInfo.Length > 1 && currentDialoguer.lineToRead < currentDialoguer.dialogueInfo.Length) currentDialoguer.lineToRead++; // o esto tmb se cambiará por NPC AI
-                    if (GameManager.Instance.gameOutcome >= 0) currentDialoguer.lineToRead = 0;
-                    GameManager.Instance.playerInDialogue = false;
+                    //empezar métodos de multiopción, si ya ha acabado -> CloseDialogue()
                 }
                 else
                 {
-                    //sigue a siguiente linea como si fuera otro diálogo
+                    if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueStopper)
+                    {
+                        CloseDialogue();
+                    }
+                    else
+                    {
+                        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].multiOption)
+                        {
+                            //activar panel de selección
+                            //poner el texto de cada una de las opciones
+                        }
+                        else
+                        {
+
+                        }
+                        //sigue a siguiente linea como si fuera otro diálogo
+                    }
                 }
+                
             }
         }
         else
@@ -95,9 +106,7 @@ public class DialogueManager : MonoBehaviour
             else
             {
                 ShowLine();
-
             }
-
         }
     }
     private void ShowLine()
@@ -115,7 +124,7 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
+            if(!choiceMade)textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
         }
 
         dialogueText.text = textToRead;
@@ -129,29 +138,57 @@ public class DialogueManager : MonoBehaviour
             yield return new WaitForSeconds(typingTime);
         }
     }
+    void CloseDialogue()
+    {
+        didDialogueStart = false;
+        dialoguePanel.SetActive(false);
+        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
+        dialogueOver = true;
+        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame)
+        {
+            StartCoroutine(MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference));
+        }
+        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue && !currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame) GameManager.Instance.ChangeCamera();
+        if (currentDialoguer.dialogueInfo.Length > 1 && currentDialoguer.lineToRead < currentDialoguer.dialogueInfo.Length) currentDialoguer.lineToRead++; // o esto tmb se cambiará por NPC AI
+        if (GameManager.Instance.gameOutcome >= 0) currentDialoguer.lineToRead = 0;
+        GameManager.Instance.playerInDialogue = false;
+    }
     public void DialogueCall()
     {
         DialoguerOrder();
-        //Debug.Log("Dialogue 2");
         if (!didDialogueStart)
         {
             StartDialogue();
-            //Debug.Log("Start");
         }
         else if ( dialogueText.maxVisibleCharacters == textToRead.Length)
         {
             NextDialogueLine();
-            //Debug.Log("Next");
         }
         else
         {
             StopAllCoroutines();
-            //Debug.Log("End");
 
             //else se queda en esa útlima/ se resetea a 0
             dialogueText.maxVisibleCharacters = textToRead.Length;
             //dialogueText.text = dialogueLines[lineIndex];
         }
+    }
+    public void ChooseOption(int optionNumber)//poner en botones
+    {
+        choiceMade = true;
+        if(optionNumber == 0)
+        {
+            textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options1Answer;
+        }
+        else if(optionNumber == 1)
+        {
+            textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options2Answer;
+        }
+        else if(optionNumber == 2)
+        {
+            textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options3Answer;
+        }
+        DialogueCall();
     }
     void DialoguerOrder()
     {
@@ -164,22 +201,6 @@ public class DialogueManager : MonoBehaviour
             randomized = false;
         }
     }
-    /*
-     
-    Hey, it's mom!
-    
-    Don't worry darling, we're safe here.
-    No need to come here!
 
-    Though I think your area may be in a bit of danger...
-
-    Just to be safe, head to the <b> dock </b>, as you know, where the shops are.
-
-    The flags mark the way, remember?
-
-    Take care +emoji
-
-
-    */
 
 }

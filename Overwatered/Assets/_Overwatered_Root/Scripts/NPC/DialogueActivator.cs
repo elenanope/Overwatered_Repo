@@ -37,8 +37,13 @@ public class DialogueActivator : MonoBehaviour
         [Header("Options")]
         [Tooltip("Will this sentence offer answers?")]
         public bool multiOption;
-        [TextArea(4, 6)] public string[] dialogueOptions1;
-        [TextArea(4, 6)] public string[] dialogueOptions2;
+        [TextArea(4, 6)] public string dialogueOptions1;
+        [TextArea(4, 6)] public string options1Answer;
+        [TextArea(4, 6)] public string dialogueOptions2;
+        [TextArea(4, 6)] public string options2Answer;
+        [TextArea(4, 6)] public string dialogueOptions3;
+        [TextArea(4, 6)] public string options3Answer;
+        //[TextArea(4, 6)] public string[] options1Answers;
 
     }
     public int lineToRead; //si tiene que seguir un orden, sino, que desde otro sitio se declare la randomness

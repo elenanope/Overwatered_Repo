@@ -35635,7 +35635,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialoguePanel: {fileID: 1253355304}
+  selectionPanel: {fileID: 0}
   dialogueText: {fileID: 713445514}
+  options1Text: {fileID: 0}
+  options2Text: {fileID: 0}
+  options3Text: {fileID: 0}
   currentDialoguer: {fileID: 0}
   dialogueOver: 0
 --- !u!1001 &626230072
@@ -48724,8 +48728,12 @@ MonoBehaviour:
     willGame: 0
     gameScene: 2
     multiOption: 0
-    dialogueOptions1: []
-    dialogueOptions2: []
+    dialogueOptions1: 
+    options1Answer: 
+    dialogueOptions2: 
+    options2Answer: 
+    dialogueOptions3: 
+    options3Answer: 
   - dialogueLinesDefault: []
     dialogueMark: {fileID: 0}
     dialogueStopper: 1
@@ -48738,8 +48746,12 @@ MonoBehaviour:
     willGame: 0
     gameScene: 0
     multiOption: 0
-    dialogueOptions1: []
-    dialogueOptions2: []
+    dialogueOptions1: 
+    options1Answer: 
+    dialogueOptions2: 
+    options2Answer: 
+    dialogueOptions3: 
+    options3Answer: 
   - dialogueLinesDefault: []
     dialogueMark: {fileID: 0}
     dialogueStopper: 1
@@ -48752,8 +48764,12 @@ MonoBehaviour:
     willGame: 0
     gameScene: 0
     multiOption: 0
-    dialogueOptions1: []
-    dialogueOptions2: []
+    dialogueOptions1: 
+    options1Answer: 
+    dialogueOptions2: 
+    options2Answer: 
+    dialogueOptions3: 
+    options3Answer: 
 --- !u!114 &999618646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52530,7 +52546,7 @@ MonoBehaviour:
   negative: []
   dialogueInfo:
   - dialogueLinesDefault:
-    - Welcome to the minigame!
+    - Do you wanna play a game?
     dialogueMark: {fileID: 0}
     dialogueStopper: 1
     areaDialogue: 1
@@ -52541,9 +52557,13 @@ MonoBehaviour:
     objectType: 0
     willGame: 1
     gameScene: 2
-    multiOption: 0
-    dialogueOptions1: []
-    dialogueOptions2: []
+    multiOption: 1
+    dialogueOptions1: Of course!
+    options1Answer: Okay, here we go!
+    dialogueOptions2: Maybe later
+    options2Answer: You do you
+    dialogueOptions3: No
+    options3Answer: Okay... Bye
   - dialogueLinesDefault:
     - Oh, you are back, how did it went? Ohh.. I see...
     dialogueMark: {fileID: 0}
@@ -52557,8 +52577,12 @@ MonoBehaviour:
     willGame: 0
     gameScene: 0
     multiOption: 0
-    dialogueOptions1: []
-    dialogueOptions2: []
+    dialogueOptions1: 
+    options1Answer: 
+    dialogueOptions2: 
+    options2Answer: 
+    dialogueOptions3: 
+    options3Answer: 
   - dialogueLinesDefault:
     - Heyy!! At least you managed to draw!!
     dialogueMark: {fileID: 0}
@@ -52572,8 +52596,12 @@ MonoBehaviour:
     willGame: 0
     gameScene: 0
     multiOption: 0
-    dialogueOptions1: []
-    dialogueOptions2: []
+    dialogueOptions1: 
+    options1Answer: 
+    dialogueOptions2: 
+    options2Answer: 
+    dialogueOptions3: 
+    options3Answer: 
   - dialogueLinesDefault:
     - Congratss!! I see it was great!
     dialogueMark: {fileID: 0}
@@ -52587,8 +52615,12 @@ MonoBehaviour:
     willGame: 0
     gameScene: 0
     multiOption: 0
-    dialogueOptions1: []
-    dialogueOptions2: []
+    dialogueOptions1: 
+    options1Answer: 
+    dialogueOptions2: 
+    options2Answer: 
+    dialogueOptions3: 
+    options3Answer: 
 --- !u!114 &1052555356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94134,6 +94166,10 @@ PrefabInstance:
       propertyPath: walkDust
       value: 
       objectReference: {fileID: 431316036}
+    - target: {fileID: 7379920930478948665, guid: 2369a1cae8b83484bbc92b68d60f0cfc, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7379920930478948665, guid: 2369a1cae8b83484bbc92b68d60f0cfc, type: 3}
       propertyPath: waterLeft
       value: 130
