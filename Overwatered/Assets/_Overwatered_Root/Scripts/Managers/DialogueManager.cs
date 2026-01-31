@@ -9,6 +9,7 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] GameObject dialoguePanel;
     [SerializeField] GameObject selectionPanel;
+    [SerializeField] InventoryManager inventoryManager;
     //[SerializeField] GameObject dialogueSubpanel = null;
     //[SerializeField] TMP_Text dialoguerName = null;
     [SerializeField] TMP_Text dialogueText;
@@ -28,6 +29,7 @@ public class DialogueManager : MonoBehaviour
     string textToRead;
     [SerializeField] int choiceStatus; //0 choice asked, 1 choice made,2 answer given
     [SerializeField] int optionChosen;
+    bool lastConfirmation;
 
     //falta impedir que se muevan
 
@@ -39,6 +41,7 @@ public class DialogueManager : MonoBehaviour
 
     private void StartDialogue()
     {
+        lastConfirmation = false;
         GameManager.Instance.playerInDialogue = true;
         choiceStatus = 0;
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue) GameManager.Instance.ChangeCamera();
@@ -72,7 +75,8 @@ public class DialogueManager : MonoBehaviour
                     {
 
                         choiceStatus = 1;
-                        selectionPanel.SetActive(true);
+                        selectionPanel.SetActive(true); 
+                        options3Text.transform.parent.gameObject.SetActive(true);
                         Cursor.lockState = CursorLockMode.Confined;
                         Cursor.visible = true;
                         options1Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions1;
@@ -90,6 +94,9 @@ public class DialogueManager : MonoBehaviour
                         }
                         else
                         {
+                            if (optionChosen == 0) inventoryManager.TradeResult(true);
+                            else inventoryManager.TradeResult(false);
+                            Debug.Log("Last chance");//no se pq viene aqui
                             CloseDialogue();
                         }
 
@@ -149,7 +156,11 @@ public class DialogueManager : MonoBehaviour
             {
                 if(choiceStatus == 0)
                 {
-                    textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
+                    if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willRecycle)
+                    {
+                        textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];//mismo
+                    }
+                    else textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
                 }
                 else
                 {
@@ -206,7 +217,6 @@ public class DialogueManager : MonoBehaviour
     }
     public void DialogueCall()
     {
-        Debug.Log("Call");
         if(choiceStatus != 1)//si no estás con el panel de selection abierto
         {
             DialoguerOrder();
@@ -229,14 +239,44 @@ public class DialogueManager : MonoBehaviour
         }
         
     }
+
     public void ChooseOption(int optionNumber)//poner en botones
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        choiceStatus = 2;
         lineIndex = -1;
         optionChosen = optionNumber;
+        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willRecycle && optionNumber == 0 && !lastConfirmation)//CAMBIAR: solo si tiene alguna basura en el bolsillo
+        {
+            GameManager.Instance.tradeMode = true;//después reset
+            GameManager.Instance.inventoryPanel.SetActive(true);
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
+            inventoryManager.TrashVisibility(false);
+            DialogueCall();//?
+            //encender botón de tradear: se queda en gris hasta que ofreces algo
+            //encender script de trading??
+        }
+        else
+        {
+            choiceStatus = 2;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            DialogueCall();
+        }
+        selectionPanel.SetActive(false);
+    }
+    public void TrashCount()
+    {
+        textToRead = inventoryManager.SubmitTrade();
+        Debug.Log(textToRead);
+        inventoryManager.TrashVisibility(true);
+        GameManager.Instance.inventoryPanel.SetActive(false);
+        choiceStatus = 2;
         DialogueCall();
+        options3Text.transform.parent.gameObject.SetActive(false);
+        options1Text.text = "yes";
+        options2Text.text = "no";
+        selectionPanel.SetActive(true);
+        lastConfirmation = true;
     }
     void DialoguerOrder()
     {

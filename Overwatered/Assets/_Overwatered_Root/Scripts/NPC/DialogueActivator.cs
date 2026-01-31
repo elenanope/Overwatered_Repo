@@ -33,6 +33,8 @@ public class DialogueActivator : MonoBehaviour
         [Tooltip("Will this character offer a chance to play a minigame?")]
         public bool willGame;
         public int gameScene;
+        [Tooltip("Will trade something? Right ow only available for trading trash")]
+        public bool willRecycle;//sacar fuera?
 
         [Header("Options")]
         [Tooltip("Will this sentence offer answers?")]

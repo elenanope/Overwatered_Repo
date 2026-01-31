@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     public EventSystem eventSystem;
     public Transform mapCamera;
     public bool menuOpened;
+    public bool tradeMode;
     public bool playerInDialogue;
     public bool isEating;
     public bool gameOver;
