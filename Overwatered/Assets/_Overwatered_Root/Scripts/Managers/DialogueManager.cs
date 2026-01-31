@@ -26,7 +26,8 @@ public class DialogueManager : MonoBehaviour
     bool randomized;
     int randomNumber;
     string textToRead;
-    bool choiceMade;
+    [SerializeField] int choiceStatus; //0 choice asked, 1 choice made,2 answer given
+    [SerializeField] int optionChosen;
 
     //falta impedir que se muevan
 
@@ -39,6 +40,7 @@ public class DialogueManager : MonoBehaviour
     private void StartDialogue()
     {
         GameManager.Instance.playerInDialogue = true;
+        choiceStatus = 0;
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue) GameManager.Instance.ChangeCamera();
         GameManager.Instance.SetNPCTarget(currentDialoguer.gameObject.transform);
         didDialogueStart = true;
@@ -55,7 +57,7 @@ public class DialogueManager : MonoBehaviour
         dialogueIndex++;
         if (!randomized)
         {
-            if (lineIndex < currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault.Length)
+            if (lineIndex < currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault.Length && choiceStatus == 0)
             {
                 //mostrar emoción correspondiente
 
@@ -64,9 +66,34 @@ public class DialogueManager : MonoBehaviour
             }
             else
             {
-                if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].multiOption)
+                if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].multiOption)//te enseña las opciones
                 {
-                    //empezar métodos de multiopción, si ya ha acabado -> CloseDialogue()
+                    if(choiceStatus == 0)
+                    {
+
+                        choiceStatus = 1;
+                        selectionPanel.SetActive(true);
+                        Cursor.lockState = CursorLockMode.Confined;
+                        Cursor.visible = true;
+                        options1Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions1;
+                        options2Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions2;
+                        options3Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions3;
+                        //empezar métodos de multiopción, si ya ha acabado -> CloseDialogue()
+                    }
+                    else if(choiceStatus == 2)
+                    {
+                        if ((optionChosen == 0 && lineIndex < currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options1Answer.Length)
+                            || (optionChosen == 1 && lineIndex < currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options2Answer.Length)
+                            || (optionChosen == 2 && lineIndex < currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options3Answer.Length))
+                        {
+                            ShowLine();
+                        }
+                        else
+                        {
+                            CloseDialogue();
+                        }
+
+                    }
                 }
                 else
                 {
@@ -74,21 +101,14 @@ public class DialogueManager : MonoBehaviour
                     {
                         CloseDialogue();
                     }
-                    else
+                    else//esto comprobar
                     {
-                        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].multiOption)
-                        {
-                            //activar panel de selección
-                            //poner el texto de cada una de las opciones
-                        }
-                        else
-                        {
-
-                        }
+                        currentDialoguer.lineToRead++;
+                        lineIndex = 0;
+                        ShowLine();
                         //sigue a siguiente linea como si fuera otro diálogo
                     }
                 }
-                
             }
         }
         else
@@ -124,7 +144,30 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            if(!choiceMade)textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
+            if(!currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].multiOption) textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
+            else
+            {
+                if(choiceStatus == 0)
+                {
+                    textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
+                }
+                else
+                {
+                    if (optionChosen == 0)
+                    {
+                        textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options1Answer[lineIndex];
+                    }
+                    else if (optionChosen == 1)
+                    {
+                        textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options2Answer[lineIndex];
+                    }
+                    else if (optionChosen == 2)
+                    {
+                        textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options3Answer[lineIndex];
+                    }
+                }
+                
+            }
         }
 
         dialogueText.text = textToRead;
@@ -140,54 +183,59 @@ public class DialogueManager : MonoBehaviour
     }
     void CloseDialogue()
     {
+        choiceStatus = 0;
         didDialogueStart = false;
         dialoguePanel.SetActive(false);
+        if(selectionPanel != null)selectionPanel.SetActive(false);
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
         dialogueOver = true;
-        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame)
+        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame && optionChosen == 0)
         {
             StartCoroutine(MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference));
+            optionChosen = 0;
         }
-        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue && !currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame) GameManager.Instance.ChangeCamera();
+        else
+        {
+            if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue) GameManager.Instance.ChangeCamera();
+            optionChosen = 0;
+        }
+        
         if (currentDialoguer.dialogueInfo.Length > 1 && currentDialoguer.lineToRead < currentDialoguer.dialogueInfo.Length) currentDialoguer.lineToRead++; // o esto tmb se cambiará por NPC AI
         if (GameManager.Instance.gameOutcome >= 0) currentDialoguer.lineToRead = 0;
         GameManager.Instance.playerInDialogue = false;
     }
     public void DialogueCall()
     {
-        DialoguerOrder();
-        if (!didDialogueStart)
+        Debug.Log("Call");
+        if(choiceStatus != 1)//si no estás con el panel de selection abierto
         {
-            StartDialogue();
-        }
-        else if ( dialogueText.maxVisibleCharacters == textToRead.Length)
-        {
-            NextDialogueLine();
-        }
-        else
-        {
-            StopAllCoroutines();
+            DialoguerOrder();
+            if (!didDialogueStart)
+            {
+                StartDialogue();
+            }
+            else if (dialogueText.maxVisibleCharacters == textToRead.Length)
+            {
+                NextDialogueLine();
+            }
+            else
+            {
+                StopAllCoroutines();
 
-            //else se queda en esa útlima/ se resetea a 0
-            dialogueText.maxVisibleCharacters = textToRead.Length;
-            //dialogueText.text = dialogueLines[lineIndex];
+                //else se queda en esa útlima/ se resetea a 0
+                dialogueText.maxVisibleCharacters = textToRead.Length;
+                //dialogueText.text = dialogueLines[lineIndex];
+            }
         }
+        
     }
     public void ChooseOption(int optionNumber)//poner en botones
     {
-        choiceMade = true;
-        if(optionNumber == 0)
-        {
-            textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options1Answer;
-        }
-        else if(optionNumber == 1)
-        {
-            textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options2Answer;
-        }
-        else if(optionNumber == 2)
-        {
-            textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options3Answer;
-        }
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        choiceStatus = 2;
+        lineIndex = -1;
+        optionChosen = optionNumber;
         DialogueCall();
     }
     void DialoguerOrder()

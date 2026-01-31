@@ -303,7 +303,9 @@ public class PaperShipMinigame : MonoBehaviour
         minigameState = 2;
         endResult = winCondition;
         GameManager.Instance.menuOpened = true;
-        if(winCondition == 2)
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+        if (winCondition == 2)
         {
             winPanel.SetActive(true);
             GameManager.Instance.eventSystem.SetSelectedGameObject(winPanel.transform.GetChild(1).gameObject);
@@ -323,11 +325,6 @@ public class PaperShipMinigame : MonoBehaviour
     }
     public void FinishButton()
     {
-        StartCoroutine(MinigameManager.Instance.ExitMinigame(endResult));
-    }
-    IEnumerator FinishMinigame()
-    {
-        yield return new WaitForSeconds(2f);
         StartCoroutine(MinigameManager.Instance.ExitMinigame(endResult));
     }
     IEnumerator StartMinigame()

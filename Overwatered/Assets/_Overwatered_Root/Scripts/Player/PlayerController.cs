@@ -461,6 +461,9 @@ public class PlayerController : MonoBehaviour
                     {
                         if (inventoryManager.Add(item, 1))
                         {
+                            adviceDialogue.SetActive(false);
+                            adviceDialogue.SetActive(true);
+                            adviceText.text = "Has conseguido <b>" + item.itemName+ "</b>!";
                             col.gameObject.SetActive(false);
                             anim.SetTrigger("pocketSearch");
                         }
