@@ -246,14 +246,23 @@ public class DialogueManager : MonoBehaviour
         optionChosen = optionNumber;
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willRecycle && optionNumber == 0 && !lastConfirmation)//CAMBIAR: solo si tiene alguna basura en el bolsillo
         {
-            GameManager.Instance.tradeMode = true;//después reset
-            GameManager.Instance.inventoryPanel.SetActive(true);
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.Confined;
-            inventoryManager.TrashVisibility(false);
-            DialogueCall();//?
-            //encender botón de tradear: se queda en gris hasta que ofreces algo
-            //encender script de trading??
+            if(inventoryManager.FindMisc())
+            {
+                GameManager.Instance.tradeMode = true;//después reset
+                GameManager.Instance.inventoryPanel.SetActive(true);
+                dialoguePanel.SetActive(false);
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.Confined;
+                inventoryManager.TrashVisibility(false);
+                DialogueCall();//?
+                               //encender botón de tradear: se queda en gris hasta que ofreces algo
+                               //encender script de trading??
+            }
+            else
+            {
+                Debug.Log("No tienes basura!!");
+                CloseDialogue();//por ahora
+            }
         }
         else
         {
@@ -270,6 +279,7 @@ public class DialogueManager : MonoBehaviour
         Debug.Log(textToRead);
         inventoryManager.TrashVisibility(true);
         GameManager.Instance.inventoryPanel.SetActive(false);
+        dialoguePanel.SetActive(true);
         choiceStatus = 2;
         DialogueCall();
         options3Text.transform.parent.gameObject.SetActive(false);
@@ -277,6 +287,10 @@ public class DialogueManager : MonoBehaviour
         options2Text.text = "no";
         selectionPanel.SetActive(true);
         lastConfirmation = true;
+        dialogueText.text = string.Empty;
+        dialogueText.maxVisibleCharacters = 0;
+        dialogueText.text = textToRead;
+        StartCoroutine(ShowingLine());
     }
     void DialoguerOrder()
     {

@@ -17,6 +17,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private SlotClass[] startingItems;
     private SlotClass[] items;
     private SlotClass[] tempItems;
+    private SlotClass[] imaginaryItems;
     //poner bool para ver si está lleno, en refreshUI
     GameObject[] slots;
     private SlotClass movingSlot;
@@ -42,11 +43,13 @@ public class InventoryManager : MonoBehaviour
         slots = new GameObject[slotHolder.transform.childCount];
         items = new SlotClass[slots.Length];
         tempItems = new SlotClass[slots.Length];
+        imaginaryItems = new SlotClass[slots.Length];
 
         for (int i = 0; i < items.Length; i++)
         {
             items[i] = new SlotClass();
             tempItems[i] = new SlotClass();
+            imaginaryItems[i] = new SlotClass();
         }
 
         for (int i = 0; i < startingItems.Length; i++)
@@ -79,7 +82,7 @@ public class InventoryManager : MonoBehaviour
                     {
                         if (items[i] == currentSlot)
                         {
-                            if(currentSlot != null)
+                            if(currentSlot.GetItem() != null)
                             {
                                 if (items[i].GetItem().GetMisc() != null)
                                 {
@@ -95,15 +98,15 @@ public class InventoryManager : MonoBehaviour
                                     //esto no es basura!!
                                 }
                             }
-                            else
+                            else//aqwui no es posible llegar
                             {
-                                items[i].AddItem(items[i].GetItem(), items[i].GetQuantity());
+                                items[i].AddItem(tempItems[i].GetItem(), tempItems[i].GetQuantity());
                                 tempItems[i].Clear();
                                 slots[i].gameObject.transform.GetChild(2).gameObject.SetActive(false);
                                 if (itemsSelected > 0) itemsSelected--; 
                                 if (itemsSelected == 0) tradeButton.enabled = false;
                             }
-                                break;
+                            break;
                         }
                     }
                 }
@@ -160,6 +163,7 @@ public class InventoryManager : MonoBehaviour
                     if (currentSlot.GetItem().GetConsumable() != null) selectionBubble.transform.GetChild(1).gameObject.SetActive(true);
                     else selectionBubble.transform.GetChild(1).gameObject.SetActive(false);
 
+                    selectionBubble.transform.GetChild(2).gameObject.SetActive(false);
                     /*if (currentSlot.GetItem().GetMisc() != null) selectionBubble.transform.GetChild(2).gameObject.SetActive(true);
                     else selectionBubble.transform.GetChild(2).gameObject.SetActive(false);*/
                 }
@@ -291,7 +295,7 @@ public class InventoryManager : MonoBehaviour
                 }
                 else
                 {
-                    return $"A cambio de todo eso, te puedo ofrecer {migajasNumber} migas de pan.";
+                    return $"No te puedo ofrecer nada";//después quitar
                 }
             }
         }
@@ -307,46 +311,185 @@ public class InventoryManager : MonoBehaviour
                 slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(image.color.r, image.color.g, image.color.b, image.color.a * 2);
                 Debug.Log("Complete alpha:" + image.color.a);
             }
-            else if (!on)
+            else if (!on && items[i].GetItem() != null)
             {
-                if (!items[i].GetItem().GetMisc())
+                if (items[i].GetItem().GetMisc() == null)
                 {
                     slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(image.color.r, image.color.g, image.color.b, image.color.a / 2);
                     Debug.Log("Half alpha:" + image.color.a);
                     itemsSelected = 0;
-                    tradeButton.gameObject.SetActive(true);
+                    tradeButton.enabled = false;
+                    if (!tradeButton.gameObject.activeSelf)tradeButton.gameObject.SetActive(true); 
                 }
             }
-            
         }
+    }
+    public bool FindMisc()
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (items[i].GetItem() != null)
+            {
+                if (items[i].GetItem().GetMisc() != null)
+                {
+                    return true;
+                }
+
+            }
+        }
+        return false;
     }
     public void TradeResult(bool accepted)//CAMBIAR: se añade dos veces??
     {
+
         if (accepted)
         {
             List<bool> itemsToCheck = new List<bool>();
-            for (int i = 0; i < tempItems.Length; i++)
+            int timesAdded = 0;
+            int objectLeft = 0;
+            bool[] rewardIndex = new bool[4];
+            ItemClass currentItem = null;
+            int currentNumber = 0;
+            if (aguaNumber > 0) rewardIndex[0] = true;
+            if (barrasNumber > 0) rewardIndex[1] = true;
+            if (rebanadasNumber > 0) rewardIndex[2] = true;
+            if (migajasNumber > 0) rewardIndex[3] = true;
+
+            for (int i = 0; i < items.Length; i++)
             {
-                tempItems[i].Clear();
+                if (tempItems[i].GetItem() != null)
+                {
+                    imaginaryItems[i] = new SlotClass();
+                }
+                else imaginaryItems[i] = new SlotClass(items[i]);
             }
-            if (aguaNumber > 0) itemsToCheck.Add(Add(agua, aguaNumber));
-            if (barrasNumber > 0) itemsToCheck.Add(Add(barras, barrasNumber));
-            if (rebanadasNumber > 0) itemsToCheck.Add(Add(rebanadas, rebanadasNumber));
-            if (migajasNumber > 0) itemsToCheck.Add(Add(migajas, migajasNumber));
+
+            for (int i = 0; i < rewardIndex.Length; i++)
+            {
+                if (rewardIndex[i] != false)
+                {
+                    if(i == 0)
+                    {
+                        currentItem = agua;
+                        currentNumber = aguaNumber;
+                    }
+                    else if(i == 1)
+                    {
+                        currentItem = barras ;
+                        currentNumber = barrasNumber;
+                    }
+                    else if(i == 2)
+                    {
+                        currentItem = rebanadas ;
+                        currentNumber = rebanadasNumber;
+                    }
+                    else if(i == 3)
+                    {
+                        currentItem = migajas;
+                        currentNumber = migajasNumber;
+                    }
+                    if (currentNumber > 0)//esto se debería de poder quitar
+                    {
+                        if (currentItem.GetItem().stackLimit > currentNumber) itemsToCheck.Add(TempAdd(currentItem, currentNumber));
+                        else
+                        {
+                            timesAdded = currentNumber / currentItem.GetItem().stackLimit;
+                            objectLeft = currentNumber % currentItem.GetItem().stackLimit;
+                            if (timesAdded != 0)
+                            {
+                                if (objectLeft > 0)
+                                {
+                                    for (int a = 0; a < timesAdded - 1; a++)
+                                    {
+                                        itemsToCheck.Add(TempAdd(currentItem, currentItem.GetItem().stackLimit));
+                                    }
+                                    itemsToCheck.Add(TempAdd(currentItem, objectLeft));
+                                }
+                                else
+                                {
+                                    for (int a = 0; a < timesAdded; a++)
+                                    {
+                                        itemsToCheck.Add(TempAdd(currentItem, currentItem.GetItem().stackLimit));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
             for (int i = 0; i < itemsToCheck.Count; i++)
             {
                 if (!itemsToCheck[i])
                 {
                     UndoTrade();
-                    break;
+                    Debug.Log($"numeros totales {itemsToCheck.Count}, item  {i}");
+                    return;
                 }
             }
-            //if (aguaNumber > 0) Add(agua, aguaNumber);
-            //if (barrasNumber > 0) Add(barras, barrasNumber);
-            //if (rebanadasNumber > 0) Add(rebanadas, rebanadasNumber);
-            //if (migajasNumber > 0) Add(migajas, migajasNumber);
-            Debug.Log("intercambio exitoso");
-            //se han añadido tus ganancias!
+
+            for (int i = 0; i < tempItems.Length; i++)
+            {
+                tempItems[i].Clear();
+            }
+            for (int i = 0; i < rewardIndex.Length; i++)//si se llega hasta aqui, todo se puede llevar a cabo
+            {
+                if (rewardIndex[i] != false)
+                {
+                    if (i == 0)
+                    {
+                        currentItem = agua;
+                        currentNumber = aguaNumber;
+                    }
+                    else if (i == 1)
+                    {
+                        currentItem = barras;
+                        currentNumber = barrasNumber;
+                    }
+                    else if (i == 2)
+                    {
+                        currentItem = rebanadas;
+                        currentNumber = rebanadasNumber;
+                    }
+                    else if (i == 3)
+                    {
+                        currentItem = migajas;
+                        currentNumber = migajasNumber;
+                    }
+                    if (currentNumber > 0)//esto se debería de poder quitar
+                    {
+                        Debug.Log("intercambio exitoso");
+                        //se han añadido tus ganancias!
+                        if (currentItem.GetItem().stackLimit > currentNumber) Add(currentItem, currentNumber);
+                        else
+                        {
+                            timesAdded = currentNumber % currentItem.GetItem().stackLimit;
+                            if (timesAdded * currentItem.GetItem().stackLimit != currentNumber)
+                            {
+                                objectLeft = currentNumber - timesAdded * currentItem.GetItem().stackLimit;
+                            }
+                            if (timesAdded != 0)
+                            {
+                                if (objectLeft > 0)
+                                {
+                                    for (int a = 0; a < timesAdded - 1; a++)
+                                    {
+                                        Add(currentItem, currentItem.GetItem().stackLimit);
+                                    }
+                                    Add(currentItem, objectLeft);
+                                }
+                                else
+                                {
+                                    for (int a = 0; a < timesAdded; a++)
+                                    {
+                                        Add(currentItem, currentItem.GetItem().stackLimit);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         else
         {
@@ -359,16 +502,53 @@ public class InventoryManager : MonoBehaviour
         tradeButton.gameObject.SetActive(false);
         GameManager.Instance.tradeMode = false;
     }
-   void UndoTrade()
+    public bool TempAdd(ItemClass item, int quantity)
     {
+        SlotClass slot = Contains(item, quantity, imaginaryItems);
+            if (slot != null && slot.GetItem().isStackable)
+            {
+                slot.AddQuantity(quantity); //añadir tmb límite de stack, que si se pasa, busque otro slot!!!
+                return true;
+            }
+            else
+            {
+                for (int i = 0; i < items.Length; i++)
+                {
+                    if (imaginaryItems[i].GetItem() == null)//está vacío
+                    {
+                        imaginaryItems[i].AddItem(item, quantity);
+                        return true;
+                    }
+                }
+            }
+        
+        return false;
+    }
+    void UndoTrade()
+    {
+        for (int i = 0; i < items.Length; i++)
+        {
+            imaginaryItems[i].Clear();
+        }
         for (int i = 0; i < tempItems.Length; i++)
         {
-            if (tempItems[i] != null)
+            if (tempItems[i].GetItem() != null)
             {
-                items[i].AddItem(tempItems[i].GetItem(), tempItems[i].GetQuantity());
-                tempItems[i].Clear();
+                if(tempItems[i].GetItem().GetMisc() != null)
+                {
+                    items[i].AddItem(tempItems[i].GetItem(), tempItems[i].GetQuantity());
+                    //Debug.Log($"puesto:{i}, nombre:{tempItems[i].GetItem().itemName}, número:{tempItems[i].GetQuantity()}");
+                    tempItems[i].Clear();
+                }
+                
             }
         }
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i].gameObject.transform.GetChild(2).gameObject.SetActive(false);
+        }
+        tradeButton.gameObject.SetActive(false);
+        GameManager.Instance.tradeMode = false;
         Debug.Log("intercambio cancelado");
     }//comprobar metodo
     public void SelectionBubble(int selectionNumber)
@@ -431,10 +611,10 @@ public class InventoryManager : MonoBehaviour
     }
     public bool Add(ItemClass item, int quantity)
     {
-        SlotClass slot = Contains(item);
+        SlotClass slot = Contains(item, quantity, items);
         if (slot != null && slot.GetItem().isStackable)
         {
-            slot.AddQuantity(1); //añadir tmb límite de stack, que si se pasa, busque otro slot!!!
+            slot.AddQuantity(quantity); //añadir tmb límite de stack, que si se pasa, busque otro slot!!!
             RefreshUI();
             return true;
         }
@@ -456,7 +636,7 @@ public class InventoryManager : MonoBehaviour
     public bool Remove(ItemClass item)
     {
         //items.Remove(item);
-        SlotClass temp = Contains(item);
+        SlotClass temp = Contains(item, 0, items);//comprobar
         if (temp != null)
         {
             if(temp.GetQuantity() > 1) temp.SubQuantity(1);
@@ -481,13 +661,14 @@ public class InventoryManager : MonoBehaviour
         RefreshUI();
         return true;
     } 
-    public SlotClass Contains(ItemClass item)
+    public SlotClass Contains(ItemClass item, int quantityToAdd, SlotClass[] slot)
     {
-        for (int i = 0; i < items.Length; i++)//sale error al recogerlos del suelo
+        for (int i = 0; i < slot.Length; i++)
         {
-            if (items[i].GetItem() == item && items[i].GetQuantity() < 3)//está vacío
+            if (slot[i].GetItem() == null) continue;//por si acaso??
+            if (slot[i].GetItem() == item && slot[i].GetQuantity() + quantityToAdd <= item.stackLimit)//si va a poder tener espacio
             {
-                return items[i];
+                return slot[i];
             }
         }
         return null;

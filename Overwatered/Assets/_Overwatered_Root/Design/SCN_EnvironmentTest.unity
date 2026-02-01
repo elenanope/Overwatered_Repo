@@ -18379,6 +18379,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1210120338}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &286116094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50201,6 +50213,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: DialogueManager, Assembly-CSharp
         m_MethodName: ChooseOption
         m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1210120338}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -90637,6 +90661,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1210120338}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2013539859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99031,14 +99067,12 @@ MonoBehaviour:
   startingItems:
   - item: {fileID: 11400000, guid: 2675827b9c6bb3941a1738eead76526d, type: 2}
     quantity: 3
-  - item: {fileID: 11400000, guid: aa1dce56472c61d4faa9ab2e47e16d03, type: 2}
+  - item: {fileID: 11400000, guid: a3198b91d2e08ad4d8f4bb35ba5449f6, type: 2}
     quantity: 1
+  - item: {fileID: 11400000, guid: aa1dce56472c61d4faa9ab2e47e16d03, type: 2}
+    quantity: 3
   - item: {fileID: 11400000, guid: aa1dce56472c61d4faa9ab2e47e16d03, type: 2}
     quantity: 2
-  - item: {fileID: 11400000, guid: a3198b91d2e08ad4d8f4bb35ba5449f6, type: 2}
-    quantity: 1
-  - item: {fileID: 11400000, guid: a3198b91d2e08ad4d8f4bb35ba5449f6, type: 2}
-    quantity: 1
   isMovingItem: 0
   bubbleOpened: 0
   migajas: {fileID: 11400000, guid: 3fc0ba8bc173da242a01c42edcf23709, type: 2}

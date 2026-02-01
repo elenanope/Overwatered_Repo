@@ -17,6 +17,7 @@ MonoBehaviour:
   itemNumber: 0
   itemDescription: 
   isStackable: 1
+  stackLimit: 3
   itemPrefab: {fileID: 0}
   consumableType: 0
   foodAdded: 0
