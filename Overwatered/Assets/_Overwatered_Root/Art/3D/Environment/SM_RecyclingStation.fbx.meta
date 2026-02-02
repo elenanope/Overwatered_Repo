@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: 599098a082459ba41ae439a12c9ca5cd
+guid: a8bd1fc58a1c45a49a6812a8acb1f477
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RopaFisherman
+    second: {fileID: 2100000, guid: 3265f8496a7586f4da9649fd8ed16ee8, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

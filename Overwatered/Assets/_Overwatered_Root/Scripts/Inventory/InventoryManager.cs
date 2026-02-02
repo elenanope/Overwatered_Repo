@@ -200,7 +200,6 @@ public class InventoryManager : MonoBehaviour
         string slicePart = "";
         string crumbPart = "";
         int rewardCounter = 0;
-        string resultText;
 
         for (int i = 0;i < tempItems.Length;i++)
         {
@@ -232,152 +231,40 @@ public class InventoryManager : MonoBehaviour
         else rewardCounter++;
         if (barrasNumber > 0)
         {
-            if (aguaNumber > 0) breadPart = ", ";
+            if (aguaNumber > 0)
+            {
+                if (migajasNumber <= 0 && rebanadasNumber <= 0) breadPart = " and ";
+                else
+                {
+                    breadPart = ", ";
+                }
+            }
             breadPart += GetArticle(barras.GetItem().itemName, barrasNumber) + barras.GetItem().itemName + CheckPlural(barrasNumber);
         }
         else rewardCounter++;
         if (rebanadasNumber > 0)
         {
-            if (aguaNumber > 0 || barrasNumber > 0) slicePart = ", ";
+            if (aguaNumber > 0 || barrasNumber > 0)
+            {
+
+                if (migajasNumber > 0) slicePart = ", ";
+                else slicePart = " and ";
+            }
             slicePart += GetArticle(rebanadas.GetItem().itemName, rebanadasNumber) + rebanadas.GetItem().itemName + CheckPlural(rebanadasNumber);
         }
         else rewardCounter++;
         if (migajasNumber > 0)
         {
-            if (aguaNumber > 0 || barrasNumber > 0 || rebanadasNumber > 0) crumbPart = ", ";
+            if (aguaNumber > 0 || barrasNumber > 0 || rebanadasNumber > 0) crumbPart = " and ";
             crumbPart += GetArticle(migajas.GetItem().itemName, migajasNumber) + migajas.GetItem().itemName + CheckPlural(migajasNumber);
         }
         else rewardCounter++;
 
         if(rewardCounter < 4)
         {
-            resultText = $"In return, I can offer you{waterPart}";
-            if (barrasNumber > 0) 
-            {
-                if (rebanadasNumber <= 0 && migajasNumber <= 0) return resultText + " and " + breadPart;
-                resultText += breadPart;
-            }
-            else
-            {
-                if (rebanadasNumber > 0) 
-                {
-                    if(migajasNumber <= 0) return resultText + " and " + slicePart;
-                    resultText += slicePart;
-                }
-                //else 
-            }
-            return $"In return, I can offer you{waterPart}{breadPart}{slicePart}{crumbPart}";
+            return $"In return, I can offer you{waterPart}{breadPart}{slicePart}{crumbPart}.";
         }
-        else return $"There is nothing I can give you in return";
-        /*if (aguaNumber > 0)
-        {
-            if(barrasNumber > 0)
-            {
-                if (rebanadasNumber > 0)
-                {
-                    if (migajasNumber > 0)
-                    {
-                        //return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua, {barrasNumber} barras, {rebanadasNumber} rebanadas y {migajasNumber} migas de pan.";
-                        return $"In return, I can offer you{GetArticle(agua.GetItem().itemName, aguaNumber)}{agua.GetItem().itemName}{CheckPlural(aguaNumber)}, {barrasNumber} barras, {rebanadasNumber} rebanadas y {migajasNumber} migas de pan.";
-                    }
-                    else
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua, {barrasNumber} barras, {rebanadasNumber} rebanadas de pan.";
-                    }
-                }
-                else
-                {
-                    if (migajasNumber > 0)
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua, {barrasNumber} barras y {migajasNumber} migas de pan.";
-                    }
-                    else
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua, {barrasNumber} barras de pan.";
-                    }
-                }
-            }
-            else
-            {
-                if(rebanadasNumber > 0)
-                {
-                    if (migajasNumber > 0)
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua, {rebanadasNumber} rebanadas y {migajasNumber} migas de pan.";
-                    }
-                    else
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua, {rebanadasNumber} rebanadas de pan.";
-                    }
-                }
-                else
-                {
-                    if(migajasNumber > 0)
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua y {migajasNumber} migas de pan.";
-                    }
-                    else
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua.";
-                    }
-                }
-            }
-        }
-        else
-        {
-            if(barrasNumber > 0)
-            {
-                if (rebanadasNumber > 0)
-                {
-                    if (migajasNumber > 0)
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {barrasNumber} barras, {rebanadasNumber} rebanadas y {migajasNumber} migas de pan.";
-                    }
-                    else
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {barrasNumber} barras, {rebanadasNumber} rebanadas de pan.";
-                    }
-                }
-                else
-                {
-                    if (migajasNumber > 0)
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {barrasNumber} barras y {migajasNumber} migas de pan.";
-                    }
-                    else
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {barrasNumber} barras de pan.";
-                    }
-                }
-            }
-            else
-            {
-                if(rebanadasNumber > 0)
-                {
-                    if (migajasNumber > 0)
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {rebanadasNumber} rebanadas y {migajasNumber} migas de pan.";
-                    }
-                    else
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {rebanadasNumber} rebanadas de pan.";
-                    }
-                }
-                else
-                {
-                    if (migajasNumber > 0)
-                    {
-                        return $"A cambio de todo eso, te puedo ofrecer {migajasNumber} migas de pan.";
-                    }
-                    else
-                    {
-                        return $"No te puedo ofrecer nada";//después quitar
-                    }
-                    
-                }
-            }
-        }*/
-
+        else return $"There is nothing I can give you in return";//arreglar?
     }
     public void TrashVisibility(bool on)
     {
@@ -386,15 +273,13 @@ public class InventoryManager : MonoBehaviour
             Image image = slots[i].transform.GetChild(0).GetComponent<Image>();
             if (on && items[i].GetItem()!= null)
             {
-                slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(image.color.r, image.color.g, image.color.b, image.color.a * 2);
-                Debug.Log("Complete alpha:" + image.color.a);
+                slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(image.color.r, image.color.g, image.color.b, 1f);
             }
             else if (!on && items[i].GetItem() != null)
             {
                 if (items[i].GetItem().GetMisc() == null)
                 {
                     slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(image.color.r, image.color.g, image.color.b, image.color.a / 2);
-                    Debug.Log("Half alpha:" + image.color.a);
                     itemsSelected = 0;
                     tradeButton.enabled = false;
                     if (!tradeButton.gameObject.activeSelf)tradeButton.gameObject.SetActive(true); 
@@ -408,11 +293,7 @@ public class InventoryManager : MonoBehaviour
         {
             if (items[i].GetItem() != null)
             {
-                if (items[i].GetItem().GetMisc() != null)
-                {
-                    return true;
-                }
-
+                if (items[i].GetItem().GetMisc() != null) return true;
             }
         }
         return false;
@@ -604,6 +485,7 @@ public class InventoryManager : MonoBehaviour
     }
     void UndoTrade()
     {
+        Debug.Log("undoing");
         for (int i = 0; i < items.Length; i++)
         {
             imaginaryItems[i].Clear();

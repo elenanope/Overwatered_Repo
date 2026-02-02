@@ -92,13 +92,7 @@ public class DialogueManager : MonoBehaviour
                         {
                             ShowLine();
                         }
-                        else
-                        {
-                            if (optionChosen == 0) inventoryManager.TradeResult(true);
-                            else inventoryManager.TradeResult(false);
-                            Debug.Log("Last chance");//no se pq viene aqui
-                            CloseDialogue();
-                        }
+                        else CloseDialogue();
 
                     }
                 }
@@ -151,33 +145,37 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            if(!currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].multiOption) textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
+            DialogueActivator.DialogueLine dialogueInfo = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead];
+
+            if (!dialogueInfo.multiOption) textToRead = dialogueInfo.dialogueLinesDefault[lineIndex];
             else
             {
                 if(choiceStatus == 0)
                 {
-                    if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willRecycle)
+                    if(dialogueInfo.willRecycle)
                     {
-                        textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];//mismo
+                        textToRead = dialogueInfo.dialogueLinesDefault[lineIndex];//mismo
                     }
-                    else textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueLinesDefault[lineIndex];
+                    else textToRead = dialogueInfo.dialogueLinesDefault[lineIndex];
                 }
                 else
                 {
                     if (optionChosen == 0)
                     {
-                        textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options1Answer[lineIndex];
+                        if (dialogueInfo.options1Answer.Length > lineIndex) textToRead = dialogueInfo.options1Answer[lineIndex];
+                        else CloseDialogue();
                     }
-                    else if (optionChosen == 1)
+                    else if (optionChosen == 1 && !lastConfirmation)
                     {
-                        textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options2Answer[lineIndex];
+                        if (dialogueInfo.options2Answer.Length > lineIndex) textToRead = dialogueInfo.options2Answer[lineIndex];
+                        else CloseDialogue();
                     }
-                    else if (optionChosen == 2)
+                    else if (optionChosen == 2 || lastConfirmation)//ambos de estos se despiden de ti, tanto si simplemente le dices adiós, como si le rechazas una oferta
                     {
-                        textToRead = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].options3Answer[lineIndex];
+                        if (dialogueInfo.options3Answer.Length > lineIndex) textToRead = dialogueInfo.options3Answer[lineIndex];
+                        else CloseDialogue();
                     }
                 }
-                
             }
         }
 
@@ -222,14 +220,17 @@ public class DialogueManager : MonoBehaviour
             DialoguerOrder();
             if (!didDialogueStart)
             {
+                Debug.Log("a");
                 StartDialogue();
             }
             else if (dialogueText.maxVisibleCharacters == textToRead.Length)
             {
+                Debug.Log("b");
                 NextDialogueLine();
             }
             else
             {
+                Debug.Log("c");
                 StopAllCoroutines();
 
                 //else se queda en esa útlima/ se resetea a 0
@@ -237,13 +238,13 @@ public class DialogueManager : MonoBehaviour
                 //dialogueText.text = dialogueLines[lineIndex];
             }
         }
-        
     }
 
     public void ChooseOption(int optionNumber)//poner en botones
     {
         lineIndex = -1;
         optionChosen = optionNumber;
+        Debug.Log(optionChosen);
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willRecycle && optionNumber == 0 && !lastConfirmation)//CAMBIAR: solo si tiene alguna basura en el bolsillo
         {
             if(inventoryManager.FindMisc())
@@ -269,7 +270,16 @@ public class DialogueManager : MonoBehaviour
             choiceStatus = 2;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            DialogueCall();
+            if(lastConfirmation)
+            {
+                if (optionChosen == 0)
+                {
+                    inventoryManager.TradeResult(true);
+                }
+                else inventoryManager.TradeResult(false);
+                CloseDialogue();
+            }
+            else DialogueCall();
         }
         selectionPanel.SetActive(false);
     }
@@ -280,11 +290,11 @@ public class DialogueManager : MonoBehaviour
         inventoryManager.TrashVisibility(true);
         GameManager.Instance.inventoryPanel.SetActive(false);
         dialoguePanel.SetActive(true);
-        choiceStatus = 2;
+        choiceStatus = 1;
         DialogueCall();
         options3Text.transform.parent.gameObject.SetActive(false);
-        options1Text.text = "yes";
-        options2Text.text = "no";
+        options1Text.text = "great!";
+        options2Text.text = "no, thanks";
         selectionPanel.SetActive(true);
         lastConfirmation = true;
         dialogueText.text = string.Empty;
