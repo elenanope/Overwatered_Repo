@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1d029d60d2319a488a254f11b6e2cbe, type: 3}
   m_Name: Barra
   m_EditorClassIdentifier: 
-  itemName: Barra de pan
+  itemName: bread
   itemIcon: {fileID: 21300000, guid: a55bbe7ab580f5e4287666cfd85b3113, type: 3}
   itemNumber: 0
   itemDescription: 

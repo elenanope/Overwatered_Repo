@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1d029d60d2319a488a254f11b6e2cbe, type: 3}
   m_Name: Bread
   m_EditorClassIdentifier: 
-  itemName: Bread
+  itemName: bread slice
   itemIcon: {fileID: 21300000, guid: 0ae16a976f80ea24389481b8a92705c7, type: 3}
   itemNumber: 0
   itemDescription: 

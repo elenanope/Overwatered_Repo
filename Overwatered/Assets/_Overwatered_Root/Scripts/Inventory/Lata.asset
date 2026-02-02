@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7cb51a61ab90da49bd9e8368afde213, type: 3}
   m_Name: Lata
   m_EditorClassIdentifier: 
-  itemName: Lata
+  itemName: can
   itemIcon: {fileID: 21300000, guid: b054c509207d7c448ab76f4f02ac5752, type: 3}
   itemNumber: 0
   itemDescription: 
