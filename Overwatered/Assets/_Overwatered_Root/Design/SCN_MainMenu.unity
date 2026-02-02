@@ -246,7 +246,7 @@ PrefabInstance:
       insertIndex: 2
       addedObject: {fileID: 787862277}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: be5a5d07fb17e0d4aa2bfced7cb21fd5, type: 3}
-      insertIndex: 4
+      insertIndex: -1
       addedObject: {fileID: 1262290825}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: be5a5d07fb17e0d4aa2bfced7cb21fd5, type: 3}
@@ -1776,7 +1776,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 380655628}
-  m_Mesh: {fileID: 8450911274463397590, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+  m_Mesh: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
 --- !u!1001 &381394485
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2767,7 +2767,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Aceptar
+  m_text: Okay
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a635c42c0a92a8540816787b8ee9e304, type: 2}
   m_sharedMaterial: {fileID: -3537083474998472928, guid: a635c42c0a92a8540816787b8ee9e304, type: 2}
@@ -3232,6 +3232,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
+    - target: {fileID: -8080727221075835130, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
     - target: {fileID: -7898960172531403559, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: m_LocalScale.x
       value: 3.21
@@ -3260,6 +3264,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -6115381880936207309, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
     - target: {fileID: -5291554122710066423, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -3296,6 +3304,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
+    - target: {fileID: -3029948681466174108, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
     - target: {fileID: -2027366642251449945, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -3399,6 +3411,10 @@ PrefabInstance:
     - target: {fileID: 2865463383340964254, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6517812889721369063, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: m_LocalScale.x
@@ -4142,7 +4158,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 633205894}
-  m_Mesh: {fileID: -1633109054465492714, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+  m_Mesh: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
 --- !u!1 &679881986
 GameObject:
   m_ObjectHideFlags: 0
@@ -4228,7 +4244,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 679881986}
-  m_Mesh: {fileID: -1633109054465492714, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+  m_Mesh: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
 --- !u!1 &698562774
 GameObject:
   m_ObjectHideFlags: 0
@@ -4265,7 +4281,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.09433333, y: 0.25944695}
   m_AnchorMax: {x: 0.322875, y: 0.43059593}
-  m_AnchoredPosition: {x: 2.5, y: 4}
+  m_AnchoredPosition: {x: 2.5, y: 3.9999542}
   m_SizeDelta: {x: -1.9240112, y: -3.0570068}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &698562776
@@ -7365,7 +7381,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1111198154}
-  m_Mesh: {fileID: -1633109054465492714, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+  m_Mesh: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
 --- !u!1 &1123044877
 GameObject:
   m_ObjectHideFlags: 0
@@ -7544,6 +7560,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
+    - target: {fileID: -8080727221075835130, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
     - target: {fileID: -7898960172531403559, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: m_LocalScale.x
       value: 3.21
@@ -7600,6 +7620,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -6115381880936207309, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
     - target: {fileID: -5810932478876946601, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -7644,6 +7668,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 3cf72d83166ee8941908a88ffb6621c2, type: 2}
+    - target: {fileID: -3029948681466174108, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
     - target: {fileID: -2027366642251449945, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -7747,6 +7775,10 @@ PrefabInstance:
     - target: {fileID: 2865463383340964254, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6517812889721369063, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
       propertyPath: m_LocalScale.x
@@ -8519,7 +8551,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1229801262}
-  m_Mesh: {fileID: -1633109054465492714, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+  m_Mesh: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
 --- !u!1001 &1251650114
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9242,7 +9274,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1329352289}
-  m_Mesh: {fileID: -1633109054465492714, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+  m_Mesh: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
 --- !u!1 &1335696333
 GameObject:
   m_ObjectHideFlags: 0
@@ -10389,7 +10421,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1532501938}
-  m_Mesh: {fileID: -1633109054465492714, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+  m_Mesh: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
 --- !u!1001 &1538983582
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11798,7 +11830,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1750706110}
-  m_Mesh: {fileID: -1633109054465492714, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+  m_Mesh: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
 --- !u!1001 &1770176945
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12094,7 +12126,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Alerta de protecci\xF3n civil"
+  m_text: Civil Protection Alert
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a635c42c0a92a8540816787b8ee9e304, type: 2}
   m_sharedMaterial: {fileID: -3537083474998472928, guid: a635c42c0a92a8540816787b8ee9e304, type: 2}
@@ -12895,9 +12927,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Debido al fuerte riesgo de inundaci\xF3n, se activa el protocolo de Protecci\xF3n
-    Civil. \nEvite desplazamientos, extreme la precauci\xF3n y busque zonas altas
-    y seguras.\nEn caso de emergencia, contacte al 112."
+  m_text: 'Due to the high risk of flooding, the Civil Protection Protocol has been
+    activated.
+
+    Do not use your vehicle if not strictly necessary and stay home
+    until further notice.
+
+    Please call 112 in case of emergency only.
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a635c42c0a92a8540816787b8ee9e304, type: 2}
   m_sharedMaterial: {fileID: -3537083474998472928, guid: a635c42c0a92a8540816787b8ee9e304, type: 2}
@@ -15048,6 +15086,7 @@ MonoBehaviour:
   eventSystem: {fileID: 809356044}
   mapCamera: {fileID: 0}
   menuOpened: 0
+  tradeMode: 0
   playerInDialogue: 0
   isEating: 0
   gameOver: 0
@@ -15293,7 +15332,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2139751804}
-  m_Mesh: {fileID: -1633109054465492714, guid: e6c237a4aa16bae4895859277cca1571, type: 3}
+  m_Mesh: {fileID: -1633109054465492714, guid: 85e345fe6c1b9154c92ec727453e2004, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

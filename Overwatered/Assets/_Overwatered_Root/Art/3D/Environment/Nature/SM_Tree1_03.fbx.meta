@@ -12,8 +12,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Material.016
+    second: {fileID: 2100000, guid: a2d883d520e080d4fb0779142d056f6f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: hojas.001
     second: {fileID: 2100000, guid: 50e22c21ddc74904ba5834298b5b9121, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: hojas.005
+    second: {fileID: 2100000, guid: 3cf72d83166ee8941908a88ffb6621c2, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -42,7 +52,10 @@ ModelImporter:
     clipAnimations: []
     isReadable: 0
   meshes:
-    lODScreenPercentages: []
+    lODScreenPercentages:
+    - 0.25
+    - 0.125
+    - 0.01
     globalScale: 1
     meshCompression: 0
     addColliders: 0

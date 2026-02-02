@@ -170,6 +170,24 @@ public class InventoryManager : MonoBehaviour
             }
         }
     }
+
+    public string GetArticle(string word, int number)
+    {
+        // Return early if string is empty
+        if (string.IsNullOrEmpty(word)) return "";
+
+        char firstLetter = char.ToLower(word[0]);
+        string vowels = "aeiou";
+
+        // If vowels contains the first letter, use "an"
+        if(number == 1)return vowels.Contains(firstLetter) ? " an " : " a ";
+        else return $" {number} ";
+    }
+    public string CheckPlural(int number)
+    {
+        if(number == 1)return "";
+        else return "s";
+    }
     public string SubmitTrade()
     {
         int totalTrash = 0;
@@ -177,6 +195,13 @@ public class InventoryManager : MonoBehaviour
         rebanadasNumber = 0;
         barrasNumber = 0;
         aguaNumber = 0;
+        string waterPart = "";
+        string breadPart = "";
+        string slicePart = "";
+        string crumbPart = "";
+        int rewardCounter = 0;
+        string resultText;
+
         for (int i = 0;i < tempItems.Length;i++)
         {
             if (tempItems[i].GetItem() != null)totalTrash += tempItems[i].GetItem().GetMisc().trashAdded * tempItems[i].GetQuantity();
@@ -200,7 +225,51 @@ public class InventoryManager : MonoBehaviour
                 migajasNumber++;
             }
         }
-        if(aguaNumber > 0)
+        if (aguaNumber > 0)
+        {
+            waterPart = GetArticle(agua.GetItem().itemName, aguaNumber) + agua.GetItem().itemName + CheckPlural(aguaNumber);
+        }
+        else rewardCounter++;
+        if (barrasNumber > 0)
+        {
+            if (aguaNumber > 0) breadPart = ", ";
+            breadPart += GetArticle(barras.GetItem().itemName, barrasNumber) + barras.GetItem().itemName + CheckPlural(barrasNumber);
+        }
+        else rewardCounter++;
+        if (rebanadasNumber > 0)
+        {
+            if (aguaNumber > 0 || barrasNumber > 0) slicePart = ", ";
+            slicePart += GetArticle(rebanadas.GetItem().itemName, rebanadasNumber) + rebanadas.GetItem().itemName + CheckPlural(rebanadasNumber);
+        }
+        else rewardCounter++;
+        if (migajasNumber > 0)
+        {
+            if (aguaNumber > 0 || barrasNumber > 0 || rebanadasNumber > 0) crumbPart = ", ";
+            crumbPart += GetArticle(migajas.GetItem().itemName, migajasNumber) + migajas.GetItem().itemName + CheckPlural(migajasNumber);
+        }
+        else rewardCounter++;
+
+        if(rewardCounter < 4)
+        {
+            resultText = $"In return, I can offer you{waterPart}";
+            if (barrasNumber > 0) 
+            {
+                if (rebanadasNumber <= 0 && migajasNumber <= 0) return resultText + " and " + breadPart;
+                resultText += breadPart;
+            }
+            else
+            {
+                if (rebanadasNumber > 0) 
+                {
+                    if(migajasNumber <= 0) return resultText + " and " + slicePart;
+                    resultText += slicePart;
+                }
+                //else 
+            }
+            return $"In return, I can offer you{waterPart}{breadPart}{slicePart}{crumbPart}";
+        }
+        else return $"There is nothing I can give you in return";
+        /*if (aguaNumber > 0)
         {
             if(barrasNumber > 0)
             {
@@ -208,7 +277,8 @@ public class InventoryManager : MonoBehaviour
                 {
                     if (migajasNumber > 0)
                     {
-                        return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua, {barrasNumber} barras, {rebanadasNumber} rebanadas y {migajasNumber} migas de pan.";
+                        //return $"A cambio de todo eso, te puedo ofrecer {aguaNumber} botellas de agua, {barrasNumber} barras, {rebanadasNumber} rebanadas y {migajasNumber} migas de pan.";
+                        return $"In return, I can offer you{GetArticle(agua.GetItem().itemName, aguaNumber)}{agua.GetItem().itemName}{CheckPlural(aguaNumber)}, {barrasNumber} barras, {rebanadasNumber} rebanadas y {migajasNumber} migas de pan.";
                     }
                     else
                     {
@@ -295,10 +365,18 @@ public class InventoryManager : MonoBehaviour
                 }
                 else
                 {
-                    return $"No te puedo ofrecer nada";//después quitar
+                    if (migajasNumber > 0)
+                    {
+                        return $"A cambio de todo eso, te puedo ofrecer {migajasNumber} migas de pan.";
+                    }
+                    else
+                    {
+                        return $"No te puedo ofrecer nada";//después quitar
+                    }
+                    
                 }
             }
-        }
+        }*/
 
     }
     public void TrashVisibility(bool on)
@@ -390,8 +468,8 @@ public class InventoryManager : MonoBehaviour
                     }
                     if (currentNumber > 0)//esto se debería de poder quitar
                     {
-                        if (currentItem.GetItem().stackLimit > currentNumber) itemsToCheck.Add(TempAdd(currentItem, currentNumber));
-                        else
+                        if (currentItem.GetItem().stackLimit >= currentNumber) itemsToCheck.Add(TempAdd(currentItem, currentNumber));
+                        else//hay alguna excepción o algo que pueda ir mal?
                         {
                             timesAdded = currentNumber / currentItem.GetItem().stackLimit;
                             objectLeft = currentNumber % currentItem.GetItem().stackLimit;
@@ -460,7 +538,7 @@ public class InventoryManager : MonoBehaviour
                     {
                         Debug.Log("intercambio exitoso");
                         //se han añadido tus ganancias!
-                        if (currentItem.GetItem().stackLimit > currentNumber) Add(currentItem, currentNumber);
+                        if (currentItem.GetItem().stackLimit >= currentNumber) Add(currentItem, currentNumber);
                         else
                         {
                             timesAdded = currentNumber % currentItem.GetItem().stackLimit;

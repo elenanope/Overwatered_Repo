@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject waterObject;
     [SerializeField] ItemClass water;
     [SerializeField] ItemClass bread;
+    [SerializeField] ItemClass can;
     [SerializeField]bool playerPaused;//quitar esta o la siguiente? o no?
     bool interacting;
     bool isInsideBoat = false;
@@ -457,13 +458,15 @@ public class PlayerController : MonoBehaviour
                     ItemClass item = null;
                     if (col.gameObject.name == "SM_Bread") item = bread; 
                     else if (col.gameObject.name == "SM_Water") item = water; 
+                    else if (col.gameObject.name == "SM_Can") item = can; 
                     if(item != null)
                     {
-                        if (inventoryManager.Add(item, 1))
+                        if (inventoryManager.Add(item, 1))//cambiar si te encuentras más y añadir "s" para hacer el plural
                         {
                             adviceDialogue.SetActive(false);
                             adviceDialogue.SetActive(true);
-                            adviceText.text = "Has conseguido <b>" + item.itemName+ "</b>!";
+                            //adviceText.text = "Has conseguido <b>" + item.itemName+ "</b>!";
+                            adviceText.text = $"You found{inventoryManager.GetArticle(item.itemName, 1)}<b>{item.itemName}</b>!";
                             col.gameObject.SetActive(false);
                             anim.SetTrigger("pocketSearch");
                         }
@@ -472,7 +475,8 @@ public class PlayerController : MonoBehaviour
                             //Debug.Log("No tienes espacio");//sacar nube de diálogo que te diga eso, mientras no se apague, no puede volver a aparecer
                             adviceDialogue.SetActive(false);
                             adviceDialogue.SetActive(true);
-                            adviceText.text = "No te queda espacio en el inventario!";
+                            adviceText.text = "There is no space left in your inventory!!";
+                            //adviceText.text = "No te queda espacio en el inventario!";
                             //después apagar
                         }
                     }

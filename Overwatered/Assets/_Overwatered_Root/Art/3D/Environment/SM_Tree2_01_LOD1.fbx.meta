@@ -1,29 +1,9 @@
 fileFormatVersion: 2
-guid: 382ab039adf34c2498573822c49d3e64
+guid: 599098a082459ba41ae439a12c9ca5cd
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material
-    second: {fileID: 2100000, guid: a2d883d520e080d4fb0779142d056f6f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.015
-    second: {fileID: 2100000, guid: a2d883d520e080d4fb0779142d056f6f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: hojas.001
-    second: {fileID: 2100000, guid: 50e22c21ddc74904ba5834298b5b9121, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: hojas.004
-    second: {fileID: 2100000, guid: 50e22c21ddc74904ba5834298b5b9121, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -52,10 +32,7 @@ ModelImporter:
     clipAnimations: []
     isReadable: 0
   meshes:
-    lODScreenPercentages:
-    - 0.25
-    - 0.125
-    - 0.01
+    lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
     addColliders: 0
