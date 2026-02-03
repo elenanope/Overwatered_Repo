@@ -90,7 +90,7 @@ public class InventoryManager : MonoBehaviour
                                     items[i].Clear();
                                     slots[i].gameObject.transform.GetChild(2).gameObject.SetActive(true);
                                     itemsSelected++;
-                                    if(itemsSelected == 1) tradeButton.gameObject.GetComponent<Button>().interactable = true;
+                                    if(itemsSelected >= 1) tradeButton.gameObject.GetComponent<Button>().interactable = true;
                                 }
                                 else
                                 {
@@ -285,8 +285,6 @@ public class InventoryManager : MonoBehaviour
                 {
                     slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(image.color.r, image.color.g, image.color.b, image.color.a / 2);
                     itemsSelected = 0;
-                    tradeButton.enabled = false;
-                    
                 }
             }
         }

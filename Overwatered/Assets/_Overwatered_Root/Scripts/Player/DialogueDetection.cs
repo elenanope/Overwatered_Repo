@@ -9,11 +9,10 @@ public class DialogueDetection : MonoBehaviour
     [SerializeField] DialogueManager manager;
     bool playerInRange;
 
-    private void OnEnable()
+    private void Start()
     {
         if (GameManager.Instance.exitingGame)
         {
-            Debug.Log("Hemos llegado");
             GameManager.Instance.dialogueManager.currentDialoguer = GameManager.Instance.npcManager.npcDialogueActivator[GameManager.Instance.gameData.lastNPCNumber];
             //se da por hecho que esto solo se llama una vez (quien tenga ese activator)
             // o lose, 1 empate, 2 ganar

@@ -42,10 +42,14 @@ public class DialogueManager : MonoBehaviour
 
     private void StartDialogue()
     {
-        if (playerAnim.GetInteger("playerState") >= 0)
+        if(playerAnim!= null)
         {
-            playerAnim.SetInteger("playerState", 0);
+            if (playerAnim.GetInteger("playerState") >= 0)
+            {
+                playerAnim.SetInteger("playerState", 0);
+            }
         }
+        
         lastConfirmation = false;
         GameManager.Instance.playerInDialogue = true;
         choiceStatus = 0;
@@ -198,6 +202,8 @@ public class DialogueManager : MonoBehaviour
     void CloseDialogue()
     {
         choiceStatus = 0;
+        Cursor.visible = false; 
+        Cursor.lockState = CursorLockMode.Locked;
         didDialogueStart = false;
         dialoguePanel.SetActive(false);
         if(selectionPanel != null)selectionPanel.SetActive(false);
@@ -222,6 +228,7 @@ public class DialogueManager : MonoBehaviour
     {
         if(choiceStatus != 1)//si no estás con el panel de selection abierto
         {
+            Debug.Log("call");
             DialoguerOrder();
             if (!didDialogueStart)
             {

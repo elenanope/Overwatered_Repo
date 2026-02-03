@@ -133,8 +133,8 @@ public class PlayerController : MonoBehaviour
             if (interacting) StartCoroutine(InteractRoutine());
         }
 
-        foodLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
-        waterLeft -= Time.deltaTime * (10f / 24f) * movementMult; //ajustar tiempo o según distancia
+        foodLeft -= (Time.deltaTime * (10f / 24f) * movementMult)/2; //ajustar tiempo o según distancia
+        waterLeft -= (Time.deltaTime * (10f / 24f) * movementMult)/2; //ajustar tiempo o según distancia
         timePassed += Time.deltaTime;
         if(!isInsideBoat)
         {
@@ -462,9 +462,9 @@ public class PlayerController : MonoBehaviour
                 foreach (Collider col in colTouched)
                 {//si no está lleno el inventario
                     ItemClass item = null;
-                    if (col.gameObject.name == "SM_Bread") item = bread; 
-                    else if (col.gameObject.name == "SM_Water") item = water; 
-                    else if (col.gameObject.name == "SM_Can") item = can; 
+                    if (col.gameObject.name.Contains("SM_Bread")) item = bread; 
+                    else if (col.gameObject.name.Contains("SM_Water")) item = water; 
+                    else if (col.gameObject.name.Contains("SM_Can")) item = can; 
                     if(item != null)
                     {
                         if (inventoryManager.Add(item, 1))//cambiar si te encuentras más y añadir "s" para hacer el plural
