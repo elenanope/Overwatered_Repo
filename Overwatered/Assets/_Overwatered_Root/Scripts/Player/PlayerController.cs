@@ -445,6 +445,12 @@ public class PlayerController : MonoBehaviour
         canRow = true;
         yield break;
     }
+    public void NewAdvice(string adviceToSay)
+    {
+        adviceDialogue.SetActive(false);
+        adviceDialogue.SetActive(true);
+        adviceText.text = adviceToSay;
+    }
     void Interact()
     {
         if (!GameManager.Instance.menuOpened)
@@ -463,20 +469,13 @@ public class PlayerController : MonoBehaviour
                     {
                         if (inventoryManager.Add(item, 1))//cambiar si te encuentras más y añadir "s" para hacer el plural
                         {
-                            adviceDialogue.SetActive(false);
-                            adviceDialogue.SetActive(true);
-                            adviceText.text = $"You found{inventoryManager.GetArticle(item.itemName, 1)}<b>{item.itemName}</b>!";
+                            NewAdvice($"You found{inventoryManager.GetArticle(item.itemName, 1)}<b>{item.itemName}</b>!");
                             col.gameObject.SetActive(false);
                             anim.SetTrigger("pocketSearch");
                         }
                         else
                         {
-                            //Debug.Log("No tienes espacio");//sacar nube de diálogo que te diga eso, mientras no se apague, no puede volver a aparecer
-                            adviceDialogue.SetActive(false);
-                            adviceDialogue.SetActive(true);
-                            adviceText.text = "There is no space left in your inventory!!";
-                            //adviceText.text = "No te queda espacio en el inventario!";
-                            //después apagar
+                            NewAdvice("There is no space left in your inventory!!");
                         }
                     }
                 }
@@ -490,16 +489,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (isNearBoat && !isInsideBoat)
                 {
-                    isNearBoat = false;
-                    //sentarte en el bote
-                    gameObject.GetComponent<Collider>().enabled = false;
-                    playerRb.isKinematic = true;
-                    playerRb.useGravity = false;
-                    gameObject.transform.position = boat.transform.position;
-                    gameObject.transform.rotation = boat.transform.rotation;
-                    gameObject.transform.SetParent(boat.transform);
-                    isInsideBoat = true;
-                    boatController.RegisterPlayer(this);
+                    GetInsideBoat();
                 }
                 else if (isNearLand && isInsideBoat)//este no va
                 {
@@ -527,6 +517,28 @@ public class PlayerController : MonoBehaviour
             }
         }
        
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.CompareTag("Boat"))
+        {
+            //GetInsideBoat();//tener cuidado para que pueda salir por encima del barco sin meterse en él
+        }
+    }
+    void GetInsideBoat()
+    {
+        isNearBoat = false;
+        moveInput.x = 0;
+        moveInput.y = 0;
+        //sentarte en el bote
+        gameObject.GetComponent<Collider>().enabled = false;
+        playerRb.isKinematic = true;
+        playerRb.useGravity = false;
+        gameObject.transform.position = boat.transform.position;
+        gameObject.transform.rotation = boat.transform.rotation;
+        gameObject.transform.SetParent(boat.transform);
+        isInsideBoat = true;
+        boatController.RegisterPlayer(this);
     }
     IEnumerator InteractRoutine()
     {

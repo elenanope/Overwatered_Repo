@@ -90,21 +90,20 @@ public class InventoryManager : MonoBehaviour
                                     items[i].Clear();
                                     slots[i].gameObject.transform.GetChild(2).gameObject.SetActive(true);
                                     itemsSelected++;
-                                    if(itemsSelected == 1) tradeButton.enabled = true;
+                                    if(itemsSelected == 1) tradeButton.gameObject.GetComponent<Button>().interactable = true;
                                 }
                                 else
                                 {
                                     Debug.Log("no basura");
-                                    //esto no es basura!!
                                 }
                             }
-                            else//aqwui no es posible llegar
+                            else
                             {
                                 items[i].AddItem(tempItems[i].GetItem(), tempItems[i].GetQuantity());
                                 tempItems[i].Clear();
                                 slots[i].gameObject.transform.GetChild(2).gameObject.SetActive(false);
                                 if (itemsSelected > 0) itemsSelected--; 
-                                if (itemsSelected == 0) tradeButton.enabled = false;
+                                if (itemsSelected == 0) tradeButton.gameObject.GetComponent<Button>().interactable = false;
                             }
                             break;
                         }
@@ -277,12 +276,17 @@ public class InventoryManager : MonoBehaviour
             }
             else if (!on && items[i].GetItem() != null)
             {
+                if (!tradeButton.gameObject.activeSelf)
+                {
+                    tradeButton.gameObject.SetActive(true);
+                    tradeButton.gameObject.GetComponent<Button>().interactable = false;
+                }
                 if (items[i].GetItem().GetMisc() == null)
                 {
                     slots[i].transform.GetChild(0).GetComponent<Image>().color = new Color(image.color.r, image.color.g, image.color.b, image.color.a / 2);
                     itemsSelected = 0;
                     tradeButton.enabled = false;
-                    if (!tradeButton.gameObject.activeSelf)tradeButton.gameObject.SetActive(true); 
+                    
                 }
             }
         }
@@ -354,22 +358,20 @@ public class InventoryManager : MonoBehaviour
                         {
                             timesAdded = currentNumber / currentItem.GetItem().stackLimit;
                             objectLeft = currentNumber % currentItem.GetItem().stackLimit;
-                            if (timesAdded != 0)
+                            Debug.Log($"{currentItem.GetItem().itemName}: hay {timesAdded} unidades, divididas en {timesAdded} packs enteros, quedando un pack extra de {objectLeft}");
+                            if (objectLeft > 0)
                             {
-                                if (objectLeft > 0)
+                                for (int a = 0; a < timesAdded - 1; a++)
                                 {
-                                    for (int a = 0; a < timesAdded - 1; a++)
-                                    {
-                                        itemsToCheck.Add(TempAdd(currentItem, currentItem.GetItem().stackLimit));
-                                    }
-                                    itemsToCheck.Add(TempAdd(currentItem, objectLeft));
+                                    itemsToCheck.Add(TempAdd(currentItem, currentItem.GetItem().stackLimit));
                                 }
-                                else
+                                itemsToCheck.Add(TempAdd(currentItem, objectLeft));
+                            }
+                            else
+                            {
+                                for (int a = 0; a < timesAdded; a++)
                                 {
-                                    for (int a = 0; a < timesAdded; a++)
-                                    {
-                                        itemsToCheck.Add(TempAdd(currentItem, currentItem.GetItem().stackLimit));
-                                    }
+                                    itemsToCheck.Add(TempAdd(currentItem, currentItem.GetItem().stackLimit));
                                 }
                             }
                         }
@@ -382,7 +384,8 @@ public class InventoryManager : MonoBehaviour
                 if (!itemsToCheck[i])
                 {
                     UndoTrade();
-                    Debug.Log($"numeros totales {itemsToCheck.Count}, item  {i}");
+                    playerController.NewAdvice("The trade was cancelled, you don't have enough space!");
+                    //Debug.Log($"numeros totales {itemsToCheck.Count}, item  {i}");
                     return;
                 }
             }
@@ -417,32 +420,31 @@ public class InventoryManager : MonoBehaviour
                     }
                     if (currentNumber > 0)//esto se debería de poder quitar
                     {
-                        Debug.Log("intercambio exitoso");
+                        playerController.NewAdvice("The trade was succesful!");
                         //se han añadido tus ganancias!
                         if (currentItem.GetItem().stackLimit >= currentNumber) Add(currentItem, currentNumber);
                         else
                         {
-                            timesAdded = currentNumber % currentItem.GetItem().stackLimit;
+
+                            timesAdded = currentNumber / currentItem.GetItem().stackLimit;
+                            objectLeft = currentNumber % currentItem.GetItem().stackLimit;
                             if (timesAdded * currentItem.GetItem().stackLimit != currentNumber)
                             {
                                 objectLeft = currentNumber - timesAdded * currentItem.GetItem().stackLimit;
                             }
-                            if (timesAdded != 0)
+                            if (objectLeft > 0)
                             {
-                                if (objectLeft > 0)
+                                for (int a = 0; a < timesAdded - 1; a++)
                                 {
-                                    for (int a = 0; a < timesAdded - 1; a++)
-                                    {
-                                        Add(currentItem, currentItem.GetItem().stackLimit);
-                                    }
-                                    Add(currentItem, objectLeft);
+                                    Add(currentItem, currentItem.GetItem().stackLimit);
                                 }
-                                else
+                                Add(currentItem, objectLeft);
+                            }
+                            else
+                            {
+                                for (int a = 0; a < timesAdded; a++)
                                 {
-                                    for (int a = 0; a < timesAdded; a++)
-                                    {
-                                        Add(currentItem, currentItem.GetItem().stackLimit);
-                                    }
+                                    Add(currentItem, currentItem.GetItem().stackLimit);
                                 }
                             }
                         }
@@ -485,7 +487,6 @@ public class InventoryManager : MonoBehaviour
     }
     void UndoTrade()
     {
-        Debug.Log("undoing");
         for (int i = 0; i < items.Length; i++)
         {
             imaginaryItems[i].Clear();
@@ -497,10 +498,8 @@ public class InventoryManager : MonoBehaviour
                 if(tempItems[i].GetItem().GetMisc() != null)
                 {
                     items[i].AddItem(tempItems[i].GetItem(), tempItems[i].GetQuantity());
-                    //Debug.Log($"puesto:{i}, nombre:{tempItems[i].GetItem().itemName}, número:{tempItems[i].GetQuantity()}");
                     tempItems[i].Clear();
                 }
-                
             }
         }
         for (int i = 0; i < slots.Length; i++)
@@ -509,7 +508,6 @@ public class InventoryManager : MonoBehaviour
         }
         tradeButton.gameObject.SetActive(false);
         GameManager.Instance.tradeMode = false;
-        Debug.Log("intercambio cancelado");
     }//comprobar metodo
     public void SelectionBubble(int selectionNumber)
     {

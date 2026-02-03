@@ -7,6 +7,7 @@ public class DialogueManager : MonoBehaviour
 {
     [Header("Dialogue Manager")]
 
+    [SerializeField] Animator playerAnim;
     [SerializeField] GameObject dialoguePanel;
     [SerializeField] GameObject selectionPanel;
     [SerializeField] InventoryManager inventoryManager;
@@ -41,6 +42,10 @@ public class DialogueManager : MonoBehaviour
 
     private void StartDialogue()
     {
+        if (playerAnim.GetInteger("playerState") >= 0)
+        {
+            playerAnim.SetInteger("playerState", 0);
+        }
         lastConfirmation = false;
         GameManager.Instance.playerInDialogue = true;
         choiceStatus = 0;
@@ -220,22 +225,16 @@ public class DialogueManager : MonoBehaviour
             DialoguerOrder();
             if (!didDialogueStart)
             {
-                Debug.Log("a");
                 StartDialogue();
             }
             else if (dialogueText.maxVisibleCharacters == textToRead.Length)
             {
-                Debug.Log("b");
                 NextDialogueLine();
             }
             else
             {
-                Debug.Log("c");
                 StopAllCoroutines();
-
-                //else se queda en esa útlima/ se resetea a 0
                 dialogueText.maxVisibleCharacters = textToRead.Length;
-                //dialogueText.text = dialogueLines[lineIndex];
             }
         }
     }
@@ -244,7 +243,7 @@ public class DialogueManager : MonoBehaviour
     {
         lineIndex = -1;
         optionChosen = optionNumber;
-        Debug.Log(optionChosen);
+        //Debug.Log(optionChosen);
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willRecycle && optionNumber == 0 && !lastConfirmation)//CAMBIAR: solo si tiene alguna basura en el bolsillo
         {
             if(inventoryManager.FindMisc())
@@ -255,14 +254,16 @@ public class DialogueManager : MonoBehaviour
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.Confined;
                 inventoryManager.TrashVisibility(false);
-                DialogueCall();//?
-                               //encender botón de tradear: se queda en gris hasta que ofreces algo
-                               //encender script de trading??
+                DialogueCall();
             }
             else
             {
-                Debug.Log("No tienes basura!!");
-                CloseDialogue();//por ahora
+                choiceStatus = 2;
+                dialogueText.text = string.Empty;
+                dialogueText.maxVisibleCharacters = 0;
+                textToRead = "No tienes basura!!";//guardar en Data para buscarla en inglés/español/idioma que quieras
+                dialogueText.text = textToRead;
+                StartCoroutine(ShowingLine());
             }
         }
         else
@@ -274,6 +275,7 @@ public class DialogueManager : MonoBehaviour
             {
                 if (optionChosen == 0)
                 {
+                    playerAnim.SetTrigger("pocketSearch");
                     inventoryManager.TradeResult(true);
                 }
                 else inventoryManager.TradeResult(false);

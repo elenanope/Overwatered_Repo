@@ -4,6 +4,8 @@ public abstract class ItemClass : ScriptableObject
 {
     [Header ("Item")]
     public string itemName;
+    //public string itemArticle
+    //public string itemPlural
     public Sprite itemIcon;
     public int itemNumber;
     public string itemDescription;

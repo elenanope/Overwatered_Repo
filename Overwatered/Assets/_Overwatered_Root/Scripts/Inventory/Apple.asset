@@ -21,4 +21,4 @@ MonoBehaviour:
   itemPrefab: {fileID: 0}
   consumableType: 0
   foodAdded: 30
-  waterAdded: 15
+  waterAdded: 20

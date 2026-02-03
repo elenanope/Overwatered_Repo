@@ -37676,6 +37676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8ec85d90ac6f3f4cb87a948c7cdca0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerAnim: {fileID: 7258952702121667692}
   dialoguePanel: {fileID: 1253355304}
   selectionPanel: {fileID: 1210120338}
   inventoryManager: {fileID: 7258952702121667698}
@@ -51281,7 +51282,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &930350327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52687,7 +52688,7 @@ MonoBehaviour:
   Lens:
     FieldOfView: 23.9
     OrthographicSize: 10
-    NearClipPlane: 0.1
+    NearClipPlane: 2.4
     FarClipPlane: 5000
     Dutch: 0
     ModeOverride: 0
@@ -110922,6 +110923,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f48715cd48b9e3e449ad46d5bf1b350b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &7258952702121667692 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5997161335495516209, guid: 2369a1cae8b83484bbc92b68d60f0cfc, type: 3}
+  m_PrefabInstance: {fileID: 7258952702121667689}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7258952702121667698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110941,14 +110947,16 @@ MonoBehaviour:
   selectionBubble: {fileID: 73860914}
   slotHolder: {fileID: 1872526170}
   startingItems:
-  - item: {fileID: 11400000, guid: 2675827b9c6bb3941a1738eead76526d, type: 2}
-    quantity: 3
-  - item: {fileID: 11400000, guid: a3198b91d2e08ad4d8f4bb35ba5449f6, type: 2}
-    quantity: 1
   - item: {fileID: 11400000, guid: aa1dce56472c61d4faa9ab2e47e16d03, type: 2}
     quantity: 3
   - item: {fileID: 11400000, guid: aa1dce56472c61d4faa9ab2e47e16d03, type: 2}
     quantity: 2
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0
   isMovingItem: 0
   bubbleOpened: 0
   migajas: {fileID: 11400000, guid: 3fc0ba8bc173da242a01c42edcf23709, type: 2}

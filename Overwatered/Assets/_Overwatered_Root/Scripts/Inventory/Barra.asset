@@ -20,5 +20,5 @@ MonoBehaviour:
   stackLimit: 3
   itemPrefab: {fileID: 0}
   consumableType: 0
-  foodAdded: 0
-  waterAdded: 0
+  foodAdded: 40
+  waterAdded: 20
