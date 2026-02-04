@@ -212,16 +212,23 @@ public class DialogueManager : MonoBehaviour
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame && optionChosen == 0)
         {
             StartCoroutine(MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference));
-            optionChosen = 0;
         }
         else
         {
             if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue) GameManager.Instance.ChangeCamera();
-            optionChosen = 0;
+            
         }
-        
-        if (currentDialoguer.dialogueInfo.Length > 1 && currentDialoguer.lineToRead < currentDialoguer.dialogueInfo.Length) currentDialoguer.lineToRead++; // o esto tmb se cambiará por NPC AI
-        if (GameManager.Instance.gameOutcome >= 0) currentDialoguer.lineToRead = 0;
+
+        if ((currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame && optionChosen > 0) || GameManager.Instance.gameOutcome >= 0)
+        {
+            optionChosen = 0;
+            currentDialoguer.lineToRead = 0;
+        }
+        else
+        {
+            if (currentDialoguer.dialogueInfo.Length > 1 && currentDialoguer.lineToRead < currentDialoguer.dialogueInfo.Length) currentDialoguer.lineToRead++;
+        }
+        //if () currentDialoguer.lineToRead = 0;
         GameManager.Instance.playerInDialogue = false;
     }
     public void DialogueCall()

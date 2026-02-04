@@ -96,9 +96,11 @@ public class PlayerController : MonoBehaviour
     Quaternion mapRotation;
     bool maintainedRow;
     GameObject consumable;//cambiar esto como pueda
+    DialogueDetection detection;
     #endregion
     private void Awake()
     {
+        detection = GetComponent<DialogueDetection>();
         GameManager.Instance.inventoryPanel.SetActive(true);
         GameManager.Instance.inventoryPanel.SetActive(false);
     }
@@ -472,6 +474,7 @@ public class PlayerController : MonoBehaviour
                             NewAdvice($"You found{inventoryManager.GetArticle(item.itemName, 1)}<b>{item.itemName}</b>!");
                             col.gameObject.SetActive(false);
                             anim.SetTrigger("pocketSearch");
+                            detection.pickUpSign.SetActive(false);
                         }
                         else
                         {

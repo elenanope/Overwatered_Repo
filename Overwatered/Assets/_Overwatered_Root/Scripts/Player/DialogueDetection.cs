@@ -7,6 +7,7 @@ public class DialogueDetection : MonoBehaviour
     [Tooltip("Do not reference, unless it is a minigame/is not area activated")]
     [SerializeField]DialogueActivator npcActivator;
     [SerializeField] DialogueManager manager;
+    public GameObject pickUpSign;
     bool playerInRange;
 
     private void Start()
@@ -30,15 +31,31 @@ public class DialogueDetection : MonoBehaviour
             npcActivator = other.gameObject.GetComponent<DialogueActivator>();
             playerInRange = true;
             manager.currentDialoguer = npcActivator;
+            if (npcActivator.dialogueInfo[npcActivator.lineToRead].dialogueMark != null) npcActivator.dialogueInfo[npcActivator.lineToRead].dialogueMark.SetActive(true);
+        }
+        else if(other.gameObject.layer == 6)
+        {
+            if(pickUpSign!= null)
+            {
+                if(!pickUpSign.activeSelf) pickUpSign.SetActive(true);
+            }
         }
     }
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.layer == 8)
         {
+            if (npcActivator.dialogueInfo[npcActivator.lineToRead].dialogueMark != null) npcActivator.dialogueInfo[npcActivator.lineToRead].dialogueMark.SetActive(false);
             playerInRange = false;
             npcActivator = null;
             manager.currentDialoguer = null;
+        }
+        else if (other.gameObject.layer == 6)
+        {
+            if (pickUpSign != null)
+            {
+                if (pickUpSign.activeSelf) pickUpSign.SetActive(false);
+            }
         }
     }
     public void OnInfo(InputAction.CallbackContext ctx)
