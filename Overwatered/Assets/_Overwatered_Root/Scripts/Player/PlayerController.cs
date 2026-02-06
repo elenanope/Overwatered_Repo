@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] ItemClass can;
     [SerializeField]bool playerPaused;//quitar esta o la siguiente? o no?
     bool interacting;
-    bool isInsideBoat = false;
+    [SerializeField]bool isInsideBoat = false;
     [SerializeField] bool isNearBoat;
     public bool isNearLand;
     [SerializeField] bool canRow = true;
@@ -95,6 +95,7 @@ public class PlayerController : MonoBehaviour
     public Vector3 shorePoint;
     Quaternion mapRotation;
     bool maintainedRow;
+    float isTired = 1;
     GameObject consumable;//cambiar esto como pueda
     DialogueDetection detection;
     #endregion
@@ -135,9 +136,11 @@ public class PlayerController : MonoBehaviour
             if (interacting) StartCoroutine(InteractRoutine());
         }
 
-        foodLeft -= (Time.deltaTime * (10f / 24f) * movementMult)/2; //ajustar tiempo o según distancia
-        waterLeft -= (Time.deltaTime * (10f / 24f) * movementMult)/2; //ajustar tiempo o según distancia
-        timePassed += Time.deltaTime;
+        if(foodLeft > 0)foodLeft -= (Time.deltaTime * (10f / 24f) * movementMult)/2; //ajustar tiempo o según distancia
+        else foodLeft = 0;
+        if (waterLeft > 0) waterLeft -= (Time.deltaTime * (10f / 24f) * movementMult) / 2; //ajustar tiempo o según distancia
+        else waterLeft = 0;
+            timePassed += Time.deltaTime;
         if(!isInsideBoat)
         {
             timeSinceMove += Time.deltaTime;
@@ -154,11 +157,6 @@ public class PlayerController : MonoBehaviour
             StatsUpdater();
         }
 
-        if (waterLeft <= 0 && !GameManager.Instance.gameOver) //si la comida se agota, la bebida tmb se agotará más rápido?
-        {
-            GameManager.Instance.gameOver = true;
-            StartCoroutine(GameOver());
-        }
         /*//else if (condicion de ganar)
         {
             winPanel.SetActive(true);
@@ -184,8 +182,27 @@ public class PlayerController : MonoBehaviour
     }
     void StatsUpdater()
     {
-        waterBarFill.fillAmount = waterLeft / maxWater;
-        foodBarFill.fillAmount = foodLeft / maxFood;
+        if(waterBarFill != null)
+        {
+            waterBarFill.fillAmount = waterLeft / maxWater;
+        }
+        if(foodBarFill != null) foodBarFill.fillAmount = foodLeft / maxFood;
+        if (waterLeft <= 30 || foodLeft <= 10)
+        {
+            if (!anim.GetBool("isTired")) anim.SetBool("isTired", true);
+            if (isTired == 1) isTired = 0.6f;
+        }
+        else
+        {
+            if(anim.GetBool("isTired")) anim.SetBool("isTired", false);
+            if (isTired != 1) isTired = 1f;
+        }
+            
+        if (waterLeft <= 0 && !GameManager.Instance.gameOver) //si la comida se agota, la bebida tmb se agotará más rápido?
+        {
+            GameManager.Instance.gameOver = true;
+            StartCoroutine(GameOver());
+        }
     }
     IEnumerator GameOver()
     {
@@ -290,6 +307,12 @@ public class PlayerController : MonoBehaviour
         Vector3 currentVelocity = playerRb.linearVelocity;
         Vector3 targetVelocity = moveDirection;
         targetVelocity *= isSprinting ? sprintSpeed : speed;
+        if(isTired != 1)
+        {
+            if (isSprinting) isTired = 0.8f;
+            else isTired = 0.6f;
+        }
+        targetVelocity *= isTired;
 
         if(willBeGrounded)
         {
@@ -350,8 +373,8 @@ public class PlayerController : MonoBehaviour
     {
         //moveInput.x rota la barca y moveInput.y acelera o mueve hacia atrás
         //poner preferencia en alguna si son pulsadas a la vez?
-        float forceDirection = rowingForce * moveInput.y; //quizá poner directamente si 1 o -1
-        float forceRotation = rowingTurningForce * moveInput.x;
+        float forceDirection = rowingForce * isTired * moveInput.y; //quizá poner directamente si 1 o -1
+        float forceRotation = rowingTurningForce * isTired * moveInput.x;
         float lastMoveInputX = moveInput.x;
         float lastMoveInputY = moveInput.y;
 

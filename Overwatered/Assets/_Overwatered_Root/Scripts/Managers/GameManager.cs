@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
             {
                 fading = false;
                 faded = false;
-                if (nextScene > 0) LoadScene(nextScene);
+                if (nextScene >= 0) LoadScene(nextScene);
                 if (goalAlpha == 0) fadePanel.gameObject.SetActive(false);
             }
         }
