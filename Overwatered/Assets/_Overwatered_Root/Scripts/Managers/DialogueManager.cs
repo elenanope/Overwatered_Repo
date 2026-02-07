@@ -53,8 +53,8 @@ public class DialogueManager : MonoBehaviour
         lastConfirmation = false;
         GameManager.Instance.playerInDialogue = true;
         choiceStatus = 0;
+        GameManager.Instance.SetNPCTarget(currentDialoguer.activatorReference);
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue) GameManager.Instance.ChangeCamera();
-        GameManager.Instance.SetNPCTarget(currentDialoguer.gameObject.transform);
         didDialogueStart = true;
         dialogueOver = false;
         dialoguePanel.SetActive(true);
@@ -275,7 +275,8 @@ public class DialogueManager : MonoBehaviour
                 choiceStatus = 2;
                 dialogueText.text = string.Empty;
                 dialogueText.maxVisibleCharacters = 0;
-                textToRead = "No tienes basura!!";//guardar en Data para buscarla en inglés/español/idioma que quieras
+                textToRead = "You don't have any trash to recycle!!";//guardar en Data para buscarla en inglés/español/idioma que quieras
+                //textToRead = "No tienes basura!!";//guardar en Data para buscarla en inglés/español/idioma que quieras
                 dialogueText.text = textToRead;
                 StartCoroutine(ShowingLine());
             }

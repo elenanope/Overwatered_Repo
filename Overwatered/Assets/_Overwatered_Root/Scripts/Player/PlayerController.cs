@@ -486,22 +486,25 @@ public class PlayerController : MonoBehaviour
                 Collider[] colTouched = Physics.OverlapBox(worldOffset, interactCubeScale, gameObject.transform.rotation, interactLayer);
                 foreach (Collider col in colTouched)
                 {//si no está lleno el inventario
-                    ItemClass item = null;
-                    if (col.gameObject.name.Contains("SM_Bread")) item = bread; 
-                    else if (col.gameObject.name.Contains("SM_Water")) item = water; 
-                    else if (col.gameObject.name.Contains("SM_Can")) item = can; 
-                    if(item != null)
+                    if(col.GetType() == typeof(BoxCollider))
                     {
-                        if (inventoryManager.Add(item, 1))//cambiar si te encuentras más y añadir "s" para hacer el plural
+                        ItemClass item = null;
+                        if (col.gameObject.name.Contains("SM_Bread")) item = bread;
+                        else if (col.gameObject.name.Contains("SM_Water")) item = water;
+                        else if (col.gameObject.name.Contains("SM_Can")) item = can;
+                        if (item != null)
                         {
-                            NewAdvice($"You found{inventoryManager.GetArticle(item.itemName, 1)}<b>{item.itemName}</b>!");
-                            col.gameObject.SetActive(false);
-                            anim.SetTrigger("pocketSearch");
-                            detection.pickUpSign.SetActive(false);
-                        }
-                        else
-                        {
-                            NewAdvice("There is no space left in your inventory!!");
+                            if (inventoryManager.Add(item, 1))//cambiar si te encuentras más y añadir "s" para hacer el plural
+                            {
+                                NewAdvice($"You found{inventoryManager.GetArticle(item.itemName, 1)}<b>{item.itemName}</b>!");
+                                col.gameObject.SetActive(false);
+                                anim.SetTrigger("pocketSearch");
+                                detection.pickUpSign.SetActive(false);
+                            }
+                            else
+                            {
+                                NewAdvice("There is no space left in your inventory!!");
+                            }
                         }
                     }
                 }
@@ -621,7 +624,7 @@ public class PlayerController : MonoBehaviour
                 anim.SetInteger("playerState", -1);
             }
             GameManager.Instance.inventoryPanel.SetActive(!GameManager.Instance.menuOpened);
-            GameManager.Instance.SetNPCTarget(null);
+            //GameManager.Instance.SetNPCTarget(null);
             menuCamera.SetActive(!GameManager.Instance.menuOpened);
             GameManager.Instance.cinemachineCamera.enabled = GameManager.Instance.menuOpened;
             GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = GameManager.Instance.menuOpened;

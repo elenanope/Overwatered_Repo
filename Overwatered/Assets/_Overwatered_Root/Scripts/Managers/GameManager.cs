@@ -35,7 +35,6 @@ public class GameManager : MonoBehaviour
     public CinemachineCamera cinemachineCamera;
     [SerializeField] Camera cameraComponent;
     [SerializeField] CinemachineCamera dialogueCam;
-    [SerializeField] CinemachineTargetGroup targetGroup;
     [SerializeField] CinemachineRotationComposer dialogueCamRot;
     public EventSystem eventSystem;
     public Transform mapCamera;
@@ -58,15 +57,24 @@ public class GameManager : MonoBehaviour
     int nextScene = -1;
     int goalAlpha;
 
+    [Header("Dialogue Camera")]
+    [SerializeField] Transform head1Trans;
+    [SerializeField] Transform head2Trans;
+    [SerializeField] float frontDistance;
+    [SerializeField] float verticalWeight;
+    Vector3 head1;
+    Vector3 head2;
+    Vector2 head1Top;
+    Vector2 head2Top;
+    [SerializeField] Vector3 middlePoint;
+    [SerializeField] Vector3 cameraPoint;
+    [SerializeField] float angles;
+    [SerializeField] GameObject cameraDialogue;
+
     private void Awake()
     {
         instance = this;
         DontDestroyOnLoad(this.gameObject);
-        if (dialogueCamRot != null) 
-        {
-            actualXOffset = dialogueCamRot.TargetOffset.x;
-            actualZOffset = dialogueCamRot.TargetOffset.z;
-        } 
     }
     private void Start()
     {
@@ -74,13 +82,6 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        if(charactersHidden) //mejorar esta rotacion
-        {
-            actualZOffset = Mathf.Lerp(dialogueCamRot.TargetOffset.z, -6, Time.deltaTime * 3);
-            if (dialogueCamRot.TargetOffset.z < -0.5f) actualXOffset = Mathf.Lerp(dialogueCamRot.TargetOffset.x, -2, Time.deltaTime); //ajustar
-            if (dialogueCamRot.TargetOffset.x <= -1.9f && dialogueCamRot.TargetOffset.z <= -5.9f) charactersHidden = false;
-            dialogueCamRot.TargetOffset = new Vector3(actualXOffset, 0, actualZOffset);
-        }
         if(fading)
         {
             if(!faded)
@@ -102,8 +103,6 @@ public class GameManager : MonoBehaviour
     }
      IEnumerator ChangeCamCoroutine()
     {
-        Vector3 NPCToCam;
-        Vector3 PlayerToCam;
         if (!overworldCamActive)
         {
             cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = true;
@@ -112,6 +111,7 @@ public class GameManager : MonoBehaviour
             actualXOffset = 0f;
             actualZOffset = 0f;
             dialogueCamRot.TargetOffset.x = 0f;
+            dialogueCamRot.TargetOffset.y = 0.83f;
             dialogueCamRot.TargetOffset.z = 0f;
             dialogueCam.Priority = 0;
             cinemachineCamera.Priority = 1;
@@ -125,28 +125,42 @@ public class GameManager : MonoBehaviour
             dialogueCam.Priority = 1;
             cinemachineCamera.Priority = 0;
             yield return new WaitForSeconds(0.5f);
-            //hacerlo midiendo distancias entre cámara y cada personaje
-            PlayerToCam = cameraComponent.WorldToScreenPoint(targetGroup.Targets[1].Object.position);
-            if (targetGroup.Targets[0].Object != null)
-            {
-                NPCToCam = cameraComponent.WorldToScreenPoint(targetGroup.Targets[0].Object.position);
-                if (Mathf.Abs(NPCToCam.x - PlayerToCam.x) < 50f) //esto va raro
-                {
-                    charactersHidden = true;
-                    //dialogueCamRot.TargetOffset.x = -3f;
-                    //dialogueCamRot.TargetOffset.z = -5f;
-                }
-            }
-                
-            //Debug.Log("NPC está a " + NPCToCam.x);
-            //Debug.Log("Player está a " + PlayerToCam.x);
+            DialogueDistance();
+
             overworldCamActive = !overworldCamActive;
             yield break;
         }
     }
-    public void SetNPCTarget(Transform npcTransform)
+    public void SetNPCTarget(int npcTrans)
     {
-        targetGroup.Targets[0].Object = npcTransform;
+        Debug.Log(npcTrans);
+        head2 = npcManager.npcHeads[npcTrans].position;
+    }
+    public void DialogueDistance()//close FOV 9 for dialogueCam
+    {
+        Vector2 direction;
+        Vector2 tempDifference;
+        Vector2 cameraTemp;
+        Vector2 middleTemp;
+        Vector3 lookDir;
+
+        head1 = head1Trans.position;
+
+        head1Top = new Vector2(head1.x, head1.z);
+        head2Top = new Vector2(head2.x, head2.z);
+        tempDifference = head2Top - head1Top;
+
+        middleTemp = new Vector2((head1Top.x + head2Top.x) / 2, (head1Top.y + head2Top.y) / 2);
+        middlePoint = new Vector3(middleTemp.x, 0f, middleTemp.y);
+        direction = new Vector2(tempDifference.y, -tempDifference.x).normalized;
+
+        cameraTemp = middleTemp + direction * frontDistance;
+        cameraPoint = new Vector3(cameraTemp.x, (head1.y + head2.y) / 2 + verticalWeight * Mathf.Abs(head1.y - head2.y), cameraTemp.y);
+
+        dialogueCam.gameObject.transform.position = cameraPoint;
+        lookDir = middlePoint - dialogueCam.gameObject.transform.position;
+        lookDir.y = 0f;
+        dialogueCam.gameObject.transform.rotation = Quaternion.LookRotation(lookDir);
     }
     public void FindReferences()
     {
@@ -160,7 +174,6 @@ public class GameManager : MonoBehaviour
             if (sceneReferences.cinemachineCamera != null) cinemachineCamera = sceneReferences.cinemachineCamera;
             if (sceneReferences.cameraComponent != null) cameraComponent = sceneReferences.cameraComponent;
             if (sceneReferences.dialogueCam != null) dialogueCam = sceneReferences.dialogueCam;
-            if (sceneReferences.targetGroup != null) targetGroup = sceneReferences.targetGroup;
             if (sceneReferences.dialogueCamRot != null) dialogueCamRot = sceneReferences.dialogueCamRot;
             if (sceneReferences.fadePanel != null) fadePanel = sceneReferences.fadePanel;
             if (sceneReferences.mapCamera != null) mapCamera = sceneReferences.mapCamera;
