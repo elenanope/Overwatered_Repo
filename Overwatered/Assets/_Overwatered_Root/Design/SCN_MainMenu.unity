@@ -3231,8 +3231,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2123970354}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+      - m_Target: {fileID: 1818828687}
+        m_TargetAssemblyTypeName: SceneReferences, Assembly-CSharp
         m_MethodName: ExitGame
         m_Mode: 1
         m_Arguments:
@@ -3776,8 +3776,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2123970354}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+      - m_Target: {fileID: 1818828687}
+        m_TargetAssemblyTypeName: SceneReferences, Assembly-CSharp
         m_MethodName: DeleteGame
         m_Mode: 1
         m_Arguments:
@@ -10751,8 +10751,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2123970354}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+      - m_Target: {fileID: 1818828687}
+        m_TargetAssemblyTypeName: SceneReferences, Assembly-CSharp
         m_MethodName: StartLoading
         m_Mode: 3
         m_Arguments:
@@ -11593,8 +11593,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2123970354}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+      - m_Target: {fileID: 1818828687}
+        m_TargetAssemblyTypeName: SceneReferences, Assembly-CSharp
         m_MethodName: StartLoading
         m_Mode: 3
         m_Arguments:
@@ -12103,6 +12103,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1805726234}
   m_CullTransparentMesh: 1
+--- !u!1 &1818828686
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1818828688}
+  - component: {fileID: 1818828687}
+  m_Layer: 0
+  m_Name: References
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1818828687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1818828686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2dc9b1dd03f7744b9779434dd3c850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camController: {fileID: 0}
+  dialogueManager: {fileID: 0}
+  npcManager: {fileID: 0}
+  winPanel: {fileID: 0}
+  losePanel: {fileID: 0}
+  inventoryPanel: {fileID: 0}
+  cinemachineCamera: {fileID: 0}
+  cameraComponent: {fileID: 0}
+  dialogueCam: {fileID: 0}
+  targetGroup: {fileID: 0}
+  dialogueCamRot: {fileID: 0}
+  mapCamera: {fileID: 0}
+  fadePanel: {fileID: 841124280}
+  eventSystem: {fileID: 809356044}
+  head1Trans: {fileID: 0}
+--- !u!4 &1818828688
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1818828686}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1828678758
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15231,7 +15290,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac8398326d9fb174a929e5f107615872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isInMinigame: 0
   lastMinigameResult: 0
   minigameScene: 0
 --- !u!114 &2123970354
@@ -15257,7 +15315,6 @@ MonoBehaviour:
   cinemachineCamera: {fileID: 0}
   cameraComponent: {fileID: 459556490}
   dialogueCam: {fileID: 0}
-  targetGroup: {fileID: 0}
   dialogueCamRot: {fileID: 0}
   eventSystem: {fileID: 809356044}
   mapCamera: {fileID: 0}
@@ -15272,6 +15329,14 @@ MonoBehaviour:
   fading: 0
   exitingGame: 0
   gameOutcome: -1
+  nextScene: -1
+  head1Trans: {fileID: 0}
+  frontDistance: 8
+  verticalWeight: -1.67
+  middlePoint: {x: 0, y: 0, z: 0}
+  cameraPoint: {x: 0, y: 0, z: 0}
+  angles: 0
+  cameraDialogue: {fileID: 0}
 --- !u!4 &2123970355
 Transform:
   m_ObjectHideFlags: 0
@@ -16725,8 +16790,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 1335696335}
   - {fileID: 1618121969}
-  - {fileID: 2123970355}
   - {fileID: 879661409}
   - {fileID: 1123044878}
   - {fileID: 923198746}
   - {fileID: 995722904}
+  - {fileID: 1818828688}
+  - {fileID: 2123970355}

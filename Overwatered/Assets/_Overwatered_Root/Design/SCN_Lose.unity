@@ -24285,6 +24285,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a710c2c450e78d74a89308e11b832a01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  npcName: 
+  npcColor: {r: 0, g: 0, b: 0, a: 0}
   lineToRead: 0
   activatorReference: 2
   isRandom: 0
@@ -25936,7 +25938,6 @@ MonoBehaviour:
   cinemachineCamera: {fileID: 0}
   cameraComponent: {fileID: 330585545}
   dialogueCam: {fileID: 0}
-  targetGroup: {fileID: 0}
   dialogueCamRot: {fileID: 0}
   eventSystem: {fileID: 0}
   mapCamera: {fileID: 1107626830}
@@ -25951,6 +25952,14 @@ MonoBehaviour:
   fading: 0
   exitingGame: 0
   gameOutcome: 0
+  nextScene: -1
+  head1Trans: {fileID: 0}
+  frontDistance: 0
+  verticalWeight: 0
+  middlePoint: {x: 0, y: 0, z: 0}
+  cameraPoint: {x: 0, y: 0, z: 0}
+  angles: 0
+  cameraDialogue: {fileID: 0}
 --- !u!4 &930350328
 Transform:
   m_ObjectHideFlags: 0
@@ -25978,7 +25987,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac8398326d9fb174a929e5f107615872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isInMinigame: 0
   lastMinigameResult: 0
   minigameScene: 0
 --- !u!1 &930445640 stripped
@@ -33489,8 +33497,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 930350327}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+      - m_Target: {fileID: 1500216437}
+        m_TargetAssemblyTypeName: SceneReferences, Assembly-CSharp
         m_MethodName: StartLoading
         m_Mode: 3
         m_Arguments:
@@ -41404,6 +41412,65 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 753494489}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1500216436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1500216438}
+  - component: {fileID: 1500216437}
+  m_Layer: 0
+  m_Name: References
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1500216437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500216436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2dc9b1dd03f7744b9779434dd3c850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camController: {fileID: 0}
+  dialogueManager: {fileID: 0}
+  npcManager: {fileID: 0}
+  winPanel: {fileID: 0}
+  losePanel: {fileID: 2009609852}
+  inventoryPanel: {fileID: 0}
+  cinemachineCamera: {fileID: 0}
+  cameraComponent: {fileID: 0}
+  dialogueCam: {fileID: 0}
+  targetGroup: {fileID: 0}
+  dialogueCamRot: {fileID: 0}
+  mapCamera: {fileID: 0}
+  fadePanel: {fileID: 120938141}
+  eventSystem: {fileID: 72413416}
+  head1Trans: {fileID: 0}
+--- !u!4 &1500216438
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500216436}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1503053289 stripped
 GameObject:
@@ -56553,8 +56620,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 930350327}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+      - m_Target: {fileID: 1500216437}
+        m_TargetAssemblyTypeName: SceneReferences, Assembly-CSharp
         m_MethodName: StartLoading
         m_Mode: 3
         m_Arguments:
@@ -70506,6 +70573,7 @@ MeshFilter:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1500216438}
   - {fileID: 1710404046}
   - {fileID: 740451690}
   - {fileID: 769236863}

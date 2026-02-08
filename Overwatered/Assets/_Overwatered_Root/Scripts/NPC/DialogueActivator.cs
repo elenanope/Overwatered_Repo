@@ -48,6 +48,8 @@ public class DialogueActivator : MonoBehaviour
         //[TextArea(4, 6)] public string[] options1Answers;
 
     }
+    public string npcName;
+    public Color npcColor;
     public int lineToRead; //si tiene que seguir un orden, sino, que desde otro sitio se declare la randomness
     public int activatorReference; //número de este activator en el manager NPC
     [Tooltip("These will be randomized, dialogue lines default will be ignored")]

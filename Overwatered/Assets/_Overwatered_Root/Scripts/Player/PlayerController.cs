@@ -207,15 +207,23 @@ public class PlayerController : MonoBehaviour
     IEnumerator GameOver()
     {
         playerPaused = true;
+        if(GameManager.Instance.menuOpened)
+        {
+            GameManager.Instance.inventoryPanel.SetActive(false);
+            menuCamera.SetActive(false);
+            GameManager.Instance.cinemachineCamera.enabled = true;
+            GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = true;
+            GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = true;
+            GameManager.Instance.menuOpened = false;
+        }
+        
         anim.SetTrigger("faint");
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(2f);
         //pantalla negra y se escucha un golpe en el suelo (thump)
-        GameManager.Instance.losePanel.SetActive(true);//añadirle fade a esto
-        //GameManager.Instance.menuOpened = true;
+        GameManager.Instance.sceneReferences.StartLoading(4);//añadirle fade a esto
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
         Time.timeScale = 0f;
-        Debug.Log("Game over!!");
     }
     public void Consume(bool isDrinkable ,int itemNumber, int waterAdded, int foodAdded)//añadir el tipo de objeto para spawnear ese
     {
@@ -286,7 +294,6 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
     void Movement() //añadir que tolere escalones ligeros (raycasts? u otra cosa)
     {
         Vector3 forward = camTransform.forward;
@@ -463,7 +470,6 @@ public class PlayerController : MonoBehaviour
         }
             yield break;
     }
-
     IEnumerator ResetRow()
     {
         yield return new WaitForSeconds(0.1f); //se reproduce idle de row (transición entre barridos)
@@ -478,7 +484,7 @@ public class PlayerController : MonoBehaviour
     }
     void Interact()
     {
-        if (!GameManager.Instance.menuOpened)
+        if (!GameManager.Instance.menuOpened && moveInput.x== 0 && moveInput.y == 0)
         {
             if (!isNearBoat && !isNearLand) // && !isInsideBoat? ya veremos
             {
@@ -595,7 +601,6 @@ public class PlayerController : MonoBehaviour
         }
         else maintainedRow = false;
     }
-
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (ctx.performed && !playerPaused) interacting = true;

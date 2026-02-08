@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -11,14 +12,15 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] GameObject dialoguePanel;
     [SerializeField] GameObject selectionPanel;
     [SerializeField] InventoryManager inventoryManager;
-    //[SerializeField] GameObject dialogueSubpanel = null;
-    //[SerializeField] TMP_Text dialoguerName = null;
+    [SerializeField] GameObject dialogueSubpanel = null;
+    [SerializeField] TMP_Text dialoguerName = null;
     [SerializeField] TMP_Text dialogueText;
     [SerializeField] TMP_Text options1Text;
     [SerializeField] TMP_Text options2Text;
     [SerializeField] TMP_Text options3Text;
     [Tooltip("Do not reference, unless it is a minigame/is not area activated")]
     public DialogueActivator currentDialoguer;
+     DialogueActivator lastDialoguer;
 
     float typingTime;
     bool didDialogueStart;
@@ -53,11 +55,15 @@ public class DialogueManager : MonoBehaviour
         lastConfirmation = false;
         GameManager.Instance.playerInDialogue = true;
         choiceStatus = 0;
+        if(currentDialoguer != null)lastDialoguer = currentDialoguer;
         GameManager.Instance.SetNPCTarget(currentDialoguer.activatorReference);
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue) GameManager.Instance.ChangeCamera();
         didDialogueStart = true;
         dialogueOver = false;
         dialoguePanel.SetActive(true);
+        dialogueSubpanel.SetActive(true);
+        dialogueSubpanel.GetComponent<Image>().color = currentDialoguer.npcColor;
+        dialoguerName.text = currentDialoguer.npcName;
         if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(false);
         lineIndex = dialogueIndex = 0;
         //show emotion and name of the person
@@ -88,9 +94,26 @@ public class DialogueManager : MonoBehaviour
                         options3Text.transform.parent.gameObject.SetActive(true);
                         Cursor.lockState = CursorLockMode.Confined;
                         Cursor.visible = true;
-                        options1Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions1;
-                        options2Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions2;
-                        options3Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions3;
+
+                        if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions1 != "")
+                        {
+                            options1Text.transform.parent.gameObject.SetActive(true);
+                            options1Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions1;
+                        }
+                        else options1Text.transform.parent.gameObject.SetActive(false);
+                        if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions2 != "")
+                        {
+                            options2Text.transform.parent.gameObject.SetActive(true);
+                            options2Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions2;
+                        }
+                        else options2Text.transform.parent.gameObject.SetActive(false);
+                        if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions3 != "")
+                        {
+                            options3Text.transform.parent.gameObject.SetActive(true);
+                            options3Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions3;
+                        }
+                        else options3Text.transform.parent.gameObject.SetActive(false);
+                        
                         //empezar métodos de multiopción, si ya ha acabado -> CloseDialogue()
                     }
                     else if(choiceStatus == 2)
@@ -128,6 +151,7 @@ public class DialogueManager : MonoBehaviour
             {
                 didDialogueStart = false;
                 dialoguePanel.SetActive(false);
+                dialogueSubpanel.SetActive(false);
                 if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
                 dialogueOver = true;
                 if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue && !currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame) GameManager.Instance.ChangeCamera();
@@ -206,12 +230,18 @@ public class DialogueManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         didDialogueStart = false;
         dialoguePanel.SetActive(false);
+        dialogueSubpanel.SetActive(false);
         if(selectionPanel != null)selectionPanel.SetActive(false);
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
         dialogueOver = true;
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame && optionChosen == 0)
         {
-            StartCoroutine(MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference));
+            if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene > 2)
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.Confined;
+            }
+            MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference);
         }
         else
         {
@@ -235,6 +265,7 @@ public class DialogueManager : MonoBehaviour
     {
         if(choiceStatus != 1)//si no estás con el panel de selection abierto
         {
+            if(!dialogueOver && currentDialoguer == null) currentDialoguer = lastDialoguer;
             Debug.Log("call");
             DialoguerOrder();
             if (!didDialogueStart)
@@ -265,6 +296,7 @@ public class DialogueManager : MonoBehaviour
                 GameManager.Instance.tradeMode = true;//después reset
                 GameManager.Instance.inventoryPanel.SetActive(true);
                 dialoguePanel.SetActive(false);
+                dialogueSubpanel.SetActive(false);
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.Confined;
                 inventoryManager.TrashVisibility(false);
@@ -307,6 +339,7 @@ public class DialogueManager : MonoBehaviour
         inventoryManager.TrashVisibility(true);
         GameManager.Instance.inventoryPanel.SetActive(false);
         dialoguePanel.SetActive(true);
+        dialogueSubpanel.SetActive(true);
         choiceStatus = 1;
         DialogueCall();
         options3Text.transform.parent.gameObject.SetActive(false);

@@ -21086,6 +21086,65 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.4, y: 10.962033, z: 0.47}
   m_Center: {x: 0.0000000149011585, y: 5.4810166, z: -0.08793846}
+--- !u!1 &809358755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 809358757}
+  - component: {fileID: 809358756}
+  m_Layer: 0
+  m_Name: References
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &809358756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 809358755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2dc9b1dd03f7744b9779434dd3c850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camController: {fileID: 0}
+  dialogueManager: {fileID: 0}
+  npcManager: {fileID: 0}
+  winPanel: {fileID: 2009609852}
+  losePanel: {fileID: 0}
+  inventoryPanel: {fileID: 0}
+  cinemachineCamera: {fileID: 0}
+  cameraComponent: {fileID: 0}
+  dialogueCam: {fileID: 0}
+  targetGroup: {fileID: 0}
+  dialogueCamRot: {fileID: 0}
+  mapCamera: {fileID: 0}
+  fadePanel: {fileID: 120938141}
+  eventSystem: {fileID: 72413416}
+  head1Trans: {fileID: 0}
+--- !u!4 &809358757
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 809358755}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &810680249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25898,6 +25957,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a710c2c450e78d74a89308e11b832a01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  npcName: 
+  npcColor: {r: 0, g: 0, b: 0, a: 0}
   lineToRead: 0
   activatorReference: 2
   isRandom: 0
@@ -27366,7 +27427,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &930350327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27390,7 +27451,6 @@ MonoBehaviour:
   cinemachineCamera: {fileID: 0}
   cameraComponent: {fileID: 330585545}
   dialogueCam: {fileID: 0}
-  targetGroup: {fileID: 0}
   dialogueCamRot: {fileID: 0}
   eventSystem: {fileID: 0}
   mapCamera: {fileID: 1107626830}
@@ -27405,6 +27465,14 @@ MonoBehaviour:
   fading: 0
   exitingGame: 0
   gameOutcome: 0
+  nextScene: -1
+  head1Trans: {fileID: 0}
+  frontDistance: 0
+  verticalWeight: 0
+  middlePoint: {x: 0, y: 0, z: 0}
+  cameraPoint: {x: 0, y: 0, z: 0}
+  angles: 0
+  cameraDialogue: {fileID: 0}
 --- !u!4 &930350328
 Transform:
   m_ObjectHideFlags: 0
@@ -27432,7 +27500,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac8398326d9fb174a929e5f107615872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isInMinigame: 0
   lastMinigameResult: 0
   minigameScene: 0
 --- !u!1 &930445640 stripped
@@ -32068,7 +32135,7 @@ Transform:
   m_GameObject: {fileID: 1107626826}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -6.26, y: 12.451, z: -27.76}
+  m_LocalPosition: {x: -26.197866, y: 11.8306265, z: -9.071911}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -58934,8 +59001,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 930350327}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+      - m_Target: {fileID: 809358756}
+        m_TargetAssemblyTypeName: SceneReferences, Assembly-CSharp
         m_MethodName: StartLoading
         m_Mode: 3
         m_Arguments:
@@ -73819,6 +73886,7 @@ MeshFilter:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 809358757}
   - {fileID: 1710404046}
   - {fileID: 740451690}
   - {fileID: 769236863}

@@ -325,7 +325,7 @@ public class PaperShipMinigame : MonoBehaviour
     }
     public void FinishButton()
     {
-        StartCoroutine(MinigameManager.Instance.ExitMinigame(endResult));
+        MinigameManager.Instance.ExitMinigame(endResult);
     }
     IEnumerator StartMinigame()
     {

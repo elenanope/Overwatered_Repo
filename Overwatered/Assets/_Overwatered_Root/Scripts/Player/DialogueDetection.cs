@@ -20,7 +20,7 @@ public class DialogueDetection : MonoBehaviour
             if (GameManager.Instance.gameOutcome == 0) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 1;
             else if (GameManager.Instance.gameOutcome == 1) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 2;
             else if (GameManager.Instance.gameOutcome == 2) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 3;
-            GameManager.Instance.ChangeCamera();
+            //GameManager.Instance.ChangeCamera();
             manager.DialogueCall();
         }
     }
@@ -47,8 +47,8 @@ public class DialogueDetection : MonoBehaviour
         {
             if (npcActivator.dialogueInfo[npcActivator.lineToRead].dialogueMark != null) npcActivator.dialogueInfo[npcActivator.lineToRead].dialogueMark.SetActive(false);
             playerInRange = false;
-            npcActivator = null;
-            manager.currentDialoguer = null;
+            //npcActivator = null;
+            //manager.currentDialoguer = null;
         }
         else if (other.gameObject.layer == 6)
         {

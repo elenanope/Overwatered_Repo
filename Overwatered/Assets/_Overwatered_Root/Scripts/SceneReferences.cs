@@ -1,6 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SceneReferences : MonoBehaviour
@@ -20,13 +21,29 @@ public class SceneReferences : MonoBehaviour
     public Transform mapCamera;
     public Image fadePanel;
     public EventSystem eventSystem;
+    public Transform head1Trans;
 
     private void Awake()
     {
-        GameManager.Instance.FindReferences();
+        if(GameManager.Instance != null)GameManager.Instance.FindReferences();
     }
     private void Start()
     {
-        GameManager.Instance.StartFade(0);
+        //GameManager.Instance.StartFade(0);
     }
+    #region Game States Methods [move to other script?]
+    public void StartLoading(int sceneToLoad)
+    {
+        GameManager.Instance.nextScene = sceneToLoad;
+        GameManager.Instance.StartFade(1);
+    }
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+    public void DeleteGame()
+    {
+        GameManager.Instance.gameData.gameHasStarted = false;//y todo un método de reset
+    }
+    #endregion
 }

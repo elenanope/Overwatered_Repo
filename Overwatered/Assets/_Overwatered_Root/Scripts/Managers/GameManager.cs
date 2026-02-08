@@ -54,12 +54,12 @@ public class GameManager : MonoBehaviour
     public bool fading;
     public bool exitingGame;
     public int gameOutcome = -1;
-    int nextScene = -1;
+    public int nextScene = -1;
     int goalAlpha;
 
     [Header("Dialogue Camera")]
     [SerializeField] Transform head1Trans;
-    [SerializeField] Transform head2Trans;
+    //[SerializeField] Transform head2Trans;
     [SerializeField] float frontDistance;
     [SerializeField] float verticalWeight;
     Vector3 head1;
@@ -73,8 +73,15 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        if(instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else if(instance != this)
+        {
+            Destroy(this.gameObject);//al volver a la escena inicial ya no va bien
+        }
     }
     private void Start()
     {
@@ -92,10 +99,24 @@ public class GameManager : MonoBehaviour
             {
                 fading = false;
                 faded = false;
-                if (nextScene >= 0) LoadScene(nextScene);
+                if (nextScene >= 0)StartCoroutine(LoadScene(nextScene));
                 if (goalAlpha == 0) fadePanel.gameObject.SetActive(false);
             }
         }
+    }
+
+    IEnumerator LoadScene(int sceneToLoad)
+    {
+        SceneManager.LoadScene(sceneToLoad);
+        if(sceneToLoad == 0)
+        {
+            Debug.Log("Reset");
+            gameOver = false;
+            Time.timeScale = 1.0f;
+        }
+        nextScene = -1;
+        yield return new WaitForSeconds(1f);
+        StartFade(0);
     }
     public void ChangeCamera()
     {
@@ -133,7 +154,6 @@ public class GameManager : MonoBehaviour
     }
     public void SetNPCTarget(int npcTrans)
     {
-        Debug.Log(npcTrans);
         head2 = npcManager.npcHeads[npcTrans].position;
     }
     public void DialogueDistance()//close FOV 9 for dialogueCam
@@ -180,7 +200,8 @@ public class GameManager : MonoBehaviour
             if (sceneReferences.eventSystem != null) eventSystem = sceneReferences.eventSystem;
             if (sceneReferences.dialogueManager != null) dialogueManager = sceneReferences.dialogueManager;
             if (sceneReferences.npcManager != null) npcManager = sceneReferences.npcManager;
-            StartFade(0);
+            if (sceneReferences.head1Trans != null) head1Trans = sceneReferences.head1Trans;
+            //StartFade(0);
         }
         else
         {
@@ -207,24 +228,4 @@ public class GameManager : MonoBehaviour
             faded = true;
         }
     }
-    #region Game States Methods [move to other script?]
-    public void StartLoading(int sceneToLoad)
-    {
-        nextScene = sceneToLoad;
-        StartFade(1);
-    }
-     void LoadScene(int sceneToLoad)
-    {
-        SceneManager.LoadScene(sceneToLoad);
-        nextScene = -1;
-    }
-    public void ExitGame()
-    {
-        Application.Quit();
-    }
-    public void DeleteGame()
-    {
-        gameData.gameHasStarted = false;//y todo un método de reset
-    }
-    #endregion
 }
