@@ -14,8 +14,9 @@ public class DialogueDetection : MonoBehaviour
     {
         if (GameManager.Instance.exitingGame)
         {
+            GameManager.Instance.cameraReady = true;
             GameManager.Instance.dialogueManager.currentDialoguer = GameManager.Instance.npcManager.npcDialogueActivator[GameManager.Instance.gameData.lastNPCNumber];
-            //se da por hecho que esto solo se llama una vez (quien tenga ese activator)
+            npcActivator = GameManager.Instance.dialogueManager.currentDialoguer;
             // o lose, 1 empate, 2 ganar
             if (GameManager.Instance.gameOutcome == 0) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 1;
             else if (GameManager.Instance.gameOutcome == 1) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 2;

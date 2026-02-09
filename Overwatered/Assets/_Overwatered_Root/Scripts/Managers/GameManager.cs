@@ -44,15 +44,13 @@ public class GameManager : MonoBehaviour
     public bool isEating;
     public bool gameOver;
     bool overworldCamActive = true;
-    bool charactersHidden = false;
-    float actualXOffset;
-    float actualZOffset;
 
     [SerializeField] Image fadePanel;
     public float fadeTime = 2f;
     public bool faded;
     public bool fading;
     public bool exitingGame;
+    public bool cameraReady;//camera ready to transition into dialogueCam
     public int gameOutcome = -1;
     public int nextScene = -1;
     int goalAlpha;
@@ -85,6 +83,7 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        cameraReady = true;
         StartFade(0);
     }
     private void Update()
@@ -113,6 +112,12 @@ public class GameManager : MonoBehaviour
             Debug.Log("Reset");
             gameOver = false;
             Time.timeScale = 1.0f;
+            cameraReady = true;
+        }
+        else if(sceneToLoad == 1)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         nextScene = -1;
         yield return new WaitForSeconds(1f);
@@ -120,41 +125,32 @@ public class GameManager : MonoBehaviour
     }
     public void ChangeCamera()
     {
-        StartCoroutine(ChangeCamCoroutine());
+        DialogueCamera.Instance.LerpBetweenCameras();
+        //StartCoroutine(ChangeCamCoroutine());
     }
      IEnumerator ChangeCamCoroutine()
-    {
+     {
+        cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = !overworldCamActive;
+        cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = !overworldCamActive;
+        dialogueCam.Priority = !overworldCamActive? 0 : 1;
+        cinemachineCamera.Priority = !overworldCamActive ? 1 : 0;
+
         if (!overworldCamActive)
         {
-            cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = true;
-            cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = true;
-            charactersHidden = false;
-            actualXOffset = 0f;
-            actualZOffset = 0f;
             dialogueCamRot.TargetOffset.x = 0f;
             dialogueCamRot.TargetOffset.y = 0.83f;
             dialogueCamRot.TargetOffset.z = 0f;
-            dialogueCam.Priority = 0;
-            cinemachineCamera.Priority = 1;
-            overworldCamActive = !overworldCamActive;
-            yield break;
         }
-        else//la segunda vez va raro
+        else
         {
-            cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = false;
-            cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = false;
-            dialogueCam.Priority = 1;
-            cinemachineCamera.Priority = 0;
             yield return new WaitForSeconds(0.5f);
             DialogueDistance();
-
-            overworldCamActive = !overworldCamActive;
-            yield break;
         }
-    }
+        overworldCamActive = !overworldCamActive;
+     }
     public void SetNPCTarget(int npcTrans)
     {
-        head2 = npcManager.npcHeads[npcTrans].position;
+        DialogueCamera.Instance.head2 = npcManager.npcHeads[npcTrans].position;
     }
     public void DialogueDistance()//close FOV 9 for dialogueCam
     {

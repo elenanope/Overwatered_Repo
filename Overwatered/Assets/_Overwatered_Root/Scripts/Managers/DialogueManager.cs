@@ -44,30 +44,39 @@ public class DialogueManager : MonoBehaviour
 
     private void StartDialogue()
     {
-        if(playerAnim!= null)
+        if (GameManager.Instance.cameraReady)
         {
-            if (playerAnim.GetInteger("playerState") >= 0)
+            if (playerAnim != null)
             {
-                playerAnim.SetInteger("playerState", 0);
+                if (playerAnim.GetInteger("playerState") >= 0)
+                {
+                    playerAnim.SetInteger("playerState", 0);
+                }
             }
+
+            lastConfirmation = false;
+            GameManager.Instance.playerInDialogue = true;
+            choiceStatus = 0;
+            if (currentDialoguer != null) lastDialoguer = currentDialoguer;
+            if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue)
+            {
+                GameManager.Instance.SetNPCTarget(currentDialoguer.activatorReference);
+                GameManager.Instance.ChangeCamera();
+            }
+            didDialogueStart = true;
+            dialogueOver = false;
+            dialoguePanel.SetActive(true);
+            if(dialogueSubpanel != null)
+            {
+                dialogueSubpanel.SetActive(true);
+                dialogueSubpanel.GetComponent<Image>().color = currentDialoguer.npcColor;
+                dialoguerName.text = currentDialoguer.npcName;
+            }
+            if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(false);
+            lineIndex = dialogueIndex = 0;
+            //show emotion and name of the person
+            ShowLine();
         }
-        
-        lastConfirmation = false;
-        GameManager.Instance.playerInDialogue = true;
-        choiceStatus = 0;
-        if(currentDialoguer != null)lastDialoguer = currentDialoguer;
-        GameManager.Instance.SetNPCTarget(currentDialoguer.activatorReference);
-        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue) GameManager.Instance.ChangeCamera();
-        didDialogueStart = true;
-        dialogueOver = false;
-        dialoguePanel.SetActive(true);
-        dialogueSubpanel.SetActive(true);
-        dialogueSubpanel.GetComponent<Image>().color = currentDialoguer.npcColor;
-        dialoguerName.text = currentDialoguer.npcName;
-        if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(false);
-        lineIndex = dialogueIndex = 0;
-        //show emotion and name of the person
-        ShowLine();
     }
     private void NextDialogueLine()
     {
@@ -151,7 +160,7 @@ public class DialogueManager : MonoBehaviour
             {
                 didDialogueStart = false;
                 dialoguePanel.SetActive(false);
-                dialogueSubpanel.SetActive(false);
+                if(dialogueSubpanel != null)dialogueSubpanel.SetActive(false);
                 if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
                 dialogueOver = true;
                 if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue && !currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame) GameManager.Instance.ChangeCamera();
@@ -230,7 +239,7 @@ public class DialogueManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         didDialogueStart = false;
         dialoguePanel.SetActive(false);
-        dialogueSubpanel.SetActive(false);
+        if(dialogueSubpanel != null)dialogueSubpanel.SetActive(false);
         if(selectionPanel != null)selectionPanel.SetActive(false);
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark != null) currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueMark.SetActive(true);
         dialogueOver = true;
@@ -241,12 +250,13 @@ public class DialogueManager : MonoBehaviour
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.Confined;
             }
+            GameManager.Instance.cameraReady = true;
+            GameManager.Instance.playerInDialogue = false;
             MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference);
         }
         else
         {
             if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].areaDialogue) GameManager.Instance.ChangeCamera();
-            
         }
 
         if ((currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame && optionChosen > 0) || GameManager.Instance.gameOutcome >= 0)
@@ -296,7 +306,7 @@ public class DialogueManager : MonoBehaviour
                 GameManager.Instance.tradeMode = true;//después reset
                 GameManager.Instance.inventoryPanel.SetActive(true);
                 dialoguePanel.SetActive(false);
-                dialogueSubpanel.SetActive(false);
+                if(dialogueSubpanel != null)dialogueSubpanel.SetActive(false);
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.Confined;
                 inventoryManager.TrashVisibility(false);

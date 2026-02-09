@@ -46,7 +46,7 @@ public class ThirdPersonCamController : MonoBehaviour
         {
             if(orbital!= null)
             {
-                targetZoom = Mathf.Clamp(orbital.Radius - scrollDelta.y * zoomSpeed, minDistance, maxDistance);
+                targetZoom = Mathf.Clamp(orbital.Radius - scrollDelta.y * zoomSpeed, minDistance, maxDistance);//usar esto para cambiar el zoom en barca
                 scrollDelta = Vector2.zero;
                 zoomReseted = false;
             }

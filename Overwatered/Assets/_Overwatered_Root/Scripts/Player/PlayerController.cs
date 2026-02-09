@@ -97,7 +97,11 @@ public class PlayerController : MonoBehaviour
     bool maintainedRow;
     float isTired = 1;
     GameObject consumable;//cambiar esto como pueda
-    DialogueDetection detection;
+    public DialogueDetection detection;
+    float groundingMult = 1f;
+    Collider[] collidedGrounds;
+    int groundedChecks;
+    bool groundedInBoat = false;
     #endregion
     private void Awake()
     {
@@ -114,23 +118,9 @@ public class PlayerController : MonoBehaviour
     {
         if(GameManager.Instance.playerInDialogue) playerPaused = true;
         else playerPaused = false;
-        //Groundcheck
-        isGrounded = Physics.CheckSphere(groundCheck.transform.position, groundCheckRadius, groundLayer);
-        if(isSprinting)
-        {
-            if (Physics.CheckBox(futureGroundCheck.transform.position, futureGroundCheckBox * 0.2f, this.gameObject.transform.rotation, groundLayer) && Physics.CheckBox(futureGroundCheck2.transform.position, futureGroundCheckBox * 0.2f, this.gameObject.transform.rotation, groundLayer))
-                willBeGrounded = true;
-            else willBeGrounded = false;
-        }
-        else
-        {
-            if (Physics.CheckBox(futureGroundCheck.transform.position, futureGroundCheckBox, this.gameObject.transform.rotation, groundLayer) && Physics.CheckBox(futureGroundCheck2.transform.position, futureGroundCheckBox, this.gameObject.transform.rotation, groundLayer))
-                willBeGrounded = true;
-            else willBeGrounded = false;
-        }
-        //Debug ray: visible only in Scene
-        //Debug.DrawRay(camHolder.transform.position, camHolder.transform.forward * 100f, Color.red);
 
+        GroundCheck();
+        
         if (!playerPaused)//congelar también las stats? o solo en las cabinas telefónicas
         {
             if (interacting) StartCoroutine(InteractRoutine());
@@ -170,15 +160,119 @@ public class PlayerController : MonoBehaviour
     {
         if(other.CompareTag("Boat"))
         {
-            if (!isInsideBoat && !isNearBoat) isNearBoat = true;
+            if (!isInsideBoat && !isNearBoat)
+            {
+                isNearBoat = true;
+                detection.pickUpSign.SetActive(true);
+            }
         }
     }
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Boat"))
         {
-            if (isNearBoat) isNearBoat = false;
+            if (isNearBoat)
+            {
+                isNearBoat = false;
+                detection.pickUpSign.SetActive(false);
+            }
         }
+    }
+    void GroundCheck()
+    {
+        
+        isGrounded = Physics.CheckSphere(groundCheck.transform.position, groundCheckRadius, groundLayer);
+        if(!isInsideBoat && !groundedInBoat)
+        {
+            collidedGrounds = Physics.OverlapSphere(groundCheck.transform.position, groundCheckRadius, groundLayer);
+            foreach (Collider col in collidedGrounds)
+            {
+                if (!col.isTrigger)
+                {
+                    if (col.gameObject.name.Contains("Boat"))
+                    {
+                        groundedInBoat = true;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            collidedGrounds = Physics.OverlapSphere(groundCheck.transform.position, groundCheckRadius, groundLayer);
+            foreach (Collider col in collidedGrounds)
+            {
+                if (!col.isTrigger)
+                {
+                    if (col.gameObject.name.Contains("Boat"))
+                    {
+                        groundedInBoat = true;
+                        break;
+                    }
+                    else
+                    {
+                        groundedInBoat = false;
+                    }
+                }
+            }
+        }
+        
+        if (isSprinting && groundingMult != 2f)
+        {
+            groundingMult = 2f;
+        }
+        else
+        {
+            groundingMult = 1f;
+        }
+        if(groundedInBoat)
+        {
+            willBeGrounded = true;
+        }
+        else
+        {
+            if (Physics.CheckBox(futureGroundCheck.transform.position, futureGroundCheckBox * groundingMult, this.gameObject.transform.rotation, groundLayer)
+               && Physics.CheckBox(futureGroundCheck2.transform.position, futureGroundCheckBox * groundingMult, this.gameObject.transform.rotation, groundLayer))
+            {
+
+                {
+                    groundedChecks = 0;
+                    collidedGrounds = Physics.OverlapBox(futureGroundCheck.transform.position, futureGroundCheckBox * groundingMult, this.gameObject.transform.rotation, groundLayer);
+                    foreach (Collider col in collidedGrounds)
+                    {
+                        if (!col.isTrigger)
+                        {
+                            if (!col.gameObject.name.Contains("Boat"))
+                            {
+                                groundedChecks++;
+                                break;
+                            }
+                        }
+                    }
+                    if (groundedChecks > 1) groundedChecks = 1;
+                    collidedGrounds = Physics.OverlapBox(futureGroundCheck2.transform.position, futureGroundCheckBox * groundingMult, this.gameObject.transform.rotation, groundLayer);
+                    foreach (Collider col in collidedGrounds)
+                    {
+                        if (!col.isTrigger)
+                        {
+                            if (!col.gameObject.name.Contains("Boat"))
+                            {
+                                groundedChecks++;
+                                break;
+                            }
+                        }
+                    }
+                    if (groundedChecks > 2) groundedChecks = 2;
+                    if (groundedChecks == 2)
+                    {
+                        willBeGrounded = true;
+                    }
+                    else willBeGrounded = false;
+                }
+            }
+            else willBeGrounded = false;
+        }
+       
     }
     void StatsUpdater()
     {
@@ -223,7 +317,7 @@ public class PlayerController : MonoBehaviour
         GameManager.Instance.sceneReferences.StartLoading(4);//añadirle fade a esto
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
     }
     public void Consume(bool isDrinkable ,int itemNumber, int waterAdded, int foodAdded)//añadir el tipo de objeto para spawnear ese
     {
@@ -265,7 +359,7 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (!playerPaused || !GameManager.Instance.playerInDialogue)
+        if (!playerPaused && !GameManager.Instance.menuOpened)
         {
             if (!isInsideBoat)
             {
@@ -484,7 +578,7 @@ public class PlayerController : MonoBehaviour
     }
     void Interact()
     {
-        if (!GameManager.Instance.menuOpened && moveInput.x== 0 && moveInput.y == 0)
+        if (!GameManager.Instance.menuOpened)
         {
             if (!isNearBoat && !isNearLand) // && !isInsideBoat? ya veremos
             {
@@ -528,34 +622,52 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (isNearLand && isInsideBoat)//este no va
                 {
+
                     isNearLand = false;
                     //sentarte en el bote
                     gameObject.GetComponent<Collider>().enabled = true;
                     playerRb.isKinematic = false;
                     playerRb.useGravity = true;
                     //poner que sea más flexible la bajada
-                    boatController.SendClosestPoint();
-                    gameObject.transform.position = shorePoint;
-                    gameObject.transform.parent = null;
-                    isInsideBoat = false;
-                    //MinigameUpdater.Instance.SaveBoatPos(boatController.gameObject.transform);
-                    if (anim.GetBool("inBoat"))
+                    boatController.SendClosestPoint(0f);
+                    if(CheckClosestPointGround())
                     {
-                        anim.SetBool("inBoat", false);
-                        animatorL.gameObject.SetActive(false);
-                        animatorR.gameObject.SetActive(false);
+                        gameObject.transform.position = shorePoint;
+                        gameObject.transform.parent = null;
+                        isInsideBoat = false;
+                        //MinigameUpdater.Instance.SaveBoatPos(boatController.gameObject.transform);
+                        if (anim.GetBool("inBoat"))
+                        {
+                            anim.SetBool("inBoat", false);
+                            animatorL.gameObject.SetActive(false);
+                            animatorR.gameObject.SetActive(false);
+                        }
+                        boatController.hasPlayer = false;
+                        boatController.sticks.SetActive(true);
+                        walkDust.SetActive(true);
                     }
-                    boatController.hasPlayer = false;
-                    boatController.sticks.SetActive(true);
-                    walkDust.SetActive(true);
+                    
                 }
             }
         }
        
     }
+    bool CheckClosestPointGround()
+    {
+        RaycastHit hit;
+        float quantityRemoved = 0f;
+        while(!Physics.Raycast(shorePoint, Vector3.down, out hit, 5, groundLayer))
+        {
+            quantityRemoved -= 0.2f;
+            boatController.SendClosestPoint(quantityRemoved);
+            if(quantityRemoved >= 1f) return false;
+        }
+        return true;
+        
+    }
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.CompareTag("Boat"))
+        if(collision.gameObject.CompareTag("Boat") &&(!isGrounded || !willBeGrounded))
         {
             //GetInsideBoat();//tener cuidado para que pueda salir por encima del barco sin meterse en él
         }
@@ -607,7 +719,7 @@ public class PlayerController : MonoBehaviour
     }
     public void OnSprint(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && !playerPaused) isSprinting = true; //gestionar que deje de sprintear al dejar de moverse
+        if (ctx.performed && !playerPaused) isSprinting = !isSprinting;
         //cambiar input actions para que sea doble toque de tecla/(movimiento rápido/apretar joystick)
     }
     public void OnMenuInteraction(InputAction.CallbackContext ctx) //pasar al gameManager
@@ -631,9 +743,9 @@ public class PlayerController : MonoBehaviour
             GameManager.Instance.inventoryPanel.SetActive(!GameManager.Instance.menuOpened);
             //GameManager.Instance.SetNPCTarget(null);
             menuCamera.SetActive(!GameManager.Instance.menuOpened);
-            GameManager.Instance.cinemachineCamera.enabled = GameManager.Instance.menuOpened;
-            GameManager.Instance.cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = GameManager.Instance.menuOpened;
-            GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = GameManager.Instance.menuOpened;
+            //GameManager.Instance.cinemachineCamera.enabled = GameManager.Instance.menuOpened;
+            GameManager.Instance.cinemachineCamera.gameObject.SetActive(GameManager.Instance.menuOpened);
+            //GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = GameManager.Instance.menuOpened;
             GameManager.Instance.menuOpened = !GameManager.Instance.menuOpened;
             //playerPaused = GameManager.Instance.menuOpened;
         }
@@ -646,7 +758,7 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawCube(worldOffset, interactCubeScale);
         Gizmos.DrawCube(futureGroundCheck.transform.position, futureGroundCheckBox );
         Gizmos.DrawCube(futureGroundCheck2.transform.position, futureGroundCheckBox );
-        //Gizmos.DrawSphere(worldOffset, interactingDistance);
+        Gizmos.DrawSphere(groundCheck.transform.position, groundCheckRadius);
         Gizmos.color = Color.blue;
     }
 }

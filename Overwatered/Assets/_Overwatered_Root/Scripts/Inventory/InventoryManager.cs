@@ -720,7 +720,7 @@ public class InventoryManager : MonoBehaviour
     {
         for (int i = 0; i < slots.Length; i++)
         {
-            if (Vector2.Distance(slots[i].transform.position, Mouse.current.position.ReadValue()) <= 32) //añadir opción tmb para mando?
+            if (Vector2.Distance(slots[i].transform.position, Mouse.current.position.ReadValue()) <= 44) //añadir opción tmb para mando?
                 return items[i];
         }
         return null;
