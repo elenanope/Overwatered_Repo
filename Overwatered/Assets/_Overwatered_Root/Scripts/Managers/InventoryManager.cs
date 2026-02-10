@@ -51,11 +51,22 @@ public class InventoryManager : MonoBehaviour
             tempItems[i] = new SlotClass();
             imaginaryItems[i] = new SlotClass();
         }
-
-        for (int i = 0; i < startingItems.Length; i++)
+        if(GameManager.Instance.inventoryData.inventoryDataAvailable)
         {
-            items[i] = startingItems[i];
+            for (int i = 0; i < GameManager.Instance.inventoryData.startingItems.Length; i++)
+            {
+                items[i] = GameManager.Instance.inventoryData.startingItems[i];
+            }
         }
+        else
+        {
+            GameManager.Instance.inventoryData.inventoryDataAvailable = true;
+            for (int i = 0; i < startingItems.Length; i++)
+            {
+                items[i] = startingItems[i];
+            }
+        }
+        
 
         for (int i = 0; i < slotHolder.transform.childCount; i++) slots[i] = slotHolder.transform.GetChild(i).gameObject;
         if(itemToAdd != null) Add(itemToAdd, 1);
@@ -545,7 +556,11 @@ public class InventoryManager : MonoBehaviour
     #region Inventory Bases
     public void RefreshUI()
     {
-        for(int i = 0; i < slots.Length; i++)
+        for (int i = 0; i < items.Length; i++)
+        {
+             GameManager.Instance.inventoryData.startingItems[i] = items[i];
+        }
+        for (int i = 0; i < slots.Length; i++)
         {
             try
             {

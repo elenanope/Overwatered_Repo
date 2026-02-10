@@ -32,6 +32,12 @@ public class SceneReferences : MonoBehaviour
     public void DeleteGame()
     {
         GameManager.Instance.gameData.gameHasStarted = false;//y todo un método de reset
+        GameManager.Instance.inventoryData.inventoryDataAvailable = false;//y todo un método de reset
+        for (int i = 0; i < GameManager.Instance.inventoryData.pickedUpObjects.Length; i++)
+        {
+            GameManager.Instance.inventoryData.pickedUpObjects[i] = true;
+        }
+        GameManager.Instance.inventoryData.pickedUpObjects[0] = false;
     }
     #endregion
 }

@@ -42,6 +42,7 @@ public class MinigameManager : MonoBehaviour
     public void ExitMinigame(int endResult) // + int gameNumber?
     {
         GameManager.Instance.gameOutcome = endResult;
+        if(endResult == 2) GameManager.Instance.inventoryData.pickedUpObjects[0] = true;
         GameManager.Instance.menuOpened = false;//quitar?
         GameManager.Instance.StartFade(1);
         GameManager.Instance.exitingGame = true;

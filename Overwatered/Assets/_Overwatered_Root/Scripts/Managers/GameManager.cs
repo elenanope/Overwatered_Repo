@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     public SceneReferences sceneReferences;
     public SO_GameData gameData;
+    public SO_InventoryData inventoryData;
     public DialogueManager dialogueManager;
     public NPCManager npcManager;
 

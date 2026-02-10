@@ -17723,6 +17723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneReferences: {fileID: 0}
   gameData: {fileID: 11400000, guid: 1e9c78437afebc748a38ce6e41a4d0f4, type: 2}
+  inventoryData: {fileID: 11400000, guid: e200a785e430e7848962d7cb84459c4e, type: 2}
   dialogueManager: {fileID: 0}
   npcManager: {fileID: 0}
   camController: {fileID: 0}

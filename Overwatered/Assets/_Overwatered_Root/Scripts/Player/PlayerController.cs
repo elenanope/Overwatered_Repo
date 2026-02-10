@@ -588,6 +588,14 @@ public class PlayerController : MonoBehaviour
                         else if (col.gameObject.name.Contains("SM_Can")) item = can;
                         if (item != null)
                         {
+                            for (int i = 0; i < GameManager.Instance.inventoryData.pickedUpObjects.Length; i++)
+                            {
+                                if( col.gameObject == SpawnerManager.Instance.pickableObjects[i])
+                                {
+                                    GameManager.Instance.inventoryData.pickedUpObjects[i] = false;
+                                    break;
+                                }
+                            }
                             if (inventoryManager.Add(item, 1))//cambiar si te encuentras más y añadir "s" para hacer el plural
                             {
                                 NewAdvice($"You found{inventoryManager.GetArticle(item.itemName, 1)}<b>{item.itemName}</b>!");

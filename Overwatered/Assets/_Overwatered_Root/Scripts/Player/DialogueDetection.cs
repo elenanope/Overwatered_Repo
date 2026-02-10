@@ -20,7 +20,10 @@ public class DialogueDetection : MonoBehaviour
             // o lose, 1 empate, 2 ganar
             if (GameManager.Instance.gameOutcome == 0) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 1;
             else if (GameManager.Instance.gameOutcome == 1) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 2;
-            else if (GameManager.Instance.gameOutcome == 2) GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 3;
+            else if (GameManager.Instance.gameOutcome == 2)
+            {
+                GameManager.Instance.dialogueManager.currentDialoguer.lineToRead = 3;
+            }
             //GameManager.Instance.ChangeCamera();
             manager.DialogueCall();
         }
