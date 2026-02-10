@@ -18,5 +18,5 @@ MonoBehaviour:
   itemDescription: 
   isStackable: 1
   stackLimit: 3
-  itemPrefab: {fileID: 0}
+  itemPrefab: {fileID: 8039368436146082877, guid: b98347ff9d9d7d840b036ba0523c25ff, type: 3}
   trashAdded: 1

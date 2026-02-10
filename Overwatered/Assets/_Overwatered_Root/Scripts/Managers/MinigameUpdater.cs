@@ -44,7 +44,7 @@ public class MinigameUpdater : MonoBehaviour
     {
         if(GameManager.Instance.gameData.gameHasStarted)
         {
-            messagesManager.SetActive(false);
+            messagesManager.GetComponent<NotificationManager>().enabled = false ;
             phonePanel.SetActive(true);
             player.transform.SetPositionAndRotation(GameManager.Instance.gameData.lastPlayerPos, GameManager.Instance.gameData.lastPlayerRot);
             boat.transform.SetPositionAndRotation(GameManager.Instance.gameData.lastBoatPos, GameManager.Instance.gameData.lastBoatRot);

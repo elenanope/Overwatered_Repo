@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 5595738278599075076}
   - component: {fileID: 8082343978638676477}
   m_Layer: 5
-  m_Name: SlotPanel
+  m_Name: PF_SlotPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

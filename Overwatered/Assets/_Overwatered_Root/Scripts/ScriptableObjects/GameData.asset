@@ -18,7 +18,7 @@ MonoBehaviour:
   lastPlayerPos: {x: 16.139816, y: 1.8014276, z: 32.403904}
   lastPlayerRot: {x: -0, y: -0.6970533, z: -0, w: 0.7170194}
   foodLeft: 52.55544
-  waterLeft: 4.95
+  waterLeft: 146.23
   lastBoatPos: {x: 11.07336, y: 1.1381899, z: 26.071032}
   lastBoatRot: {x: -0.0010265138, y: -0.99614745, z: -0.004491177, w: -0.0875735}
   lastNPCNumber: 3

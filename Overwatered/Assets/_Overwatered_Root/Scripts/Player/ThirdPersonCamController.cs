@@ -31,8 +31,6 @@ public class ThirdPersonCamController : MonoBehaviour
         inputActions = new PlayerInput();
         inputActions.Enable();
         inputActions.CameraControls.CameraMouseZoom.performed += HandleMouseScroll;
-
-        //Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void HandleMouseScroll(InputAction.CallbackContext context)

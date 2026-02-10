@@ -29,13 +29,8 @@ public class GameManager : MonoBehaviour
 
     public ThirdPersonCamController camController;
     //poner los paneles en el player para que puedan ser privados?
-    public GameObject winPanel;
-    public GameObject losePanel;
     public GameObject inventoryPanel;
     public CinemachineCamera cinemachineCamera;
-    [SerializeField] Camera cameraComponent;
-    [SerializeField] CinemachineCamera dialogueCam;
-    [SerializeField] CinemachineRotationComposer dialogueCamRot;
     public EventSystem eventSystem;
     public Transform mapCamera;
     public bool menuOpened;
@@ -43,7 +38,6 @@ public class GameManager : MonoBehaviour
     public bool playerInDialogue;
     public bool isEating;
     public bool gameOver;
-    bool overworldCamActive = true;
 
     [SerializeField] Image fadePanel;
     public float fadeTime = 2f;
@@ -55,19 +49,6 @@ public class GameManager : MonoBehaviour
     public int nextScene = -1;
     int goalAlpha;
 
-    [Header("Dialogue Camera")]
-    [SerializeField] Transform head1Trans;
-    //[SerializeField] Transform head2Trans;
-    [SerializeField] float frontDistance;
-    [SerializeField] float verticalWeight;
-    Vector3 head1;
-    Vector3 head2;
-    Vector2 head1Top;
-    Vector2 head2Top;
-    [SerializeField] Vector3 middlePoint;
-    [SerializeField] Vector3 cameraPoint;
-    [SerializeField] float angles;
-    [SerializeField] GameObject cameraDialogue;
 
     private void Awake()
     {
@@ -125,58 +106,11 @@ public class GameManager : MonoBehaviour
     }
     public void ChangeCamera()
     {
-        DialogueCamera.Instance.LerpBetweenCameras();
-        //StartCoroutine(ChangeCamCoroutine());
+        CameraManager.Instance.LerpBetweenCameras();
     }
-     IEnumerator ChangeCamCoroutine()
-     {
-        cinemachineCamera.gameObject.GetComponent<ThirdPersonCamController>().enabled = !overworldCamActive;
-        cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = !overworldCamActive;
-        dialogueCam.Priority = !overworldCamActive? 0 : 1;
-        cinemachineCamera.Priority = !overworldCamActive ? 1 : 0;
-
-        if (!overworldCamActive)
-        {
-            dialogueCamRot.TargetOffset.x = 0f;
-            dialogueCamRot.TargetOffset.y = 0.83f;
-            dialogueCamRot.TargetOffset.z = 0f;
-        }
-        else
-        {
-            yield return new WaitForSeconds(0.5f);
-            DialogueDistance();
-        }
-        overworldCamActive = !overworldCamActive;
-     }
     public void SetNPCTarget(int npcTrans)
     {
-        DialogueCamera.Instance.head2 = npcManager.npcHeads[npcTrans].position;
-    }
-    public void DialogueDistance()//close FOV 9 for dialogueCam
-    {
-        Vector2 direction;
-        Vector2 tempDifference;
-        Vector2 cameraTemp;
-        Vector2 middleTemp;
-        Vector3 lookDir;
-
-        head1 = head1Trans.position;
-
-        head1Top = new Vector2(head1.x, head1.z);
-        head2Top = new Vector2(head2.x, head2.z);
-        tempDifference = head2Top - head1Top;
-
-        middleTemp = new Vector2((head1Top.x + head2Top.x) / 2, (head1Top.y + head2Top.y) / 2);
-        middlePoint = new Vector3(middleTemp.x, 0f, middleTemp.y);
-        direction = new Vector2(tempDifference.y, -tempDifference.x).normalized;
-
-        cameraTemp = middleTemp + direction * frontDistance;
-        cameraPoint = new Vector3(cameraTemp.x, (head1.y + head2.y) / 2 + verticalWeight * Mathf.Abs(head1.y - head2.y), cameraTemp.y);
-
-        dialogueCam.gameObject.transform.position = cameraPoint;
-        lookDir = middlePoint - dialogueCam.gameObject.transform.position;
-        lookDir.y = 0f;
-        dialogueCam.gameObject.transform.rotation = Quaternion.LookRotation(lookDir);
+        CameraManager.Instance.head2 = npcManager.npcHeads[npcTrans].position;
     }
     public void FindReferences()
     {
@@ -184,19 +118,13 @@ public class GameManager : MonoBehaviour
         if(sceneReferences != null)
         {
             if(sceneReferences.camController != null) camController = sceneReferences.camController;
-            if (sceneReferences.winPanel != null) winPanel = sceneReferences.winPanel;
-            if (sceneReferences.losePanel != null) losePanel = sceneReferences.losePanel;
             if (sceneReferences.inventoryPanel != null) inventoryPanel = sceneReferences.inventoryPanel;
             if (sceneReferences.cinemachineCamera != null) cinemachineCamera = sceneReferences.cinemachineCamera;
-            if (sceneReferences.cameraComponent != null) cameraComponent = sceneReferences.cameraComponent;
-            if (sceneReferences.dialogueCam != null) dialogueCam = sceneReferences.dialogueCam;
-            if (sceneReferences.dialogueCamRot != null) dialogueCamRot = sceneReferences.dialogueCamRot;
             if (sceneReferences.fadePanel != null) fadePanel = sceneReferences.fadePanel;
             if (sceneReferences.mapCamera != null) mapCamera = sceneReferences.mapCamera;
             if (sceneReferences.eventSystem != null) eventSystem = sceneReferences.eventSystem;
             if (sceneReferences.dialogueManager != null) dialogueManager = sceneReferences.dialogueManager;
             if (sceneReferences.npcManager != null) npcManager = sceneReferences.npcManager;
-            if (sceneReferences.head1Trans != null) head1Trans = sceneReferences.head1Trans;
             //StartFade(0);
         }
         else

@@ -6,6 +6,7 @@ public class NotificationManager : MonoBehaviour
 {
     [SerializeField] GameObject[] messages;
     [SerializeField] GameObject phoneWithChat;
+    [SerializeField] AudioSource notificationSound;
     bool firstMessage;
     private void Start()
     {//meter alarma por inundación en el propio main menu
@@ -26,6 +27,7 @@ public class NotificationManager : MonoBehaviour
             }
             //+ sonido
             messages[i].SetActive(true);
+            notificationSound.Play();
             StartCoroutine(TurnOff(i));
         }
     }

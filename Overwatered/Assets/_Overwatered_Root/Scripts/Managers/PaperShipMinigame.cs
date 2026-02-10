@@ -28,7 +28,6 @@ public class PaperShipMinigame : MonoBehaviour
     [SerializeField] int pointsNPC1;
     [SerializeField] int pointsNPC2;
     [SerializeField] float airTaken;
-    //[SerializeField] float airTakenSpeed = 1.5f;
     [SerializeField] int wind; //0 no hay, 1 hacia derecha, -1 hacia izquierda
     [SerializeField] float windMult; //1 no hay, 2 hacia derecha, 0.5 hacia izquierda
 
@@ -43,8 +42,6 @@ public class PaperShipMinigame : MonoBehaviour
     float goalDistance;
     int minigameState;//0 fade in, 1 jugar, 2 finalizado, 3 fadeout, 4 fadeout over
     int endResult = -1;
-    bool extraRound;
-    bool adviceOpened;
     [SerializeField] DialogueManager dialogueManager;
 
     void Start()

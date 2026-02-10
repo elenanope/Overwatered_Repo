@@ -4,11 +4,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class DialogueCamera : MonoBehaviour
+public class CameraManager : MonoBehaviour
 {
-    private static DialogueCamera instance;
+    private static CameraManager instance;
 
-    public static DialogueCamera Instance
+    public static CameraManager Instance
     {
         get
         {

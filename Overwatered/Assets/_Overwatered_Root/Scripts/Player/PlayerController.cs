@@ -83,6 +83,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform camTransform;
     [SerializeField] bool hasTurned = false;
     [SerializeField] float rotationTime = 20f;
+    [SerializeField] AudioSource notificationSound;
 
     [Header("Boat References")]
     [SerializeField] GameObject boat;
@@ -146,15 +147,6 @@ public class PlayerController : MonoBehaviour
             timePassed = 0;
             StatsUpdater();
         }
-
-        /*//else if (condicion de ganar)
-        {
-            winPanel.SetActive(true);
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
-            Time.timeScale = 0f;
-            Debug.Log("Win!!");
-        }*/
     }
     private void OnTriggerStay(Collider other)
     {
@@ -212,6 +204,7 @@ public class PlayerController : MonoBehaviour
                     else
                     {
                         groundedInBoat = false;
+                        //boatController.HandleColliders(false);
                     }
                 }
             }
@@ -574,6 +567,7 @@ public class PlayerController : MonoBehaviour
     {
         adviceDialogue.SetActive(false);
         adviceDialogue.SetActive(true);
+        notificationSound.Play();
         adviceText.text = adviceToSay;
     }
     void Interact()
@@ -645,6 +639,7 @@ public class PlayerController : MonoBehaviour
                         boatController.hasPlayer = false;
                         boatController.sticks.SetActive(true);
                         walkDust.SetActive(true);
+                        //if (!groundedInBoat) boatController.HandleColliders(false);
                     }
                     
                 }
@@ -729,25 +724,19 @@ public class PlayerController : MonoBehaviour
             if(GameManager.Instance.menuOpened)
             {
                 anim.SetInteger("playerState", 0);
-
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
             }
             else
             {
 
                 Cursor.lockState = CursorLockMode.Confined;
-                Cursor.visible = true;
                 anim.SetInteger("playerState", -1);
             }
             GameManager.Instance.inventoryPanel.SetActive(!GameManager.Instance.menuOpened);
-            //GameManager.Instance.SetNPCTarget(null);
+            Cursor.visible = !GameManager.Instance.menuOpened;
             menuCamera.SetActive(!GameManager.Instance.menuOpened);
-            //GameManager.Instance.cinemachineCamera.enabled = GameManager.Instance.menuOpened;
             GameManager.Instance.cinemachineCamera.gameObject.SetActive(GameManager.Instance.menuOpened);
-            //GameManager.Instance.cinemachineCamera.gameObject.GetComponent<CinemachineInputAxisController>().enabled = GameManager.Instance.menuOpened;
             GameManager.Instance.menuOpened = !GameManager.Instance.menuOpened;
-            //playerPaused = GameManager.Instance.menuOpened;
         }
     }
 
