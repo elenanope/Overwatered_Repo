@@ -308,8 +308,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(2f);
         //pantalla negra y se escucha un golpe en el suelo (thump)
         GameManager.Instance.sceneReferences.StartLoading(4);//añadirle fade a esto
-        Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = true;
+        GameManager.Instance.ShowCursor(true);
         //Time.timeScale = 0f;
     }
     public void Consume(bool isDrinkable ,int itemNumber, int waterAdded, int foodAdded)//añadir el tipo de objeto para spawnear ese
@@ -732,16 +731,17 @@ public class PlayerController : MonoBehaviour
             if(GameManager.Instance.menuOpened)
             {
                 anim.SetInteger("playerState", 0);
-                Cursor.lockState = CursorLockMode.Locked;
+                inventoryManager.SelectionBubble(3);//cierra el desplegable del inventario por si acaso
+                inventoryManager.ReturnObject();
             }
             else
             {
-
-                Cursor.lockState = CursorLockMode.Confined;
                 anim.SetInteger("playerState", -1);
+                //desactivar pickUp/dialogueSign??
             }
             GameManager.Instance.inventoryPanel.SetActive(!GameManager.Instance.menuOpened);
-            Cursor.visible = !GameManager.Instance.menuOpened;
+
+            GameManager.Instance.ShowCursor(!GameManager.Instance.menuOpened);
             menuCamera.SetActive(!GameManager.Instance.menuOpened);
             GameManager.Instance.cinemachineCamera.gameObject.SetActive(GameManager.Instance.menuOpened);
             GameManager.Instance.menuOpened = !GameManager.Instance.menuOpened;

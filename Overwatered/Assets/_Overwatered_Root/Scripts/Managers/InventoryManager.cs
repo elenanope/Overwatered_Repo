@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
@@ -37,7 +38,8 @@ public class InventoryManager : MonoBehaviour
     int barrasNumber;
     int aguaNumber;
     int itemsSelected;
-    [SerializeField] Button tradeButton;
+    [SerializeField] Button tradeButton; 
+    [SerializeField] VirtualMouseInput virtualMouseInput;
     private void Start()
     {
         slots = new GameObject[slotHolder.transform.childCount];
@@ -77,7 +79,11 @@ public class InventoryManager : MonoBehaviour
     private void Update()
     {
         itemCursor.SetActive(isMovingItem);
-        itemCursor.transform.position = Mouse.current.position.ReadValue();
+        //itemCursor.transform.position = Mouse.current.position.ReadValue();
+        if(isMovingItem)
+        {
+            itemCursor.transform.position = virtualMouseInput.virtualMouse.position.value;
+        }
         selectionBubble.transform.GetChild(1).gameObject.GetComponent<Button>().interactable = !GameManager.Instance.isEating;//hacer más óptimo?
     }
     public void OnTouch(InputAction.CallbackContext ctx)
@@ -174,11 +180,17 @@ public class InventoryManager : MonoBehaviour
                     else selectionBubble.transform.GetChild(1).gameObject.SetActive(false);
 
                     selectionBubble.transform.GetChild(2).gameObject.SetActive(false);
+
+                    //GameManager.Instance.eventSystem.SetSelectedGameObject(selectionBubble.transform.GetChild(0).gameObject);
                     /*if (currentSlot.GetItem().GetMisc() != null) selectionBubble.transform.GetChild(2).gameObject.SetActive(true);
                     else selectionBubble.transform.GetChild(2).gameObject.SetActive(false);*/
                 }
             }
         }
+    }
+    public void OnClose(InputAction.CallbackContext ctx)
+    {
+        SelectionBubble(3);
     }
 
     public string GetArticle(string word, int number)
@@ -552,6 +564,10 @@ public class InventoryManager : MonoBehaviour
         }
         bubbleOpened = false;
         selectionBubble.SetActive(false);
+    }
+    public void ReturnObject()
+    {
+        if(isMovingItem) EndItemMove();
     }
     #region Inventory Bases
     public void RefreshUI()

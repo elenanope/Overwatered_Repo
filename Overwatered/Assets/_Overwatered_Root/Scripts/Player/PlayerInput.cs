@@ -101,6 +101,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""CloseBubble"",
+                    ""type"": ""Button"",
+                    ""id"": ""586a536a-21a4-4de1-a143-dbafb960673a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""20c14a4a-fdaf-420c-b889-d101100e243c"",
@@ -203,6 +212,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b3715f0d-2bbe-4a3b-b29c-702c4113438b"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseBubble"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -326,6 +346,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CursorMove"",
+                    ""type"": ""Value"",
+                    ""id"": ""92d22e13-7c66-412b-85d4-071c5fe8f263"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -342,12 +371,45 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""9c47b745-908f-441c-b26e-ab82e96ab92b"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""acec55ce-be85-4f52-b1a5-331d0b05382f"",
                     ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""SelectOptions"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""70afa9aa-8427-4f84-bf87-49206a484611"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelectOptions"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7d21fd9e-9724-46df-b914-215abc1d2006"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CursorMove"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -460,6 +522,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
+        m_Gameplay_CloseBubble = m_Gameplay.FindAction("CloseBubble", throwIfNotFound: true);
         m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
         m_Gameplay_PutBack = m_Gameplay.FindAction("PutBack", throwIfNotFound: true);
         m_Gameplay_OpenMenu = m_Gameplay.FindAction("OpenMenu", throwIfNotFound: true);
@@ -468,6 +531,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Select = m_UI.FindAction("Select", throwIfNotFound: true);
         m_UI_SelectOptions = m_UI.FindAction("SelectOptions", throwIfNotFound: true);
+        m_UI_CursorMove = m_UI.FindAction("CursorMove", throwIfNotFound: true);
         // CameraControls
         m_CameraControls = asset.FindActionMap("CameraControls", throwIfNotFound: true);
         m_CameraControls_CameraLook = m_CameraControls.FindAction("CameraLook", throwIfNotFound: true);
@@ -556,6 +620,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Gameplay;
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
     private readonly InputAction m_Gameplay_Move;
+    private readonly InputAction m_Gameplay_CloseBubble;
     private readonly InputAction m_Gameplay_Interact;
     private readonly InputAction m_Gameplay_PutBack;
     private readonly InputAction m_Gameplay_OpenMenu;
@@ -575,6 +640,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/Move".
         /// </summary>
         public InputAction @Move => m_Wrapper.m_Gameplay_Move;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/CloseBubble".
+        /// </summary>
+        public InputAction @CloseBubble => m_Wrapper.m_Gameplay_CloseBubble;
         /// <summary>
         /// Provides access to the underlying input action "Gameplay/Interact".
         /// </summary>
@@ -620,6 +689,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
+            @CloseBubble.started += instance.OnCloseBubble;
+            @CloseBubble.performed += instance.OnCloseBubble;
+            @CloseBubble.canceled += instance.OnCloseBubble;
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
@@ -646,6 +718,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
+            @CloseBubble.started -= instance.OnCloseBubble;
+            @CloseBubble.performed -= instance.OnCloseBubble;
+            @CloseBubble.canceled -= instance.OnCloseBubble;
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
@@ -697,6 +772,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
     private readonly InputAction m_UI_Select;
     private readonly InputAction m_UI_SelectOptions;
+    private readonly InputAction m_UI_CursorMove;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -716,6 +792,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/SelectOptions".
         /// </summary>
         public InputAction @SelectOptions => m_Wrapper.m_UI_SelectOptions;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/CursorMove".
+        /// </summary>
+        public InputAction @CursorMove => m_Wrapper.m_UI_CursorMove;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -748,6 +828,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @SelectOptions.started += instance.OnSelectOptions;
             @SelectOptions.performed += instance.OnSelectOptions;
             @SelectOptions.canceled += instance.OnSelectOptions;
+            @CursorMove.started += instance.OnCursorMove;
+            @CursorMove.performed += instance.OnCursorMove;
+            @CursorMove.canceled += instance.OnCursorMove;
         }
 
         /// <summary>
@@ -765,6 +848,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @SelectOptions.started -= instance.OnSelectOptions;
             @SelectOptions.performed -= instance.OnSelectOptions;
             @SelectOptions.canceled -= instance.OnSelectOptions;
+            @CursorMove.started -= instance.OnCursorMove;
+            @CursorMove.performed -= instance.OnCursorMove;
+            @CursorMove.canceled -= instance.OnCursorMove;
         }
 
         /// <summary>
@@ -931,6 +1017,13 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMove(InputAction.CallbackContext context);
         /// <summary>
+        /// Method invoked when associated input action "CloseBubble" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCloseBubble(InputAction.CallbackContext context);
+        /// <summary>
         /// Method invoked when associated input action "Interact" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -980,6 +1073,13 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSelectOptions(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CursorMove" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCursorMove(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "CameraControls" which allows adding and removing callbacks.

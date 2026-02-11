@@ -100,11 +100,10 @@ public class DialogueManager : MonoBehaviour
 
                         choiceStatus = 1;
                         selectionPanel.SetActive(true); 
-                        options3Text.transform.parent.gameObject.SetActive(true);
-                        Cursor.lockState = CursorLockMode.Confined;
-                        Cursor.visible = true;
+                        options3Text.transform.parent.gameObject.SetActive(true); 
+                        GameManager.Instance.ShowCursor(true);
 
-                        if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions1 != "")
+                        if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions1 != "")
                         {
                             options1Text.transform.parent.gameObject.SetActive(true);
                             options1Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions1;
@@ -122,7 +121,8 @@ public class DialogueManager : MonoBehaviour
                             options3Text.text = currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].dialogueOptions3;
                         }
                         else options3Text.transform.parent.gameObject.SetActive(false);
-                        
+
+                        //GameManager.Instance.eventSystem.SetSelectedGameObject(options1Text.transform.parent.gameObject);
                         //empezar métodos de multiopción, si ya ha acabado -> CloseDialogue()
                     }
                     else if(choiceStatus == 2)
@@ -235,8 +235,7 @@ public class DialogueManager : MonoBehaviour
     void CloseDialogue()
     {
         choiceStatus = 0;
-        Cursor.visible = false; 
-        Cursor.lockState = CursorLockMode.Locked;
+        GameManager.Instance.ShowCursor(false);
         didDialogueStart = false;
         dialoguePanel.SetActive(false);
         if(dialogueSubpanel != null)dialogueSubpanel.SetActive(false);
@@ -245,11 +244,6 @@ public class DialogueManager : MonoBehaviour
         dialogueOver = true;
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame && optionChosen == 0)
         {
-            if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene > 2)
-            {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.Confined;
-            }
             GameManager.Instance.cameraReady = true;
             GameManager.Instance.playerInDialogue = false;
             MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference);
@@ -298,7 +292,6 @@ public class DialogueManager : MonoBehaviour
     {
         lineIndex = -1;
         optionChosen = optionNumber;
-        //Debug.Log(optionChosen);
         if (currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willRecycle && optionNumber == 0 && !lastConfirmation)//CAMBIAR: solo si tiene alguna basura en el bolsillo
         {
             if(inventoryManager.FindMisc())
@@ -307,8 +300,7 @@ public class DialogueManager : MonoBehaviour
                 GameManager.Instance.inventoryPanel.SetActive(true);
                 dialoguePanel.SetActive(false);
                 if(dialogueSubpanel != null)dialogueSubpanel.SetActive(false);
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.Confined;
+                GameManager.Instance.ShowCursor(true);
                 inventoryManager.TrashVisibility(false);
                 DialogueCall();
             }
@@ -326,9 +318,8 @@ public class DialogueManager : MonoBehaviour
         else
         {
             choiceStatus = 2;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            if(lastConfirmation)
+            GameManager.Instance.ShowCursor(false);
+            if (lastConfirmation)
             {
                 if (optionChosen == 0)
                 {
@@ -373,6 +364,9 @@ public class DialogueManager : MonoBehaviour
             randomized = false;
         }
     }
-
+    public void OnClose(InputAction.CallbackContext ctx)
+    {
+        if(!dialogueOver && choiceStatus == 1) ChooseOption(2); //modificar esto en un futuo para que solo sea si la ultima opción es despedida
+    }
 
 }

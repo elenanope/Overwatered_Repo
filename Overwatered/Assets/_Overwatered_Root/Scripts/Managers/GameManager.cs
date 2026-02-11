@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     public DialogueManager dialogueManager;
     public NPCManager npcManager;
 
+    [SerializeField] GameObject cursorPanel;
+
     public ThirdPersonCamController camController;
     //poner los paneles en el player para que puedan ser privados?
     public GameObject inventoryPanel;
@@ -65,6 +67,7 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        //Cursor.visible = false;
         cameraReady = true;
         StartFade(0);
     }
@@ -96,13 +99,13 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 1.0f;
             cameraReady = true;
         }
-        else if(sceneToLoad == 1)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
         nextScene = -1;
         yield return new WaitForSeconds(1f);
+        if (sceneToLoad == 1)
+        {
+            GameManager.Instance.ShowCursor(false);
+        }
+        else if(sceneToLoad > 2)GameManager.Instance.ShowCursor(true);
         StartFade(0);
     }
     public void ChangeCamera()
@@ -126,14 +129,33 @@ public class GameManager : MonoBehaviour
             if (sceneReferences.eventSystem != null) eventSystem = sceneReferences.eventSystem;
             if (sceneReferences.dialogueManager != null) dialogueManager = sceneReferences.dialogueManager;
             if (sceneReferences.npcManager != null) npcManager = sceneReferences.npcManager;
-            //StartFade(0);
+            if (sceneReferences.cursorPanel != null)
+            {
+                if (cursorPanel.activeSelf) cursorPanel.SetActive(false);
+                cursorPanel = sceneReferences.cursorPanel;
+            }
         }
         else
         {
             Debug.Log("References were not found");
         }
     }
+    public void ShowCursor(bool on)
+    {
+        //cursorPanel.SetActive(on);
 
+        //por ahora solo teclado y ratón, en references apago el del mando
+        if(on)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+        else
+        {
+            Cursor.visible= false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+    }
     public void StartFade(int desiredAlpha)
     {
         fadePanel.gameObject.SetActive(true);

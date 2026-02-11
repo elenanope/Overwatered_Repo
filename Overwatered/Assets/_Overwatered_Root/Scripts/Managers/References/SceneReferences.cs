@@ -14,6 +14,7 @@ public class SceneReferences : MonoBehaviour
     public Transform mapCamera;
     public Image fadePanel;
     public EventSystem eventSystem;
+    public GameObject cursorPanel;
 
     private void Awake()
     {
