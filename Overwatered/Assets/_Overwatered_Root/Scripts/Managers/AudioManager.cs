@@ -1,5 +1,4 @@
 using Unity.Cinemachine;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -21,20 +20,20 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    [Header("Music and SFX Volume")]
+    /*[Header("Music and SFX Volume")]
     [SerializeField] float musicVolume;
     [SerializeField] float sfxVolume;
     [SerializeField] int minMusicVolume;
     [SerializeField] int maxMusicVolume;//equilibrar músicas en programa externo
     [SerializeField] int minSFXVolume;
-    [SerializeField] int maxSFXVolume;
+    [SerializeField] int maxSFXVolume;*/
     public Slider musicSlider;
     public Slider sfxSlider;
 
     [Header("Audio Clips and Sources")]
     //[SerializeField] AudioSource primaryMusicSource;
     //[SerializeField] AudioSource secondaryMusicSource;//ponerlos en el mismo gameObject que este script
-    [SerializeField] AudioSource playerSource;
+    [SerializeField] AudioSource ownSource;
     [SerializeField] AudioClip[] music;
     [SerializeField] AudioReferences audioRefs; 
     public AudioSource[] musicSources;
@@ -138,6 +137,7 @@ public class AudioManager : MonoBehaviour
     public void ChangeSFXVolume( )
     {
         //sfxVolume = _sfxVolume; 
+        ownSource.volume = audioLibrary.sfxVolume;
         foreach (AudioSource sfxSource in sfxSources)
         {
             sfxSource.volume = audioLibrary.sfxVolume;
@@ -148,6 +148,28 @@ public class AudioManager : MonoBehaviour
             {
                 sfxSource.volume = audioLibrary.sfxVolume;
             }
+        }
+    }
+    public void PlaySound(int indexInLibrary, bool loopable)
+    {
+        ownSource.pitch = 1f;
+        if (loopable) ownSource.loop = true;
+        else ownSource.loop = false;
+        ownSource.clip = audioLibrary.sfx[indexInLibrary];
+        ownSource.Play();
+    }
+    public void StopSound()
+    {
+        ownSource.Stop();
+    }
+    public void NPCSpeak(float customPitch)
+    {
+        ownSource.pitch = customPitch;
+        ownSource.loop = false;
+        if(!ownSource.isPlaying)
+        {
+            ownSource.clip = audioLibrary.sfxNPC[Random.Range(0, audioLibrary.sfxNPC.Length)];
+            ownSource.Play();
         }
     }
 }

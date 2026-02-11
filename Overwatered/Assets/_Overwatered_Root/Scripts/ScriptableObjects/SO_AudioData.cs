@@ -6,5 +6,6 @@ public class SO_AudioData : ScriptableObject
     public float musicVolume;
     public float sfxVolume;
     public AudioClip[] sfx;
+    public AudioClip[] sfxNPC;
     public AudioClip[] songs;
 }

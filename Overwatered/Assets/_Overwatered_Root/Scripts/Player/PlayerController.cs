@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform camTransform;
     [SerializeField] bool hasTurned = false;
     [SerializeField] float rotationTime = 20f;
-    [SerializeField] AudioSource notificationSound;
+    //[SerializeField] AudioSource notificationSound;
 
     [Header("Boat References")]
     [SerializeField] GameObject boat;
@@ -103,6 +103,8 @@ public class PlayerController : MonoBehaviour
     Collider[] collidedGrounds;
     int groundedChecks;
     bool groundedInBoat = false;
+    float timeInWater;
+    Vector3 lastGroundedPos;
     #endregion
     private void Awake()
     {
@@ -158,6 +160,14 @@ public class PlayerController : MonoBehaviour
                 detection.pickUpSign.SetActive(true);
             }
         }
+        if(other.gameObject.layer == 4)
+        {
+            timeInWater += Time.deltaTime;
+            if(timeInWater >= 10f)
+            {
+                transform.position = new Vector3(lastGroundedPos.x, lastGroundedPos.y + 1, lastGroundedPos.z);
+            }
+        }
     }
     private void OnTriggerExit(Collider other)
     {
@@ -168,6 +178,10 @@ public class PlayerController : MonoBehaviour
                 isNearBoat = false;
                 detection.pickUpSign.SetActive(false);
             }
+        }
+        if (other.gameObject.layer == 4)
+        {
+            timeInWater = 0f;
         }
     }
     void GroundCheck()
@@ -204,6 +218,7 @@ public class PlayerController : MonoBehaviour
                     else
                     {
                         groundedInBoat = false;
+                        lastGroundedPos = transform.position;
                         //boatController.HandleColliders(false);
                     }
                 }
@@ -318,23 +333,21 @@ public class PlayerController : MonoBehaviour
         if (!isDrinkable)
         {
             animHand.SetTrigger("eat");
+            AudioManager.Instance.PlaySound(5, false);
             consumeTrigger = "eat";
-            //animHand.ResetTrigger("eat");
             foodLeft += foodAdded;
             consumable = breadObject;
-            //consumable = Instantiate(bread.itemPrefab);
         }
         else
         {
             animHand.SetTrigger("drink");
+            AudioManager.Instance.PlaySound(6, false);
             consumeTrigger = "drink";
-            //animHand.ResetTrigger("drink");
             consumable = waterObject;
         }
         consumable.SetActive(false);
     waterLeft += waterAdded;
         timePassed = 0;
-        //+ spawneo de objeto
         StartCoroutine(LunchTime(consumeTrigger));
         
     }
@@ -345,6 +358,7 @@ public class PlayerController : MonoBehaviour
         consumable.SetActive(true);
         yield return new WaitForSeconds(3f);
         StatsUpdater();
+        AudioManager.Instance.PlaySound(1, false);
         consumable.SetActive(false);
         yield return new WaitForSeconds(0.1f);
         GameManager.Instance.isEating = false;
@@ -419,6 +433,8 @@ public class PlayerController : MonoBehaviour
                 if (!GameManager.Instance.camController.zoomReseted) GameManager.Instance.camController.ResetZoom();
                 timeSinceMove = 0;
                 anim.SetInteger("playerState", isSprinting ? 2 : 1);
+
+                //AudioManager.Instance.PlaySound(9, true);
             }
             else
             {
@@ -429,6 +445,7 @@ public class PlayerController : MonoBehaviour
                     timeSinceMove = 0;
                     anim.SetInteger("playerState", 0);
                 }
+                //AudioManager.Instance.StopSound();
 
             }
             playerRb.AddForce(velocityChange, ForceMode.VelocityChange);
@@ -519,6 +536,7 @@ public class PlayerController : MonoBehaviour
         else if(lastMoveInputY > 0) yield return new WaitForSeconds(0.5f);
         else if (lastMoveInputY < 0) yield return new WaitForSeconds(1.1f);
         //rema
+        AudioManager.Instance.PlaySound(7, false);
         if (!anim.GetCurrentAnimatorStateInfo(0).IsName("AN_Player_RowIdle") && !anim.GetCurrentAnimatorStateInfo(0).IsName("AN_Player_RowTired"))
         {
             if (lastMoveInputX != 0 || lastMoveInputY != 0)
@@ -566,7 +584,7 @@ public class PlayerController : MonoBehaviour
     {
         adviceDialogue.SetActive(false);
         adviceDialogue.SetActive(true);
-        notificationSound.Play();
+        AudioManager.Instance.PlaySound(0, false);
         adviceText.text = adviceToSay;
     }
     void Interact()

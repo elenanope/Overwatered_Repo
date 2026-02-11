@@ -12,7 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ff5ea796b86f644c81fa49607fe1eb9, type: 3}
   m_Name: AudioData
   m_EditorClassIdentifier: 
-  musicVolume: 0.1474668
-  sfxVolume: 1
-  sfx: []
+  musicVolume: 0.19996941
+  sfxVolume: 0.058644477
+  sfx:
+  - {fileID: 8300000, guid: 1fc1fd6b8cc57a341964bd823acb48a7, type: 3}
+  - {fileID: 8300000, guid: 2b667a68004d60c49b31f8276db2d614, type: 3}
+  - {fileID: 8300000, guid: 8a2e5ca1091dcf74b94f1fbbe52ce445, type: 3}
+  - {fileID: 8300000, guid: 858a207ed7085aa478a2e390c53bdfa3, type: 3}
+  - {fileID: 8300000, guid: a4fa7134fa158ee47ad8ed804021a43d, type: 3}
+  - {fileID: 8300000, guid: c99c82c5dfed4554ba3b281172a7abf2, type: 3}
+  - {fileID: 8300000, guid: 233f77f3a35a2b74bb99d27a4b1446d5, type: 3}
+  - {fileID: 8300000, guid: d312e198ae3dd93429492c6ffe458d58, type: 3}
+  - {fileID: 8300000, guid: b87e7c62da240a0479d3d3c6a5371f08, type: 3}
+  - {fileID: 8300000, guid: 3cf84299ad8eee84ca7636e558118f6a, type: 3}
+  - {fileID: 8300000, guid: 265f108ea99b1124886ac56345c1ad57, type: 3}
+  sfxNPC:
+  - {fileID: 8300000, guid: 4b919dec96b4eb848a729bc725b2aba4, type: 3}
+  - {fileID: 8300000, guid: 2a667eb911e0a124a8d64ac13c740e37, type: 3}
+  - {fileID: 8300000, guid: 068418cc06a507c419179c5299082bed, type: 3}
+  - {fileID: 8300000, guid: 3370d7939fcd6bf428c510c59ec6c8ea, type: 3}
+  - {fileID: 8300000, guid: 503d7bec7a15dd94d9ff67ed32b3b0f2, type: 3}
+  - {fileID: 8300000, guid: 1ee7f93c30c3f704c8131a213afbc069, type: 3}
+  - {fileID: 8300000, guid: a5aa00550a84cd049b3b64a27d82a46e, type: 3}
   songs: []

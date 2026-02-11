@@ -134,6 +134,7 @@ public class PaperShipMinigame : MonoBehaviour
         {
             shipPlayer.AddForce(shipPlayer.transform.forward * (airTaken/1) * windMult, ForceMode.Impulse);
             playerAnimator.SetBool("isBreathing", false);
+            AudioManager.Instance.PlaySound(8, false);
         }
         else if(shipsArrived == 3)
         {
@@ -243,6 +244,7 @@ public class PaperShipMinigame : MonoBehaviour
         else
         {
             Debug.Log("Punto para nadie!");
+            AudioManager.Instance.PlaySound(10, false);
             //O poner que se repita la ronda
         }
     }
@@ -250,6 +252,7 @@ public class PaperShipMinigame : MonoBehaviour
     {
         winnerSign.transform.parent = winner;
         winnerSign.transform.localPosition = winnerSignPos;
+        AudioManager.Instance.PlaySound(0, false);
         winnerSign.SetActive(true);
     }
     void UpdateWind()
@@ -303,16 +306,19 @@ public class PaperShipMinigame : MonoBehaviour
         GameManager.Instance.ShowCursor(true);
         if (winCondition == 2)
         {
+            AudioManager.Instance.PlaySound(3, false);
             winPanel.SetActive(true);
             //GameManager.Instance.eventSystem.SetSelectedGameObject(winPanel.transform.GetChild(1).gameObject);
         }
         else if(winCondition == 1)
         {
+            AudioManager.Instance.PlaySound(0, false);
             drawPanel.SetActive(true);
             //GameManager.Instance.eventSystem.SetSelectedGameObject(drawPanel.transform.GetChild(1).gameObject);
         }
         else
         {
+            AudioManager.Instance.PlaySound(4, false);
             losePanel.SetActive(true);
             //GameManager.Instance.eventSystem.SetSelectedGameObject(losePanel.transform.GetChild(1).gameObject);
         }

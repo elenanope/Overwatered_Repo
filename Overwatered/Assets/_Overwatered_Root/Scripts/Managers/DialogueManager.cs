@@ -22,7 +22,7 @@ public class DialogueManager : MonoBehaviour
     public DialogueActivator currentDialoguer;
      DialogueActivator lastDialoguer;
 
-    float typingTime;
+    [SerializeField] float typingTime;
     bool didDialogueStart;
     int lineIndex;
     int dialogueIndex; //0 greeting, 1 mainpart, 2 goodbye
@@ -226,9 +226,16 @@ public class DialogueManager : MonoBehaviour
     }
     IEnumerator ShowingLine()
     {
+        float voicePitch = 1f;
+        //if (currentDialoguer.activatorReference == 0) //voicePitch = 0.2f;
+        //else
+        {
+            //voicePitch = 1f;
+        }
         foreach (char ch in textToRead)
         {
             dialogueText.maxVisibleCharacters++;
+            AudioManager.Instance.NPCSpeak(voicePitch);
             yield return new WaitForSeconds(typingTime);
         }
     }
@@ -246,6 +253,19 @@ public class DialogueManager : MonoBehaviour
         {
             GameManager.Instance.cameraReady = true;
             GameManager.Instance.playerInDialogue = false;
+            if(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene > 2)
+            {
+                if ((currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].willGame && optionChosen > 0) || GameManager.Instance.gameOutcome >= 0)
+                {
+                    optionChosen = 0;
+                    currentDialoguer.lineToRead = 0;
+                }
+                else
+                {
+                    if (currentDialoguer.dialogueInfo.Length > 1 && currentDialoguer.lineToRead < currentDialoguer.dialogueInfo.Length) currentDialoguer.lineToRead++;
+                }
+                GameManager.Instance.playerInDialogue = false;
+            }
             MinigameManager.Instance.EnterMinigame(currentDialoguer.dialogueInfo[currentDialoguer.lineToRead].gameScene, false, currentDialoguer.activatorReference);
         }
         else

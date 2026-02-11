@@ -14,6 +14,7 @@ public class DialogueDetection : MonoBehaviour
     {
         if (GameManager.Instance.exitingGame)
         {
+            GameManager.Instance.exitingGame = false;
             GameManager.Instance.cameraReady = true;
             GameManager.Instance.dialogueManager.currentDialoguer = GameManager.Instance.npcManager.npcDialogueActivator[GameManager.Instance.gameData.lastNPCNumber];
             npcActivator = GameManager.Instance.dialogueManager.currentDialoguer;

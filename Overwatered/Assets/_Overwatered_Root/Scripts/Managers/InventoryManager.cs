@@ -79,10 +79,10 @@ public class InventoryManager : MonoBehaviour
     private void Update()
     {
         itemCursor.SetActive(isMovingItem);
-        //itemCursor.transform.position = Mouse.current.position.ReadValue();
         if(isMovingItem)
         {
-            itemCursor.transform.position = virtualMouseInput.virtualMouse.position.value;
+            itemCursor.transform.position = Mouse.current.position.ReadValue();
+            //itemCursor.transform.position = virtualMouseInput.virtualMouse.position.value;
         }
         selectionBubble.transform.GetChild(1).gameObject.GetComponent<Button>().interactable = !GameManager.Instance.isEating;//hacer más óptimo?
     }
@@ -406,7 +406,7 @@ public class InventoryManager : MonoBehaviour
                 {
                     UndoTrade();
                     playerController.NewAdvice("The trade was cancelled, you don't have enough space!");
-                    //Debug.Log($"numeros totales {itemsToCheck.Count}, item  {i}");
+                    AudioManager.Instance.PlaySound(10, false);
                     return;
                 }
             }
@@ -442,7 +442,7 @@ public class InventoryManager : MonoBehaviour
                     if (currentNumber > 0)//esto se debería de poder quitar
                     {
                         playerController.NewAdvice("The trade was succesful!");
-                        //se han añadido tus ganancias!
+                        AudioManager.Instance.PlaySound(2, false);
                         if (currentItem.GetItem().stackLimit >= currentNumber) Add(currentItem, currentNumber);
                         else
                         {
@@ -708,20 +708,33 @@ public class InventoryManager : MonoBehaviour
                         }
                         else
                         {
-                            //poner sonido de X
+                            AudioManager.Instance.PlaySound(10, false);
                             if (singleMove) originalSlot.AddQuantity(1);
                             else originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
                         }
                     }
-                    else//si no lo puedes dejar: vuelve al sitio original (otra opción sería intercambiar objetos, pero entonces ya complica si tiene que volver a su origen)
+                    else//si no lo puedes dejar: intercambiar objetos, pero entonces ya complica si tiene que volver a su origen)
                     {
-                        //o hacerlo para que si originalSlot == null, se ponga en el primero disponible 
-                        currentSlot = new SlotClass(tempSlot);//a=b
-                        tempSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());//b=c 
-                        movingSlot.AddItem(currentSlot.GetItem(), currentSlot.GetQuantity());//a=c 
-                        itemCursor.GetComponent<Image>().sprite = movingSlot.GetItem().itemIcon;
-
+                        //si hay algun slot libre, se intercambia, sino no
+                        for (int i = 0; i < slots.Length; i++)
+                        {
+                            if(items[i].GetItem() == null)
+                            {
+                                currentSlot = new SlotClass(tempSlot);//a=b
+                                tempSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());//b=c 
+                                movingSlot.AddItem(currentSlot.GetItem(), currentSlot.GetQuantity());//a=c 
+                                itemCursor.GetComponent<Image>().sprite = movingSlot.GetItem().itemIcon;
+                                if (singleMove) singleMove = false;
+                                RefreshUI();
+                                return true;
+                            }
+                        }
+                        AudioManager.Instance.PlaySound(10, false);
+                        if (singleMove) originalSlot.AddQuantity(1);
+                        else originalSlot.AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
+                        movingSlot.Clear();
                         if (singleMove) singleMove = false;
+                        isMovingItem = false;
                         RefreshUI();
                         return true;
                         /* NO SE INTERCAMBIAN EL QUE LLEVAS Y EL QUE TOCAS, EL QUE LLEVAS VUELVO A SU LUGAR ORIGINAL

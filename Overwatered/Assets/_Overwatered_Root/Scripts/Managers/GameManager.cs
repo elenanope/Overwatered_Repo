@@ -131,8 +131,8 @@ public class GameManager : MonoBehaviour
             if (sceneReferences.npcManager != null) npcManager = sceneReferences.npcManager;
             if (sceneReferences.cursorPanel != null)
             {
-                if (cursorPanel.activeSelf) cursorPanel.SetActive(false);
-                cursorPanel = sceneReferences.cursorPanel;
+                //if (cursorPanel.activeSelf) cursorPanel.SetActive(false);
+                //cursorPanel = sceneReferences.cursorPanel;
             }
         }
         else

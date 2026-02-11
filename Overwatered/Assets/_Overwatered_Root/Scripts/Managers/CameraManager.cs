@@ -52,6 +52,7 @@ public class CameraManager : MonoBehaviour
         {
             instance = this;
         }
+        toDialogueCam = true;
     }
     private void Update()
     {
